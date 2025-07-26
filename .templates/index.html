@@ -1,172 +1,535 @@
 
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="author" content="BoostrapTheme" />
-    <title>{{SALON_NAME}} - Salon de Coiffure</title>
-    <link rel="stylesheet" href="css/bootstrap.css">
-    <link rel="stylesheet" href="css/animate.min.css">
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
-    <link rel="stylesheet" href="css/magnific-popup.css">
-    <link rel="stylesheet" href="css/app.css">
-    <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,700,500' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,900,300' rel='stylesheet' type='text/css'>
-</head>
-<body>
-    <!-- Navigation Section -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-        <div class="container">
-            <a class="navbar-brand js-scroll-trigger" href="#page-top">
-                <img src="img/logo.png" alt="{{SALON_NAME}}" width="60" height="60">
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#about">About</a></li>
-                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#services">Services</a></li>
-                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#portfolio">Portfolio</a></li>
-                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#team">Team</a></li>
-                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#testimonials">Testimonials</a></li>
-                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#contact">Contact</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <title>{{SALON_NAME}} - Salon de Coiffure</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="{{SALON_NAME}} - Salon de coiffure professionnel" name="keywords">
+        <meta content="{{DESCRIPTION}}" name="description">
 
-    <!-- Header Section -->
-    <header class="masthead text-center text-white d-flex">
-        <div class="container my-auto">
-            <div class="row">
-                <div class="col-lg-12 mx-auto">
-                    <h1 class="text-uppercase">
-                        <strong>{{SALON_NAME}}</strong>
-                    </h1>
-                    <h3>{{DESCRIPTION}}</h3>
-                    <a class="btn btn-general btn-white js-scroll-trigger" href="#about">En savoir plus</a>
-                </div>
-            </div>
-        </div>
-    </header>
+        <!-- Favicon -->
+        <link href="img/favicon.ico" rel="icon">
 
-    <!-- About Section -->
-    <section class="page-section" id="about">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6">
-                    <h3>À propos de {{SALON_NAME}}</h3>
-                    <div class="bord-bottom"></div>
-                    <p>{{DESCRIPTION}}</p>
-                    {{EMAIL_SECTION}}
-                    {{WEBSITE_SECTION}}
-                    <p><strong>Horaires :</strong><br>{{HOURS}}</p>
-                    <a href="#contact" class="img-fluid js-scroll-trigger">
-                        <button class="btn btn-general btn-white">CONTACTEZ-NOUS</button>
-                    </a>
-                </div>
-                <div class="col-lg-6">
-                    <img src="img/perfect-style.jpg" alt="Perfect Style" class="img-fluid">
-                </div>
-            </div>
-        </div>
-    </section>
+        <!-- Google Font -->
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Services Section -->
-    <section class="page-section" id="services">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2 class="section-heading">Nos Services</h2>
-                    <h3 class="section-subheading text-muted">Des services de qualité pour votre beauté</h3>
-                </div>
-            </div>
-            <div class="row text-center">
-                <div class="col-md-3">
-                    <span class="fa-stack fa-4x">
-                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                        <i class="fa fa-cut fa-stack-1x fa-inverse"></i>
-                    </span>
-                    <h4 class="service-heading">Coupe</h4>
-                    <p class="text-muted">Coupe personnalisée selon votre style</p>
-                </div>
-                <div class="col-md-3">
-                    <span class="fa-stack fa-4x">
-                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                        <i class="fa fa-tint fa-stack-1x fa-inverse"></i>
-                    </span>
-                    <h4 class="service-heading">Coloration</h4>
-                    <p class="text-muted">Couleurs tendance et naturelles</p>
-                </div>
-                <div class="col-md-3">
-                    <span class="fa-stack fa-4x">
-                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                        <i class="fa fa-star fa-stack-1x fa-inverse"></i>
-                    </span>
-                    <h4 class="service-heading">Soins</h4>
-                    <p class="text-muted">Traitements capillaires professionnels</p>
-                </div>
-                <div class="col-md-3">
-                    <span class="fa-stack fa-4x">
-                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                        <i class="fa fa-heart fa-stack-1x fa-inverse"></i>
-                    </span>
-                    <h4 class="service-heading">Styling</h4>
-                    <p class="text-muted">Mise en forme et coiffage</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        <!-- CSS Libraries -->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+        <link href="lib/animate/animate.min.css" rel="stylesheet">
+        <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+        <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
 
-    <!-- Contact Section -->
-    <section class="page-section" id="contact">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2 class="section-heading">Contactez-nous</h2>
-                    <h3 class="section-subheading text-muted">Prenez rendez-vous dès maintenant</h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="contact-info">
-                        <h4>Informations de contact</h4>
-                        <p><i class="fa fa-map-marker"></i> {{ADDRESS}}</p>
-                        <p><i class="fa fa-phone"></i> {{PHONE}}</p>
-                        {{EMAIL_SECTION}}
-                        {{SOCIAL_SECTION}}
+        <!-- Template Stylesheet -->
+        <link href="css/style.css" rel="stylesheet">
+
+        <style>
+            :root {
+                --primary-color: {{PRIMARY_COLOR}};
+                --secondary-color: {{SECONDARY_COLOR}};
+            }
+            
+            .navbar-brand span {
+                color: var(--primary-color);
+            }
+            
+            .btn {
+                background: var(--primary-color);
+                border-color: var(--primary-color);
+            }
+            
+            .btn:hover {
+                background: var(--secondary-color);
+                border-color: var(--secondary-color);
+            }
+            
+            .hero {
+                background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            }
+        </style>
+    </head>
+
+    <body>
+        <!-- Top Bar Start -->
+        <div class="top-bar d-none d-md-block">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="top-bar-left">
+                            <div class="text">
+                                <h2>{{HOURS_DISPLAY}}</h2>
+                                <p>Horaires d'ouverture</p>
+                            </div>
+                            <div class="text">
+                                <h2>{{PHONE}}</h2>
+                                <p>Appelez pour un rendez-vous</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="top-bar-right">
+                            <div class="social">
+                                {{SOCIAL_LINKS}}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <form>
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Votre nom" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="email" class="form-control" placeholder="Votre email" required>
-                        </div>
-                        <div class="form-group">
-                            <textarea class="form-control" rows="4" placeholder="Votre message" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-general btn-white">Envoyer</button>
-                    </form>
+            </div>
+        </div>
+        <!-- Top Bar End -->
+
+        <!-- Nav Bar Start -->
+        <div class="navbar navbar-expand-lg bg-dark navbar-dark">
+            <div class="container-fluid">
+                <a href="#" class="navbar-brand">{{SALON_NAME}} <span>Pro</span></a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                    <div class="navbar-nav ml-auto">
+                        <a href="#hero" class="nav-item nav-link">Accueil</a>
+                        <a href="#about" class="nav-item nav-link">À propos</a>
+                        <a href="#services" class="nav-item nav-link">Services</a>
+                        <a href="#pricing" class="nav-item nav-link">Prix</a>
+                        <a href="#team" class="nav-item nav-link">Équipe</a>
+                        <a href="#portfolio" class="nav-item nav-link">Galerie</a>
+                        <a href="#contact" class="nav-item nav-link">Contact</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
+        <!-- Nav Bar End -->
 
-    <!-- Footer -->
-    <footer class="footer text-center">
-        <div class="container">
-            <p>&copy; 2024 {{SALON_NAME}}. Tous droits réservés.</p>
+        <!-- Hero Start -->
+        <div class="hero" id="hero">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <div class="hero-text">
+                            <h1>{{SALON_NAME}}</h1>
+                            <p>{{DESCRIPTION}}</p>
+                            <a class="btn" href="#contact">Prendre Rendez-vous</a>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 d-none d-md-block">
+                        <div class="hero-image">
+                            <img src="img/hero.png" alt="{{SALON_NAME}}">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </footer>
+        <!-- Hero End -->
 
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.easing.min.js"></script>
-    <script src="js/app.js"></script>
-</body>
+        <!-- About Start -->
+        <div class="about" id="about">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-5 col-md-6">
+                        <div class="about-img">
+                            <img src="img/about.jpg" alt="À propos">
+                        </div>
+                    </div>
+                    <div class="col-lg-7 col-md-6">
+                        <div class="section-header text-left">
+                            <p>Découvrez-nous</p>
+                            <h2>{{SALON_NAME}}</h2>
+                        </div>
+                        <div class="about-text">
+                            <p>{{DESCRIPTION}}</p>
+                            <div class="contact-info">
+                                <p><strong>Adresse:</strong> {{ADDRESS}}</p>
+                                <p><strong>Téléphone:</strong> {{PHONE}}</p>
+                                {{EMAIL_SECTION}}
+                                {{WEBSITE_SECTION}}
+                                <p><strong>Horaires:</strong><br>{{HOURS}}</p>
+                            </div>
+                            <a class="btn" href="#contact">Nous Contacter</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- About End -->
+
+        <!-- Service Start -->
+        <div class="service" id="services">
+            <div class="container">
+                <div class="section-header text-center">
+                    <p>Nos Services</p>
+                    <h2>Les Meilleurs Services pour Vous</h2>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="service-item">
+                            <div class="service-img">
+                                <img src="img/service-1.jpg" alt="Coupe">
+                            </div>
+                            <h3>Coupe de Cheveux</h3>
+                            <p>Coupe personnalisée selon votre style et votre personnalité</p>
+                            <a class="btn" href="#contact">Réserver</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="service-item">
+                            <div class="service-img">
+                                <img src="img/service-2.jpg" alt="Barbe">
+                            </div>
+                            <h3>Taille de Barbe</h3>
+                            <p>Stylisation et entretien professionnel de votre barbe</p>
+                            <a class="btn" href="#contact">Réserver</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="service-item">
+                            <div class="service-img">
+                                <img src="img/service-3.jpg" alt="Coloration">
+                            </div>
+                            <h3>Coloration & Soins</h3>
+                            <p>Couleurs tendance et soins capillaires professionnels</p>
+                            <a class="btn" href="#contact">Réserver</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Service End -->
+
+        <!-- Pricing Start -->
+        <div class="price" id="pricing">
+            <div class="container">
+                <div class="section-header text-center">
+                    <p>Nos Tarifs</p>
+                    <h2>Les Meilleurs Prix de la Ville</h2>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="price-item">
+                            <div class="price-img">
+                                <img src="img/price-1.jpg" alt="Coupe">
+                            </div>
+                            <div class="price-text">
+                                <h2>Coupe</h2>
+                                <h3>€25</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="price-item">
+                            <div class="price-img">
+                                <img src="img/price-2.jpg" alt="Shampoing">
+                            </div>
+                            <div class="price-text">
+                                <h2>Shampoing</h2>
+                                <h3>€15</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="price-item">
+                            <div class="price-img">
+                                <img src="img/price-3.jpg" alt="Coloration">
+                            </div>
+                            <div class="price-text">
+                                <h2>Coloration</h2>
+                                <h3>€45</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="price-item">
+                            <div class="price-img">
+                                <img src="img/price-4.jpg" alt="Rasage">
+                            </div>
+                            <div class="price-text">
+                                <h2>Rasage</h2>
+                                <h3>€20</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Pricing End -->
+        
+        <!-- Testimonial Start -->
+        <div class="testimonial">
+            <div class="container">
+                <div class="owl-carousel testimonials-carousel">
+                    <div class="testimonial-item">
+                        <img src="img/testimonial-1.jpg" alt="Client">
+                        <p>Excellent service ! L'équipe est très professionnelle et à l'écoute. Je recommande vivement {{SALON_NAME}} pour la qualité de leurs prestations.</p>
+                        <h2>Sophie Martin</h2>
+                        <h3>Cliente fidèle</h3>
+                    </div>
+                    <div class="testimonial-item">
+                        <img src="img/testimonial-2.jpg" alt="Client">
+                        <p>Une ambiance chaleureuse et des coiffeurs talentueux. Ils savent exactement ce qui nous convient. Merci à toute l'équipe de {{SALON_NAME}} !</p>
+                        <h2>Marie Dubois</h2>
+                        <h3>Cliente régulière</h3>
+                    </div>
+                    <div class="testimonial-item">
+                        <img src="img/testimonial-3.jpg" alt="Client">
+                        <p>Je suis client depuis plusieurs années et je ne suis jamais déçu. L'expertise et le professionnalisme sont au rendez-vous à chaque visite.</p>
+                        <h2>Pierre Durand</h2>
+                        <h3>Client fidèle</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Testimonial End -->
+
+        <!-- Team Start -->
+        <div class="team" id="team">
+            <div class="container">
+                <div class="section-header text-center">
+                    <p>Notre Équipe</p>
+                    <h2>Rencontrez Nos Experts</h2>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="team-item">
+                            <div class="team-img">
+                                <img src="img/team-1.jpg" alt="Équipe">
+                            </div>
+                            <div class="team-text">
+                                <h2>Marie Dupont</h2>
+                                <p>Coiffeuse Expert</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="team-item">
+                            <div class="team-img">
+                                <img src="img/team-2.jpg" alt="Équipe">
+                            </div>
+                            <div class="team-text">
+                                <h2>Julien Martin</h2>
+                                <p>Spécialiste Barbe</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="team-item">
+                            <div class="team-img">
+                                <img src="img/team-3.jpg" alt="Équipe">
+                            </div>
+                            <div class="team-text">
+                                <h2>Sophie Bernard</h2>
+                                <p>Coloriste</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="team-item">
+                            <div class="team-img">
+                                <img src="img/team-4.jpg" alt="Équipe">
+                            </div>
+                            <div class="team-text">
+                                <h2>Lucas Moreau</h2>
+                                <p>Styliste</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Team End -->
+
+        <!-- Portfolio Start -->
+        <div class="portfolio" id="portfolio">
+            <div class="container">
+                <div class="section-header text-center">
+                    <p>Notre Galerie</p>
+                    <h2>Découvrez Nos Réalisations</h2>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <ul id="portfolio-flters">
+                            <li data-filter="*" class="filter-active">Tous</li>
+                            <li data-filter=".first">Coupes</li>
+                            <li data-filter=".second">Barbes</li>
+                            <li data-filter=".third">Colorations</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row portfolio-container">
+                    <div class="col-lg-4 col-md-6 col-sm-12 portfolio-item first">
+                        <div class="portfolio-wrap">
+                            <a href="img/portfolio-1.jpg" data-lightbox="portfolio">
+                                <img src="img/portfolio-1.jpg" alt="Portfolio">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-12 portfolio-item second">
+                        <div class="portfolio-wrap">
+                            <a href="img/portfolio-2.jpg" data-lightbox="portfolio">
+                                <img src="img/portfolio-2.jpg" alt="Portfolio">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-12 portfolio-item third">
+                        <div class="portfolio-wrap">
+                            <a href="img/portfolio-3.jpg" data-lightbox="portfolio">
+                                <img src="img/portfolio-3.jpg" alt="Portfolio">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-12 portfolio-item first">
+                        <div class="portfolio-wrap">
+                            <a href="img/portfolio-4.jpg" data-lightbox="portfolio">
+                                <img src="img/portfolio-4.jpg" alt="Portfolio">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-12 portfolio-item second">
+                        <div class="portfolio-wrap">
+                            <a href="img/portfolio-5.jpg" data-lightbox="portfolio">
+                                <img src="img/portfolio-5.jpg" alt="Portfolio">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-12 portfolio-item third">
+                        <div class="portfolio-wrap">
+                            <a href="img/portfolio-6.jpg" data-lightbox="portfolio">
+                                <img src="img/portfolio-6.jpg" alt="Portfolio">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Portfolio End -->
+
+        <!-- Contact Start -->
+        <div class="contact" id="contact">
+            <div class="container-fluid">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <div class="contact-info">
+                                <h2>Nous Contacter</h2>
+                                <div class="contact-item">
+                                    <i class="fa fa-map-marker-alt"></i>
+                                    <div>
+                                        <h4>Adresse</h4>
+                                        <p>{{ADDRESS}}</p>
+                                    </div>
+                                </div>
+                                <div class="contact-item">
+                                    <i class="fa fa-phone-alt"></i>
+                                    <div>
+                                        <h4>Téléphone</h4>
+                                        <p>{{PHONE}}</p>
+                                    </div>
+                                </div>
+                                {{EMAIL_CONTACT_SECTION}}
+                                {{SOCIAL_CONTACT_SECTION}}
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="contact-form">
+                                <div id="success"></div>
+                                <form name="sentMessage" id="contactForm" novalidate="novalidate">
+                                    <div class="control-group">
+                                        <input type="text" class="form-control" id="name" placeholder="Votre nom" required="required" data-validation-required-message="Veuillez entrer votre nom" />
+                                        <p class="help-block text-danger"></p>
+                                    </div>
+                                    <div class="control-group">
+                                        <input type="email" class="form-control" id="email" placeholder="Votre email" required="required" data-validation-required-message="Veuillez entrer votre email" />
+                                        <p class="help-block text-danger"></p>
+                                    </div>
+                                    <div class="control-group">
+                                        <input type="text" class="form-control" id="subject" placeholder="Sujet" required="required" data-validation-required-message="Veuillez entrer un sujet" />
+                                        <p class="help-block text-danger"></p>
+                                    </div>
+                                    <div class="control-group">
+                                        <textarea class="form-control" id="message" placeholder="Message" required="required" data-validation-required-message="Veuillez entrer votre message"></textarea>
+                                        <p class="help-block text-danger"></p>
+                                    </div>
+                                    <div>
+                                        <button class="btn" type="submit" id="sendMessageButton">Envoyer</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Contact End -->
+
+        <!-- Footer Start -->
+        <div class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="footer-contact">
+                                    <h2>{{SALON_NAME}}</h2>
+                                    <p><i class="fa fa-map-marker-alt"></i>{{ADDRESS}}</p>
+                                    <p><i class="fa fa-phone-alt"></i>{{PHONE}}</p>
+                                    {{EMAIL_FOOTER_SECTION}}
+                                    <div class="footer-social">
+                                        {{SOCIAL_FOOTER_LINKS}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="footer-link">
+                                    <h2>Liens Rapides</h2>
+                                    <a href="#about">À propos</a>
+                                    <a href="#services">Services</a>
+                                    <a href="#pricing">Prix</a>
+                                    <a href="#team">Équipe</a>
+                                    <a href="#contact">Contact</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="footer-newsletter">
+                            <h2>Newsletter</h2>
+                            <p>Restez informé de nos dernières offres et nouveautés en vous abonnant à notre newsletter.</p>
+                            <div class="form">
+                                <input class="form-control" placeholder="Votre email">
+                                <button class="btn">S'abonner</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container copyright">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>&copy; <a href="#">{{SALON_NAME}}</a>, Tous droits réservés.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>Créé avec le Générateur de Sites Salon</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+
+        <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+        <!-- JavaScript Libraries -->
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+        <script src="lib/easing/easing.min.js"></script>
+        <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+        <script src="lib/isotope/isotope.pkgd.min.js"></script>
+        <script src="lib/lightbox/js/lightbox.min.js"></script>
+        
+        <!-- Contact Javascript File -->
+        <script src="mail/jqBootstrapValidation.min.js"></script>
+        <script src="mail/contact.js"></script>
+
+        <!-- Template Javascript -->
+        <script src="js/main.js"></script>
+    </body>
 </html>

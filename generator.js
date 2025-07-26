@@ -1191,9 +1191,54 @@ class SalonGenerator {
         html = html.replace(/{{PRIMARY_COLOR}}/g, data.primaryColor || '#667eea');
         html = html.replace(/{{SECONDARY_COLOR}}/g, data.secondaryColor || '#764ba2');
 
+        // Horaires pour l'affichage dans la top bar
+        const hoursDisplay = data.hours ? data.hours.split('\n')[0] || '9h-18h' : '9h-18h';
+        html = html.replace(/{{HOURS_DISPLAY}}/g, hoursDisplay);
+
         // Sections conditionnelles
         const emailSection = data.email ? `<p><strong>Email :</strong> <a href="mailto:${data.email}">${data.email}</a></p>` : '';
         const websiteSection = data.website ? `<p><strong>Site web :</strong> <a href="${data.website}" target="_blank">${data.website}</a></p>` : '';
+
+        // Email pour les sections contact et footer
+        const emailContactSection = data.email ? `
+            <div class="contact-item">
+                <i class="fa fa-envelope"></i>
+                <div>
+                    <h4>Email</h4>
+                    <p><a href="mailto:${data.email}">${data.email}</a></p>
+                </div>
+            </div>` : '';
+        
+        const emailFooterSection = data.email ? `<p><i class="fa fa-envelope"></i><a href="mailto:${data.email}">${data.email}</a></p>` : '';
+
+        // Réseaux sociaux pour différentes sections
+        let socialLinks = '';
+        let socialContactSection = '';
+        let socialFooterLinks = '';
+
+        if (data.facebook || data.instagram || data.whatsapp) {
+            // Pour la top bar
+            if (data.facebook) socialLinks += `<a href="${data.facebook}" target="_blank"><i class="fab fa-facebook-f"></i></a>`;
+            if (data.instagram) socialLinks += `<a href="${data.instagram}" target="_blank"><i class="fab fa-instagram"></i></a>`;
+            if (data.whatsapp) socialLinks += `<a href="https://wa.me/${data.whatsapp}" target="_blank"><i class="fab fa-whatsapp"></i></a>`;
+
+            // Pour la section contact
+            socialContactSection = `
+                <div class="contact-item">
+                    <i class="fa fa-share-alt"></i>
+                    <div>
+                        <h4>Réseaux sociaux</h4>
+                        <div class="social-links">
+                            ${socialLinks}
+                        </div>
+                    </div>
+                </div>`;
+
+            // Pour le footer
+            if (data.facebook) socialFooterLinks += `<a href="${data.facebook}" target="_blank"><i class="fab fa-facebook-f"></i></a>`;
+            if (data.instagram) socialFooterLinks += `<a href="${data.instagram}" target="_blank"><i class="fab fa-instagram"></i></a>`;
+            if (data.whatsapp) socialFooterLinks += `<a href="https://wa.me/${data.whatsapp}" target="_blank"><i class="fab fa-whatsapp"></i></a>`;
+        }
 
         let socialSection = '';
         if (data.facebook || data.instagram || data.whatsapp) {
@@ -1206,9 +1251,15 @@ class SalonGenerator {
             socialSection += '</div>';
         }
 
+        // Remplacer toutes les sections
         html = html.replace(/{{EMAIL_SECTION}}/g, emailSection);
         html = html.replace(/{{WEBSITE_SECTION}}/g, websiteSection);
         html = html.replace(/{{SOCIAL_SECTION}}/g, socialSection);
+        html = html.replace(/{{SOCIAL_LINKS}}/g, socialLinks);
+        html = html.replace(/{{EMAIL_CONTACT_SECTION}}/g, emailContactSection);
+        html = html.replace(/{{EMAIL_FOOTER_SECTION}}/g, emailFooterSection);
+        html = html.replace(/{{SOCIAL_CONTACT_SECTION}}/g, socialContactSection);
+        html = html.replace(/{{SOCIAL_FOOTER_LINKS}}/g, socialFooterLinks);
 
         // Remplacements pour l'ancien template (rétrocompatibilité)
         html = html.replace(/Beauty &amp; Salon - Free Bootstrap 4 Template/g, `${data.salonName || 'Mon Salon'} - Salon de Coiffure`);
