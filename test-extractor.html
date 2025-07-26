@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Extracteur Google Maps</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="generator.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <h2>Test de l'Extracteur Google Maps</h2>
+                
+                <!-- Simuler les champs du formulaire -->
+                <form id="salonForm">
+                    <div class="mb-3">
+                        <label for="salonName" class="form-label">Nom du salon *</label>
+                        <input type="text" class="form-control" id="salonName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Téléphone *</label>
+                        <input type="tel" class="form-control" id="phone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Adresse *</label>
+                        <input type="text" class="form-control" id="address" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" rows="3"></textarea>
+                    </div>
+                </form>
+
+                <!-- URLs de test -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5>URLs de test</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <button class="btn btn-sm btn-outline-primary" onclick="testUrl('https://www.google.com/maps/place/Mona+Lisa+Coiffure/data=!4m7!3m6!1s0x102354317bf6e663:0x1ea90b4e08d1508b!8m2!3d6.3539367!4d2.3939986!16s%2Fg%2F11c6smb8k0!19sChIJY-b2ezFUIxARi1DRCE4LqR4?authuser=0&hl=en&rclk=1')">
+                                Test Mona Lisa Coiffure
+                            </button>
+                        </div>
+                        <div class="mb-2">
+                            <button class="btn btn-sm btn-outline-primary" onclick="testUrl('https://www.google.com/maps/place/Salon+de+Coiffure+Paris/@48.8566,2.3522,15z/data=!4m7!3m6!1s0x0:0x0!8m2!3d48.8566!4d2.3522!15s!5s20220101T000000')">
+                                Test Salon Paris (générique)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="maps-extractor.js"></script>
+    
+    <script>
+        function testUrl(url) {
+            const input = document.getElementById('mapsUrl');
+            if (input) {
+                input.value = url;
+                input.dispatchEvent(new Event('input'));
+            }
+        }
+    </script>
+</body>
+</html>

@@ -35,9 +35,86 @@ class SalonGenerator {
 
             this.initImageUploads();
             this.updateImageFormatInfo();
+            this.initFormValidation();
         } catch (error) {
             console.error('Erreur lors de l\'initialisation:', error);
         }
+    }
+
+    initFormValidation() {
+        // Validation en temps réel des champs obligatoires
+        const requiredFields = ['salonName', 'phone', 'address'];
+        
+        requiredFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('input', () => this.validateRequiredField(field));
+                field.addEventListener('blur', () => this.validateRequiredField(field));
+            }
+        });
+
+        // Validation du téléphone
+        const phoneField = document.getElementById('phone');
+        if (phoneField) {
+            phoneField.addEventListener('input', () => this.validatePhone(phoneField));
+        }
+
+        // Validation de l'email
+        const emailField = document.getElementById('email');
+        if (emailField) {
+            emailField.addEventListener('input', () => this.validateEmail(emailField));
+        }
+    }
+
+    validateRequiredField(field) {
+        const value = field.value.trim();
+        const isValid = value.length > 0;
+        
+        if (isValid) {
+            field.classList.remove('is-invalid');
+            field.classList.add('is-valid');
+        } else {
+            field.classList.remove('is-valid');
+            field.classList.add('is-invalid');
+        }
+        
+        return isValid;
+    }
+
+    validatePhone(field) {
+        const value = field.value.trim();
+        const phoneRegex = /^[\d\s\-\+\(\)\.]{8,}$/;
+        const isValid = value === '' || phoneRegex.test(value);
+        
+        if (isValid && value !== '') {
+            field.classList.remove('is-invalid');
+            field.classList.add('is-valid');
+        } else if (value !== '') {
+            field.classList.remove('is-valid');
+            field.classList.add('is-invalid');
+        } else {
+            field.classList.remove('is-valid', 'is-invalid');
+        }
+        
+        return isValid;
+    }
+
+    validateEmail(field) {
+        const value = field.value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const isValid = value === '' || emailRegex.test(value);
+        
+        if (isValid && value !== '') {
+            field.classList.remove('is-invalid');
+            field.classList.add('is-valid');
+        } else if (value !== '') {
+            field.classList.remove('is-valid');
+            field.classList.add('is-invalid');
+        } else {
+            field.classList.remove('is-valid', 'is-invalid');
+        }
+        
+        return isValid;
     }
 
     updateImageFormatInfo() {
