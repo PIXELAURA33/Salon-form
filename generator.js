@@ -4,6 +4,7 @@ class SalonGenerator {
         this.generatedHTML = null;
         this.generatedFiles = new Map();
         this.selectedTemplate = this.getSelectedTemplate();
+        this.customImages = new Map(); // Stocker les images personnalisées
         this.init();
     }
 
@@ -16,6 +17,179 @@ class SalonGenerator {
         document.getElementById('salonForm').addEventListener('submit', (e) => this.handleFormSubmit(e));
         document.getElementById('downloadBtn').addEventListener('click', () => this.downloadZip());
         document.getElementById('downloadFromPreview').addEventListener('click', () => this.downloadZip());
+        this.initImageUploads();
+    }
+
+    initImageUploads() {
+        // Gestion des uploads d'images individuelles
+        const singleImageInputs = ['heroImage', 'aboutImage', 'logoImage', 'footerImage', 'team1Image', 'team2Image', 'team3Image'];
+        
+        singleImageInputs.forEach(inputId => {
+            const input = document.getElementById(inputId);
+            if (input) {
+                input.addEventListener('change', (e) => this.handleSingleImageUpload(e, inputId));
+                
+                // Drag & Drop
+                const container = input.parentElement;
+                container.addEventListener('dragover', (e) => this.handleDragOver(e));
+                container.addEventListener('drop', (e) => this.handleDrop(e, inputId));
+                container.addEventListener('dragleave', (e) => this.handleDragLeave(e));
+            }
+        });
+
+        // Gestion du portfolio (multiple images)
+        const portfolioInput = document.getElementById('portfolioImages');
+        if (portfolioInput) {
+            portfolioInput.addEventListener('change', (e) => this.handlePortfolioImagesUpload(e));
+            
+            const container = portfolioInput.parentElement;
+            container.addEventListener('dragover', (e) => this.handleDragOver(e));
+            container.addEventListener('drop', (e) => this.handleDrop(e, 'portfolioImages'));
+            container.addEventListener('dragleave', (e) => this.handleDragLeave(e));
+        }
+    }
+
+    handleDragOver(e) {
+        e.preventDefault();
+        e.currentTarget.classList.add('drag-over');
+    }
+
+    handleDragLeave(e) {
+        e.currentTarget.classList.remove('drag-over');
+    }
+
+    handleDrop(e, inputId) {
+        e.preventDefault();
+        e.currentTarget.classList.remove('drag-over');
+        
+        const files = e.dataTransfer.files;
+        const input = document.getElementById(inputId);
+        
+        if (files.length > 0) {
+            if (inputId === 'portfolioImages') {
+                input.files = files;
+                this.handlePortfolioImagesUpload({ target: input });
+            } else {
+                // Pour les images individuelles, prendre seulement la première
+                const dt = new DataTransfer();
+                dt.items.add(files[0]);
+                input.files = dt.files;
+                this.handleSingleImageUpload({ target: input }, inputId);
+            }
+        }
+    }
+
+    async handleSingleImageUpload(e, inputId) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+            // Valider le type de fichier
+            if (!file.type.startsWith('image/')) {
+                alert('Veuillez sélectionner un fichier image valide.');
+                return;
+            }
+
+            // Valider la taille (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('L\'image est trop volumineuse. Taille maximum: 5MB.');
+                return;
+            }
+
+            // Convertir en base64 et stocker
+            const base64 = await this.fileToBase64(file);
+            this.customImages.set(inputId, {
+                data: base64,
+                name: file.name,
+                type: file.type
+            });
+
+            // Afficher l'aperçu
+            this.showImagePreview(inputId, base64);
+
+        } catch (error) {
+            console.error('Erreur lors du traitement de l\'image:', error);
+            alert('Erreur lors du traitement de l\'image.');
+        }
+    }
+
+    async handlePortfolioImagesUpload(e) {
+        const files = Array.from(e.target.files);
+        if (!files.length) return;
+
+        // Limiter à 6 images
+        if (files.length > 6) {
+            alert('Maximum 6 images pour le portfolio.');
+            return;
+        }
+
+        try {
+            const portfolioImages = [];
+            
+            for (let file of files) {
+                if (!file.type.startsWith('image/')) {
+                    alert(`${file.name} n'est pas un fichier image valide.`);
+                    continue;
+                }
+
+                if (file.size > 5 * 1024 * 1024) {
+                    alert(`${file.name} est trop volumineux (max 5MB).`);
+                    continue;
+                }
+
+                const base64 = await this.fileToBase64(file);
+                portfolioImages.push({
+                    data: base64,
+                    name: file.name,
+                    type: file.type
+                });
+            }
+
+            this.customImages.set('portfolioImages', portfolioImages);
+            this.showPortfolioPreview(portfolioImages);
+
+        } catch (error) {
+            console.error('Erreur lors du traitement des images:', error);
+            alert('Erreur lors du traitement des images.');
+        }
+    }
+
+    fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    showImagePreview(inputId, base64) {
+        const previewElement = document.getElementById(inputId + 'Preview');
+        if (previewElement) {
+            const img = previewElement.querySelector('img');
+            if (img) {
+                img.src = base64;
+                previewElement.style.display = 'block';
+            }
+        }
+    }
+
+    showPortfolioPreview(images) {
+        const previewElement = document.getElementById('portfolioImagesPreview');
+        const container = document.getElementById('portfolioPreviewContainer');
+        
+        if (previewElement && container) {
+            container.innerHTML = '';
+            
+            images.forEach((image, index) => {
+                const img = document.createElement('img');
+                img.src = image.data;
+                img.alt = `Portfolio ${index + 1}`;
+                container.appendChild(img);
+            });
+            
+            previewElement.style.display = 'block';
+        }
     }
 
     async handleFormSubmit(e) {
@@ -313,6 +487,9 @@ class SalonGenerator {
             // Remplacer les données dans le template
             htmlContent = this.replaceTemplateData(htmlContent, data);
             
+            // Intégrer les images personnalisées dans le HTML
+            htmlContent = this.integrateCustomImages(htmlContent);
+            
             this.generatedHTML = htmlContent;
             
             // Préparer les fichiers pour le téléchargement
@@ -322,6 +499,59 @@ class SalonGenerator {
             console.error('Erreur lors de la génération:', error);
             alert('Erreur lors de la génération du site. Veuillez réessayer.');
         }
+    }
+
+    integrateCustomImages(html) {
+        // Remplacer les images par les versions personnalisées (en base64)
+        
+        // Image hero/header
+        if (this.customImages.has('heroImage')) {
+            const heroImg = this.customImages.get('heroImage');
+            html = html.replace(/header-background-1\.jpg|header-background-2\.jpg/g, heroImg.data);
+        }
+
+        // Image "À propos" / Perfect Style
+        if (this.customImages.has('aboutImage')) {
+            const aboutImg = this.customImages.get('aboutImage');
+            html = html.replace(/perfect-style\.jpg/g, aboutImg.data);
+        }
+
+        // Logo
+        if (this.customImages.has('logoImage')) {
+            const logoImg = this.customImages.get('logoImage');
+            html = html.replace(/logo\.png|beauty-salon_logo_96dp\.png/g, logoImg.data);
+        }
+
+        // Footer background
+        if (this.customImages.has('footerImage')) {
+            const footerImg = this.customImages.get('footerImage');
+            html = html.replace(/bg-footer1\.jpg/g, footerImg.data);
+        }
+
+        // Images d'équipe
+        if (this.customImages.has('team1Image')) {
+            const teamImg = this.customImages.get('team1Image');
+            html = html.replace(/team-1\.jpg/g, teamImg.data);
+        }
+        if (this.customImages.has('team2Image')) {
+            const teamImg = this.customImages.get('team2Image');
+            html = html.replace(/team-2\.jpg/g, teamImg.data);
+        }
+        if (this.customImages.has('team3Image')) {
+            const teamImg = this.customImages.get('team3Image');
+            html = html.replace(/team-3\.jpg/g, teamImg.data);
+        }
+
+        // Portfolio images
+        if (this.customImages.has('portfolioImages')) {
+            const portfolioImages = this.customImages.get('portfolioImages');
+            portfolioImages.forEach((image, index) => {
+                const originalName = `portfolio-${index + 1}.jpg`;
+                html = html.replace(new RegExp(originalName, 'g'), image.data);
+            });
+        }
+
+        return html;
     }
 
     replaceTemplateData(html, data) {
@@ -452,7 +682,6 @@ class SalonGenerator {
                 const response = await fetch(cssFile);
                 if (response.ok) {
                     const content = await response.text();
-                    // Garder le chemin relatif pour le zip
                     const relativePath = cssFile.replace('.templates/', '');
                     this.generatedFiles.set(relativePath, content);
                 }
@@ -473,7 +702,6 @@ class SalonGenerator {
                 const response = await fetch(jsFile);
                 if (response.ok) {
                     const content = await response.text();
-                    // Garder le chemin relatif pour le zip
                     const relativePath = jsFile.replace('.templates/', '');
                     this.generatedFiles.set(relativePath, content);
                 }
@@ -481,6 +709,122 @@ class SalonGenerator {
                 console.warn(`Impossible de charger ${jsFile}`);
             }
         }
+
+        // Ajouter les images personnalisées comme fichiers séparés (optionnel pour backup)
+        await this.addCustomImagesToFiles();
+        
+        // Copier les images originales non remplacées
+        await this.copyOriginalImages();
+    }
+
+    async addCustomImagesToFiles() {
+        // Convertir les images base64 en fichiers binaires et les ajouter au zip
+        for (const [key, imageData] of this.customImages.entries()) {
+            if (key === 'portfolioImages') {
+                // Pour le portfolio, ajouter chaque image
+                imageData.forEach((image, index) => {
+                    const extension = image.type.split('/')[1] || 'jpg';
+                    const filename = `img/portfolio/custom-portfolio-${index + 1}.${extension}`;
+                    const binaryData = this.base64ToBinary(image.data);
+                    this.generatedFiles.set(filename, binaryData);
+                });
+            } else {
+                // Pour les images individuelles
+                const extension = imageData.type.split('/')[1] || 'jpg';
+                let filename;
+                
+                switch (key) {
+                    case 'heroImage':
+                        filename = `img/custom-header-background.${extension}`;
+                        break;
+                    case 'aboutImage':
+                        filename = `img/custom-perfect-style.${extension}`;
+                        break;
+                    case 'logoImage':
+                        filename = `img/custom-logo.${extension}`;
+                        break;
+                    case 'footerImage':
+                        filename = `img/custom-bg-footer.${extension}`;
+                        break;
+                    case 'team1Image':
+                        filename = `img/team/custom-team-1.${extension}`;
+                        break;
+                    case 'team2Image':
+                        filename = `img/team/custom-team-2.${extension}`;
+                        break;
+                    case 'team3Image':
+                        filename = `img/team/custom-team-3.${extension}`;
+                        break;
+                    default:
+                        filename = `img/custom-${key}.${extension}`;
+                }
+                
+                const binaryData = this.base64ToBinary(imageData.data);
+                this.generatedFiles.set(filename, binaryData);
+            }
+        }
+    }
+
+    async copyOriginalImages() {
+        // Copier les images originales qui n'ont pas été remplacées
+        const imagePaths = [
+            'img/client/client-1.jpg', 'img/client/client-2.jpg', 'img/client/client-3.jpg',
+            'img/service/service-1.jpg', 'img/service/service-2.jpg', 'img/service/service-3.jpg', 'img/service/service-4.jpg',
+            'img/loading.gif', 'img/treamer-small.png'
+        ];
+
+        // Ajouter les images originales non remplacées
+        if (!this.customImages.has('heroImage')) {
+            imagePaths.push('img/header-background-1.jpg');
+        }
+        if (!this.customImages.has('aboutImage')) {
+            imagePaths.push('img/perfect-style.jpg');
+        }
+        if (!this.customImages.has('logoImage')) {
+            imagePaths.push('img/logo.png');
+        }
+        if (!this.customImages.has('footerImage')) {
+            imagePaths.push('img/bg-footer1.jpg');
+        }
+        if (!this.customImages.has('team1Image')) {
+            imagePaths.push('img/team/team-1.jpg');
+        }
+        if (!this.customImages.has('team2Image')) {
+            imagePaths.push('img/team/team-2.jpg');
+        }
+        if (!this.customImages.has('team3Image')) {
+            imagePaths.push('img/team/team-3.jpg');
+        }
+
+        // Ajouter les images portfolio non remplacées
+        if (!this.customImages.has('portfolioImages')) {
+            for (let i = 1; i <= 10; i++) {
+                imagePaths.push(`img/portfolio/portfolio-${i}.jpg`);
+            }
+        }
+
+        for (const imagePath of imagePaths) {
+            try {
+                const response = await fetch(`.templates/${imagePath}`);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    this.generatedFiles.set(imagePath, blob);
+                }
+            } catch (error) {
+                console.warn(`Impossible de charger ${imagePath}`);
+            }
+        }
+    }
+
+    base64ToBinary(base64String) {
+        // Supprimer le préfixe data:image/...;base64,
+        const base64Data = base64String.split(',')[1];
+        const binaryString = atob(base64Data);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        return bytes;
     }
 
     showPreview() {
