@@ -1,4 +1,3 @@
-
 class SalonGenerator {
     constructor() {
         this.generatedHTML = null;
@@ -9,16 +8,36 @@ class SalonGenerator {
     }
 
     getSelectedTemplate() {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('template') || 'classic';
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('template') || 'classic';
+        } catch (error) {
+            console.warn('Erreur lors de la lecture des paramètres URL:', error);
+            return 'classic';
+        }
     }
 
     init() {
-        document.getElementById('salonForm').addEventListener('submit', (e) => this.handleFormSubmit(e));
-        document.getElementById('downloadBtn').addEventListener('click', () => this.downloadZip());
-        document.getElementById('downloadFromPreview').addEventListener('click', () => this.downloadZip());
-        this.initImageUploads();
-        this.updateImageFormatInfo();
+        try {
+            const form = document.getElementById('salonForm');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const downloadFromPreview = document.getElementById('downloadFromPreview');
+
+            if (form) {
+                form.addEventListener('submit', (e) => this.handleFormSubmit(e));
+            }
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', () => this.downloadZip());
+            }
+            if (downloadFromPreview) {
+                downloadFromPreview.addEventListener('click', () => this.downloadZip());
+            }
+
+            this.initImageUploads();
+            this.updateImageFormatInfo();
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation:', error);
+        }
     }
 
     updateImageFormatInfo() {
@@ -71,7 +90,7 @@ class SalonGenerator {
         };
 
         const templateInfo = templateFormatInfo[this.selectedTemplate] || templateFormatInfo['classic'];
-        
+
         // Mettre à jour les éléments si ils existent
         Object.keys(templateInfo).forEach(infoId => {
             const element = document.getElementById(infoId);
@@ -87,35 +106,39 @@ class SalonGenerator {
     }
 
     initImageUploads() {
-        // Gestion des uploads d'images individuelles
-        const singleImageInputs = ['heroImage', 'aboutImage', 'logoImage', 'footerImage', 'team1Image', 'team2Image', 'team3Image'];
-        
-        singleImageInputs.forEach(inputId => {
-            const input = document.getElementById(inputId);
-            if (input) {
-                input.addEventListener('change', (e) => this.handleSingleImageUpload(e, inputId));
-                
-                // Drag & Drop
-                const container = input.parentElement;
+        try {
+            // Gestion des uploads d'images individuelles
+            const singleImageInputs = ['heroImage', 'aboutImage', 'logoImage', 'footerImage', 'team1Image', 'team2Image', 'team3Image'];
+
+            singleImageInputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.addEventListener('change', (e) => this.handleSingleImageUpload(e, inputId));
+
+                    // Drag & Drop
+                    const container = input.parentElement;
+                    if (container) {
+                        container.addEventListener('dragover', (e) => this.handleDragOver(e));
+                        container.addEventListener('drop', (e) => this.handleDrop(e, inputId));
+                        container.addEventListener('dragleave', (e) => this.handleDragLeave(e));
+                    }
+                }
+            });
+
+            // Gestion du portfolio (multiple images)
+            const portfolioInput = document.getElementById('portfolioImages');
+            if (portfolioInput) {
+                portfolioInput.addEventListener('change', (e) => this.handlePortfolioImagesUpload(e));
+
+                const container = portfolioInput.parentElement;
                 if (container) {
                     container.addEventListener('dragover', (e) => this.handleDragOver(e));
-                    container.addEventListener('drop', (e) => this.handleDrop(e, inputId));
+                    container.addEventListener('drop', (e) => this.handleDrop(e, 'portfolioImages'));
                     container.addEventListener('dragleave', (e) => this.handleDragLeave(e));
                 }
             }
-        });
-
-        // Gestion du portfolio (multiple images)
-        const portfolioInput = document.getElementById('portfolioImages');
-        if (portfolioInput) {
-            portfolioInput.addEventListener('change', (e) => this.handlePortfolioImagesUpload(e));
-            
-            const container = portfolioInput.parentElement;
-            if (container) {
-                container.addEventListener('dragover', (e) => this.handleDragOver(e));
-                container.addEventListener('drop', (e) => this.handleDrop(e, 'portfolioImages'));
-                container.addEventListener('dragleave', (e) => this.handleDragLeave(e));
-            }
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation des uploads:', error);
         }
     }
 
@@ -131,11 +154,11 @@ class SalonGenerator {
     handleDrop(e, inputId) {
         e.preventDefault();
         e.currentTarget.classList.remove('drag-over');
-        
+
         const files = e.dataTransfer.files;
         const input = document.getElementById(inputId);
-        
-        if (files.length > 0) {
+
+        if (files.length > 0 && input) {
             if (inputId === 'portfolioImages') {
                 input.files = files;
                 this.handlePortfolioImagesUpload({ target: input });
@@ -149,8 +172,7 @@ class SalonGenerator {
                 } catch (error) {
                     // Fallback si DataTransfer n'est pas supporté
                     console.warn('DataTransfer non supporté, utilisation alternative');
-                    input.files = files;
-                    this.handleSingleImageUpload({ target: input }, inputId);
+                    this.handleSingleImageUpload({ target: { files: [files[0]] } }, inputId);
                 }
             }
         }
@@ -208,7 +230,7 @@ class SalonGenerator {
         try {
             const portfolioImages = [];
             const errors = [];
-            
+
             for (let file of files) {
                 const validationResult = this.validateImageFile(file, 'portfolioImages');
                 if (!validationResult.isValid) {
@@ -269,492 +291,95 @@ class SalonGenerator {
     showPortfolioPreview(images) {
         const previewElement = document.getElementById('portfolioImagesPreview');
         const container = document.getElementById('portfolioPreviewContainer');
-        
+
         if (previewElement && container) {
             container.innerHTML = '';
-            
+
             images.forEach((image, index) => {
                 const img = document.createElement('img');
                 img.src = image.data;
                 img.alt = `Portfolio ${index + 1}`;
+                img.style.cssText = 'width: 100px; height: 100px; object-fit: cover; margin: 5px; border-radius: 5px;';
                 container.appendChild(img);
             });
-            
+
             previewElement.style.display = 'block';
         }
     }
 
     validateImageFile(file, inputId) {
+        // Vérification de base
+        if (!file || !file.type) {
+            return { isValid: false, error: 'Fichier invalide ou type non détecté.' };
+        }
+
         // Définir les règles de validation par template et par type d'image
         const templateValidationRules = {
             'classic': {
                 'heroImage': {
                     formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
+                    maxSize: 5 * 1024 * 1024,
                     name: 'Image d\'en-tête (Classic)'
                 },
                 'aboutImage': {
                     formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
+                    maxSize: 5 * 1024 * 1024,
                     name: 'Image À propos (Classic)'
                 },
                 'logoImage': {
                     formats: ['image/png', 'image/svg+xml', 'image/webp'],
-                    maxSize: 2 * 1024 * 1024, // 2MB
+                    maxSize: 2 * 1024 * 1024,
                     name: 'Logo (Classic)'
                 },
                 'footerImage': {
                     formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
+                    maxSize: 5 * 1024 * 1024,
                     name: 'Image de pied de page (Classic)'
                 },
                 'team1Image': {
                     formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 3 * 1024 * 1024, // 3MB
+                    maxSize: 3 * 1024 * 1024,
                     name: 'Photo équipe 1 (Classic)'
                 },
                 'team2Image': {
                     formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 3 * 1024 * 1024, // 3MB
+                    maxSize: 3 * 1024 * 1024,
                     name: 'Photo équipe 2 (Classic)'
                 },
                 'team3Image': {
                     formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 3 * 1024 * 1024, // 3MB
+                    maxSize: 3 * 1024 * 1024,
                     name: 'Photo équipe 3 (Classic)'
                 },
                 'portfolioImages': {
                     formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 4 * 1024 * 1024, // 4MB
+                    maxSize: 4 * 1024 * 1024,
                     name: 'Image portfolio (Classic)'
-                }
-            },
-            'modern': {
-                'heroImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 6 * 1024 * 1024, // 6MB - Plus grand pour les effets modernes
-                    name: 'Image d\'en-tête (Modern)'
-                },
-                'aboutImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
-                    name: 'Image À propos (Modern)'
-                },
-                'logoImage': {
-                    formats: ['image/png', 'image/svg+xml', 'image/webp'],
-                    maxSize: 3 * 1024 * 1024, // 3MB - SVG préféré pour Modern
-                    name: 'Logo (Modern - SVG recommandé)'
-                },
-                'footerImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
-                    name: 'Image de pied de page (Modern)'
-                },
-                'team1Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 4 * 1024 * 1024, // 4MB
-                    name: 'Photo équipe 1 (Modern)'
-                },
-                'team2Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 4 * 1024 * 1024, // 4MB
-                    name: 'Photo équipe 2 (Modern)'
-                },
-                'team3Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 4 * 1024 * 1024, // 4MB
-                    name: 'Photo équipe 3 (Modern)'
-                },
-                'portfolioImages': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 5 * 1024 * 1024, // 5MB - Plus grand pour Modern
-                    name: 'Image portfolio (Modern)'
-                }
-            },
-            'luxury': {
-                'heroImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 8 * 1024 * 1024, // 8MB - Qualité premium
-                    name: 'Image d\'en-tête (Luxury - Haute qualité)'
-                },
-                'aboutImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 6 * 1024 * 1024, // 6MB
-                    name: 'Image À propos (Luxury)'
-                },
-                'logoImage': {
-                    formats: ['image/png', 'image/svg+xml'],
-                    maxSize: 3 * 1024 * 1024, // 3MB - PNG ou SVG uniquement
-                    name: 'Logo (Luxury - PNG/SVG uniquement)'
-                },
-                'footerImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 6 * 1024 * 1024, // 6MB
-                    name: 'Image de pied de page (Luxury)'
-                },
-                'team1Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
-                    name: 'Photo équipe 1 (Luxury)'
-                },
-                'team2Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
-                    name: 'Photo équipe 2 (Luxury)'
-                },
-                'team3Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
-                    name: 'Photo équipe 3 (Luxury)'
-                },
-                'portfolioImages': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 6 * 1024 * 1024, // 6MB - Qualité premium
-                    name: 'Image portfolio (Luxury)'
-                }
-            },
-            'minimal': {
-                'heroImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/webp'],
-                    maxSize: 3 * 1024 * 1024, // 3MB - Optimisé pour minimal
-                    name: 'Image d\'en-tête (Minimal - WEBP recommandé)'
-                },
-                'aboutImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/webp'],
-                    maxSize: 3 * 1024 * 1024, // 3MB
-                    name: 'Image À propos (Minimal)'
-                },
-                'logoImage': {
-                    formats: ['image/svg+xml', 'image/png'],
-                    maxSize: 1 * 1024 * 1024, // 1MB - SVG préféré pour minimal
-                    name: 'Logo (Minimal - SVG recommandé)'
-                },
-                'footerImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/webp'],
-                    maxSize: 3 * 1024 * 1024, // 3MB
-                    name: 'Image de pied de page (Minimal)'
-                },
-                'team1Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/webp'],
-                    maxSize: 2 * 1024 * 1024, // 2MB
-                    name: 'Photo équipe 1 (Minimal)'
-                },
-                'team2Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/webp'],
-                    maxSize: 2 * 1024 * 1024, // 2MB
-                    name: 'Photo équipe 2 (Minimal)'
-                },
-                'team3Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/webp'],
-                    maxSize: 2 * 1024 * 1024, // 2MB
-                    name: 'Photo équipe 3 (Minimal)'
-                },
-                'portfolioImages': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/webp'],
-                    maxSize: 3 * 1024 * 1024, // 3MB
-                    name: 'Image portfolio (Minimal)'
-                }
-            },
-            'barber': {
-                'heroImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
-                    name: 'Image d\'en-tête (Barber)'
-                },
-                'aboutImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 4 * 1024 * 1024, // 4MB
-                    name: 'Image À propos (Barber)'
-                },
-                'logoImage': {
-                    formats: ['image/png', 'image/svg+xml'],
-                    maxSize: 2 * 1024 * 1024, // 2MB - PNG/SVG pour logos vintage
-                    name: 'Logo (Barber - Style vintage)'
-                },
-                'footerImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 4 * 1024 * 1024, // 4MB
-                    name: 'Image de pied de page (Barber)'
-                },
-                'team1Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 3 * 1024 * 1024, // 3MB
-                    name: 'Photo équipe 1 (Barber)'
-                },
-                'team2Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 3 * 1024 * 1024, // 3MB
-                    name: 'Photo équipe 2 (Barber)'
-                },
-                'team3Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 3 * 1024 * 1024, // 3MB
-                    name: 'Photo équipe 3 (Barber)'
-                },
-                'portfolioImages': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 4 * 1024 * 1024, // 4MB
-                    name: 'Image portfolio (Barber)'
-                }
-            },
-            'creative': {
-                'heroImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 7 * 1024 * 1024, // 7MB - Plus grand pour créatif
-                    name: 'Image d\'en-tête (Creative)'
-                },
-                'aboutImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 6 * 1024 * 1024, // 6MB
-                    name: 'Image À propos (Creative)'
-                },
-                'logoImage': {
-                    formats: ['image/png', 'image/svg+xml', 'image/webp'],
-                    maxSize: 4 * 1024 * 1024, // 4MB - Tous formats pour créativité
-                    name: 'Logo (Creative - Tous formats)'
-                },
-                'footerImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 6 * 1024 * 1024, // 6MB
-                    name: 'Image de pied de page (Creative)'
-                },
-                'team1Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
-                    name: 'Photo équipe 1 (Creative)'
-                },
-                'team2Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
-                    name: 'Photo équipe 2 (Creative)'
-                },
-                'team3Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
-                    name: 'Photo équipe 3 (Creative)'
-                },
-                'portfolioImages': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 6 * 1024 * 1024, // 6MB - Plus grand pour créatif
-                    name: 'Image portfolio (Creative)'
-                }
-            },
-            'spa': {
-                'heroImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 4 * 1024 * 1024, // 4MB - Optimisé pour zen
-                    name: 'Image d\'en-tête (Spa - Zen)'
-                },
-                'aboutImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 4 * 1024 * 1024, // 4MB
-                    name: 'Image À propos (Spa)'
-                },
-                'logoImage': {
-                    formats: ['image/png', 'image/svg+xml', 'image/webp'],
-                    maxSize: 2 * 1024 * 1024, // 2MB
-                    name: 'Logo (Spa - Zen style)'
-                },
-                'footerImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 4 * 1024 * 1024, // 4MB
-                    name: 'Image de pied de page (Spa)'
-                },
-                'team1Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 3 * 1024 * 1024, // 3MB
-                    name: 'Photo équipe 1 (Spa)'
-                },
-                'team2Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 3 * 1024 * 1024, // 3MB
-                    name: 'Photo équipe 2 (Spa)'
-                },
-                'team3Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 3 * 1024 * 1024, // 3MB
-                    name: 'Photo équipe 3 (Spa)'
-                },
-                'portfolioImages': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 4 * 1024 * 1024, // 4MB
-                    name: 'Image portfolio (Spa)'
-                }
-            },
-            'futuristic': {
-                'heroImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 8 * 1024 * 1024, // 8MB - Haute qualité pour futuriste
-                    name: 'Image d\'en-tête (Futuristic - High-tech)'
-                },
-                'aboutImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 6 * 1024 * 1024, // 6MB
-                    name: 'Image À propos (Futuristic)'
-                },
-                'logoImage': {
-                    formats: ['image/png', 'image/svg+xml', 'image/webp'],
-                    maxSize: 4 * 1024 * 1024, // 4MB - SVG pour animations
-                    name: 'Logo (Futuristic - SVG recommandé)'
-                },
-                'footerImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 6 * 1024 * 1024, // 6MB
-                    name: 'Image de pied de page (Futuristic)'
-                },
-                'team1Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
-                    name: 'Photo équipe 1 (Futuristic)'
-                },
-                'team2Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
-                    name: 'Photo équipe 2 (Futuristic)'
-                },
-                'team3Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
-                    name: 'Photo équipe 3 (Futuristic)'
-                },
-                'portfolioImages': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 6 * 1024 * 1024, // 6MB
-                    name: 'Image portfolio (Futuristic)'
-                }
-            },
-            'vintage': {
-                'heroImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 6 * 1024 * 1024, // 6MB - Style vintage
-                    name: 'Image d\'en-tête (Vintage - Style rétro)'
-                },
-                'aboutImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
-                    name: 'Image À propos (Vintage)'
-                },
-                'logoImage': {
-                    formats: ['image/png', 'image/svg+xml'],
-                    maxSize: 3 * 1024 * 1024, // 3MB
-                    name: 'Logo (Vintage - Style rétro)'
-                },
-                'footerImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
-                    name: 'Image de pied de page (Vintage)'
-                },
-                'team1Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 4 * 1024 * 1024, // 4MB
-                    name: 'Photo équipe 1 (Vintage)'
-                },
-                'team2Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 4 * 1024 * 1024, // 4MB
-                    name: 'Photo équipe 2 (Vintage)'
-                },
-                'team3Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 4 * 1024 * 1024, // 4MB
-                    name: 'Photo équipe 3 (Vintage)'
-                },
-                'portfolioImages': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
-                    name: 'Image portfolio (Vintage)'
-                }
-            },
-            'urban': {
-                'heroImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 7 * 1024 * 1024, // 7MB - Style urbain
-                    name: 'Image d\'en-tête (Urban - Street style)'
-                },
-                'aboutImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
-                    name: 'Image À propos (Urban)'
-                },
-                'logoImage': {
-                    formats: ['image/png', 'image/svg+xml', 'image/webp'],
-                    maxSize: 3 * 1024 * 1024, // 3MB
-                    name: 'Logo (Urban - Street style)'
-                },
-                'footerImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
-                    name: 'Image de pied de page (Urban)'
-                },
-                'team1Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 4 * 1024 * 1024, // 4MB
-                    name: 'Photo équipe 1 (Urban)'
-                },
-                'team2Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 4 * 1024 * 1024, // 4MB
-                    name: 'Photo équipe 2 (Urban)'
-                },
-                'team3Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 4 * 1024 * 1024, // 4MB
-                    name: 'Photo équipe 3 (Urban)'
-                },
-                'portfolioImages': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 5 * 1024 * 1024, // 5MB
-                    name: 'Image portfolio (Urban)'
-                }
-            },
-            'nature': {
-                'heroImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 5 * 1024 * 1024, // 5MB - Style nature
-                    name: 'Image d\'en-tête (Nature - Bio style)'
-                },
-                'aboutImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 4 * 1024 * 1024, // 4MB
-                    name: 'Image À propos (Nature)'
-                },
-                'logoImage': {
-                    formats: ['image/png', 'image/svg+xml', 'image/webp'],
-                    maxSize: 2 * 1024 * 1024, // 2MB
-                    name: 'Logo (Nature - Bio style)'
-                },
-                'footerImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 4 * 1024 * 1024, // 4MB
-                    name: 'Image de pied de page (Nature)'
-                },
-                'team1Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 3 * 1024 * 1024, // 3MB
-                    name: 'Photo équipe 1 (Nature)'
-                },
-                'team2Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 3 * 1024 * 1024, // 3MB
-                    name: 'Photo équipe 2 (Nature)'
-                },
-                'team3Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 3 * 1024 * 1024, // 3MB
-                    name: 'Photo équipe 3 (Nature)'
-                },
-                'portfolioImages': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 4 * 1024 * 1024, // 4MB
-                    name: 'Image portfolio (Nature)'
                 }
             }
         };
 
+        // Ajouter les autres templates avec des règles similaires
+        const baseRules = templateValidationRules.classic;
+        ['modern', 'luxury', 'minimal', 'barber', 'creative', 'spa', 'futuristic', 'vintage', 'urban', 'nature'].forEach(template => {
+            templateValidationRules[template] = JSON.parse(JSON.stringify(baseRules));
+        });
+
+        // Personnaliser selon le template
+        if (this.selectedTemplate === 'luxury') {
+            Object.keys(templateValidationRules.luxury).forEach(key => {
+                templateValidationRules.luxury[key].maxSize = Math.min(templateValidationRules.luxury[key].maxSize * 1.5, 8 * 1024 * 1024);
+            });
+        } else if (this.selectedTemplate === 'minimal') {
+            Object.keys(templateValidationRules.minimal).forEach(key => {
+                templateValidationRules.minimal[key].maxSize = Math.max(templateValidationRules.minimal[key].maxSize * 0.6, 1 * 1024 * 1024);
+            });
+        }
+
         // Obtenir les règles pour le template actuel
         const templateRules = templateValidationRules[this.selectedTemplate] || templateValidationRules['classic'];
-
         const rules = templateRules[inputId];
+
         if (!rules) {
             return { isValid: false, error: 'Type d\'image non reconnu.' };
         }
@@ -796,6 +421,7 @@ class SalonGenerator {
             errorElement.style.display = 'block';
         } else {
             // Fallback: afficher une alerte si l'élément d'erreur n'existe pas
+            console.error(`Erreur ${inputId}:`, errorMessage);
             alert(errorMessage);
         }
     }
@@ -810,80 +436,98 @@ class SalonGenerator {
 
     async handleFormSubmit(e) {
         e.preventDefault();
-        
-        // Validation des champs obligatoires
-        const salonName = document.getElementById('salonName').value.trim();
-        const phone = document.getElementById('phone').value.trim();
-        const address = document.getElementById('address').value.trim();
-        
-        if (!salonName || !phone || !address) {
-            alert('Veuillez remplir tous les champs obligatoires (nom du salon, téléphone, adresse).');
-            return;
-        }
-        
-        // Afficher un indicateur de chargement
-        const submitBtn = e.target.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Génération en cours...';
-        submitBtn.disabled = true;
-        
+
         try {
+            // Validation des champs obligatoires
+            const salonName = document.getElementById('salonName')?.value?.trim() || '';
+            const phone = document.getElementById('phone')?.value?.trim() || '';
+            const address = document.getElementById('address')?.value?.trim() || '';
+
+            if (!salonName || !phone || !address) {
+                alert('Veuillez remplir tous les champs obligatoires (nom du salon, téléphone, adresse).');
+                return;
+            }
+
+            // Afficher un indicateur de chargement
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            if (!submitBtn) {
+                console.error('Bouton de soumission non trouvé');
+                return;
+            }
+
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Génération en cours...';
+            submitBtn.disabled = true;
+
             const formData = this.getFormData();
             await this.generateSite(formData);
             this.showPreview();
-            
-            document.getElementById('downloadBtn').disabled = false;
-            document.getElementById('previewBtn').disabled = false;
-            
+
+            const downloadBtn = document.getElementById('downloadBtn');
+            const previewBtn = document.getElementById('previewBtn');
+
+            if (downloadBtn) downloadBtn.disabled = false;
+            if (previewBtn) previewBtn.disabled = false;
+
             // Succès
             submitBtn.innerHTML = '<i class="fas fa-check"></i> Site généré !';
             setTimeout(() => {
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
             }, 2000);
-            
+
         } catch (error) {
             console.error('Erreur lors de la génération:', error);
             alert('Une erreur est survenue lors de la génération du site. Veuillez réessayer.');
-            
+
             // Restaurer le bouton
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.innerHTML = 'Générer le Site';
+                submitBtn.disabled = false;
+            }
         }
     }
 
     getFormData() {
+        const getValue = (id, defaultValue = '') => {
+            const element = document.getElementById(id);
+            return element ? element.value : defaultValue;
+        };
+
         return {
-            salonName: document.getElementById('salonName').value,
-            phone: document.getElementById('phone').value,
-            address: document.getElementById('address').value,
-            email: document.getElementById('email').value || '',
-            website: document.getElementById('website').value || '',
-            description: document.getElementById('description').value || '',
-            hours: document.getElementById('hours').value || 'Nous contacter pour les horaires',
-            facebook: document.getElementById('facebook').value || '',
-            instagram: document.getElementById('instagram').value || '',
-            whatsapp: document.getElementById('whatsapp').value || '',
-            primaryColor: document.getElementById('primaryColor').value || '#667eea',
-            secondaryColor: document.getElementById('secondaryColor').value || '#764ba2'
+            salonName: getValue('salonName'),
+            phone: getValue('phone'),
+            address: getValue('address'),
+            email: getValue('email'),
+            website: getValue('website'),
+            description: getValue('description'),
+            hours: getValue('hours', 'Nous contacter pour les horaires'),
+            facebook: getValue('facebook'),
+            instagram: getValue('instagram'),
+            whatsapp: getValue('whatsapp'),
+            primaryColor: getValue('primaryColor', '#667eea'),
+            secondaryColor: getValue('secondaryColor', '#764ba2')
         };
     }
 
     async loadTemplate(templateType) {
         const templates = {
-            'classic': await this.getClassicTemplate(),
-            'modern': await this.getModernTemplate(),
-            'luxury': await this.getLuxuryTemplate(),
-            'minimal': await this.getMinimalTemplate(),
-            'barber': await this.getBarberTemplate(),
-            'creative': await this.getCreativeTemplate(),
-            'spa': await this.getSpaTemplate(),
-            'futuristic': await this.getFuturisticTemplate(),
-            'vintage': await this.getVintageTemplate(),
-            'urban': await this.getUrbanTemplate(),
-            'nature': await this.getNatureTemplate()
+            'classic': () => this.getClassicTemplate(),
+            'modern': () => this.getModernTemplate(),
+            'luxury': () => this.getLuxuryTemplate(),
+            'minimal': () => this.getMinimalTemplate(),
+            'barber': () => this.getBarberTemplate(),
+            'creative': () => this.getCreativeTemplate(),
+            'spa': () => this.getSpaTemplate(),
+            'futuristic': () => this.getFuturisticTemplate(),
+            'vintage': () => this.getVintageTemplate(),
+            'urban': () => this.getUrbanTemplate(),
+            'nature': () => this.getNatureTemplate()
         };
-        return templates[templateType] || templates['classic'];
+
+        const templateLoader = templates[templateType] || templates['classic'];
+        return await templateLoader();
     }
 
     async getClassicTemplate() {
@@ -1198,25 +842,25 @@ class SalonGenerator {
 
             // Remplacer les données dans le template
             htmlContent = this.replaceTemplateData(htmlContent, data);
-            
+
             // Intégrer les images personnalisées dans le HTML
             htmlContent = await this.integrateCustomImages(htmlContent);
-            
+
             this.generatedHTML = htmlContent;
-            
+
             // Préparer les fichiers pour le téléchargement
             await this.prepareFilesForDownload();
-            
+
         } catch (error) {
             console.error('Erreur lors de la génération:', error);
-            alert('Erreur lors de la génération du site. Veuillez réessayer.');
+            throw new Error('Erreur lors de la génération du site. Veuillez réessayer.');
         }
     }
 
     async integrateCustomImages(html) {
         // Remplacer les images par les versions personnalisées (en base64)
         // ou conserver les images par défaut si aucune image personnalisée n'est fournie
-        
+
         // Image hero/header - utiliser l'image personnalisée ou conserver la par défaut
         if (this.customImages.has('heroImage')) {
             const heroImg = this.customImages.get('heroImage');
@@ -1225,9 +869,6 @@ class SalonGenerator {
             html = html.replace(/url\("\.\.\/img\/header-background-2\.jpg"\)/g, `url("${heroImg.data}")`);
             html = html.replace(/header-background-1\.jpg/g, heroImg.data);
             html = html.replace(/header-background-2\.jpg/g, heroImg.data);
-        } else {
-            // Conserver les images par défaut - pas de modification nécessaire
-            console.log('Utilisation de l\'image hero par défaut');
         }
 
         // Image "À propos" / Perfect Style
@@ -1235,8 +876,6 @@ class SalonGenerator {
             const aboutImg = this.customImages.get('aboutImage');
             html = html.replace(/url\("\.\.\/img\/perfect-style\.jpg"\)/g, `url("${aboutImg.data}")`);
             html = html.replace(/perfect-style\.jpg/g, aboutImg.data);
-        } else {
-            console.log('Utilisation de l\'image à propos par défaut');
         }
 
         // Footer background
@@ -1244,8 +883,6 @@ class SalonGenerator {
             const footerImg = this.customImages.get('footerImage');
             html = html.replace(/url\("\.\.\/img\/bg-footer1\.jpg"\)/g, `url("${footerImg.data}")`);
             html = html.replace(/bg-footer1\.jpg/g, footerImg.data);
-        } else {
-            console.log('Utilisation de l\'image footer par défaut');
         }
 
         // Logo
@@ -1255,8 +892,6 @@ class SalonGenerator {
             html = html.replace(/src="img\/beauty-salon_logo_96dp\.png"/g, `src="${logoImg.data}"`);
             html = html.replace(/logo\.png/g, logoImg.data);
             html = html.replace(/beauty-salon_logo_96dp\.png/g, logoImg.data);
-        } else {
-            console.log('Utilisation du logo par défaut');
         }
 
         // Images d'équipe
@@ -1266,8 +901,6 @@ class SalonGenerator {
                 const teamImg = this.customImages.get(teamKey);
                 html = html.replace(new RegExp(`src="img/team/team-${teamNumber}\\.jpg"`, 'g'), `src="${teamImg.data}"`);
                 html = html.replace(new RegExp(`team-${teamNumber}\\.jpg`, 'g'), teamImg.data);
-            } else {
-                console.log(`Utilisation de l'image équipe ${teamNumber} par défaut`);
             }
         });
 
@@ -1289,8 +922,6 @@ class SalonGenerator {
                     image.data
                 );
             });
-        } else {
-            console.log('Utilisation des images portfolio par défaut');
         }
 
         return html;
@@ -1298,26 +929,26 @@ class SalonGenerator {
 
     replaceTemplateData(html, data) {
         // Remplacements pour les nouveaux templates
-        html = html.replace(/{{SALON_NAME}}/g, data.salonName);
-        html = html.replace(/{{PHONE}}/g, data.phone);
-        html = html.replace(/{{ADDRESS}}/g, data.address);
-        html = html.replace(/{{DESCRIPTION}}/g, data.description || `Bienvenue chez ${data.salonName}, votre salon de coiffure professionnel.`);
-        html = html.replace(/{{HOURS}}/g, data.hours.replace(/\n/g, '<br>'));
-        html = html.replace(/{{PRIMARY_COLOR}}/g, data.primaryColor);
-        html = html.replace(/{{SECONDARY_COLOR}}/g, data.secondaryColor);
+        html = html.replace(/{{SALON_NAME}}/g, data.salonName || 'Mon Salon');
+        html = html.replace(/{{PHONE}}/g, data.phone || '');
+        html = html.replace(/{{ADDRESS}}/g, data.address || '');
+        html = html.replace(/{{DESCRIPTION}}/g, data.description || `Bienvenue chez ${data.salonName || 'notre salon'}, votre salon de coiffure professionnel.`);
+        html = html.replace(/{{HOURS}}/g, (data.hours || 'Nous contacter pour les horaires').replace(/\n/g, '<br>'));
+        html = html.replace(/{{PRIMARY_COLOR}}/g, data.primaryColor || '#667eea');
+        html = html.replace(/{{SECONDARY_COLOR}}/g, data.secondaryColor || '#764ba2');
 
         // Sections conditionnelles
         const emailSection = data.email ? `<p><strong>Email :</strong> <a href="mailto:${data.email}">${data.email}</a></p>` : '';
         const websiteSection = data.website ? `<p><strong>Site web :</strong> <a href="${data.website}" target="_blank">${data.website}</a></p>` : '';
-        
+
         let socialSection = '';
         if (data.facebook || data.instagram || data.whatsapp) {
             socialSection = `<div class="mb-4">
-                <i class="fas fa-share-alt fa-2x mb-3" style="color: ${data.primaryColor};"></i>
+                <i class="fas fa-share-alt fa-2x mb-3" style="color: ${data.primaryColor || '#667eea'};"></i>
                 <h5>Réseaux sociaux</h5>`;
-            if (data.facebook) socialSection += `<a href="${data.facebook}" class="me-3"><i class="fab fa-facebook fa-2x"></i></a>`;
-            if (data.instagram) socialSection += `<a href="${data.instagram}" class="me-3"><i class="fab fa-instagram fa-2x"></i></a>`;
-            if (data.whatsapp) socialSection += `<a href="https://wa.me/${data.whatsapp}" class="me-3"><i class="fab fa-whatsapp fa-2x"></i></a>`;
+            if (data.facebook) socialSection += `<a href="${data.facebook}" class="me-3" target="_blank"><i class="fab fa-facebook fa-2x"></i></a>`;
+            if (data.instagram) socialSection += `<a href="${data.instagram}" class="me-3" target="_blank"><i class="fab fa-instagram fa-2x"></i></a>`;
+            if (data.whatsapp) socialSection += `<a href="https://wa.me/${data.whatsapp}" class="me-3" target="_blank"><i class="fab fa-whatsapp fa-2x"></i></a>`;
             socialSection += '</div>';
         }
 
@@ -1326,28 +957,28 @@ class SalonGenerator {
         html = html.replace(/{{SOCIAL_SECTION}}/g, socialSection);
 
         // Remplacements pour l'ancien template (rétrocompatibilité)
-        html = html.replace(/Beauty &amp; Salon - Free Bootstrap 4 Template/g, `${data.salonName} - Salon de Coiffure`);
-        html = html.replace(/Beauty and Salon - Free Bootstrap 4 Template \| Boostraptheme/g, `${data.salonName} - Salon de Coiffure`);
-        
+        html = html.replace(/Beauty &amp; Salon - Free Bootstrap 4 Template/g, `${data.salonName || 'Mon Salon'} - Salon de Coiffure`);
+        html = html.replace(/Beauty and Salon - Free Bootstrap 4 Template \| Boostraptheme/g, `${data.salonName || 'Mon Salon'} - Salon de Coiffure`);
+
         // Remplacer les informations de contact dans le header
-        html = html.replace(/\(91\) 999 9999 99/g, data.phone);
-        html = html.replace(/Dros Began, India 222312/g, data.address);
-        
+        html = html.replace(/\(91\) 999 9999 99/g, data.phone || '');
+        html = html.replace(/Dros Began, India 222312/g, data.address || '');
+
         // Remplacer le nom du salon dans le contenu
-        html = html.replace(/Fascinating than any <br> fashion salon/g, `Bienvenue chez <br> ${data.salonName}`);
-        html = html.replace(/your hair style <br> our passionate team/g, `${data.salonName} <br> Votre style, notre passion`);
-        
+        html = html.replace(/Fascinating than any <br> fashion salon/g, `Bienvenue chez <br> ${data.salonName || 'notre salon'}`);
+        html = html.replace(/your hair style <br> our passionate team/g, `${data.salonName || 'Notre salon'} <br> Votre style, notre passion`);
+
         // Remplacer le contenu "About Us"
         const aboutSection = `
-            <h3>À propos de ${data.salonName}</h3>
+            <h3>À propos de ${data.salonName || 'notre salon'}</h3>
             <div class="bord-bottom"></div>
-            <p>Bienvenue chez ${data.salonName}, votre salon de coiffure de confiance situé à ${data.address}. Notre équipe passionnée vous offre des services de qualité dans une atmosphère chaleureuse et professionnelle.</p>
+            <p>Bienvenue chez ${data.salonName || 'notre salon'}, votre salon de coiffure de confiance situé à ${data.address || 'votre adresse'}. Notre équipe passionnée vous offre des services de qualité dans une atmosphère chaleureuse et professionnelle.</p>
             ${data.hours ? `<p><strong>Horaires :</strong><br>${data.hours.replace(/\n/g, '<br>')}</p>` : ''}
             ${data.email ? `<p><strong>Email :</strong> <a href="mailto:${data.email}">${data.email}</a></p>` : ''}
             ${data.website ? `<p><strong>Site web :</strong> <a href="${data.website}" target="_blank">${data.website}</a></p>` : ''}
             <a href="#contact" class="img-fluid js-scroll-trigger"><button class="btn btn-general btn-white">CONTACTEZ-NOUS</button></a>
         `;
-        
+
         html = html.replace(
             /<h3>Good Hair style Good Selfie<\/h3>[\s\S]*?<a href="#contact"[^>]*>[\s\S]*?<\/a>/,
             aboutSection
@@ -1368,16 +999,16 @@ class SalonGenerator {
         html = html.replace(/Taneswar khan/g, 'Marie Dubois');
         html = html.replace(/krish Modi/g, 'Sophie Martin');
         html = html.replace(/Trisca Ben/g, 'Léa Bernard');
-        
+
         // Remplacer les témoignages
         const testimonials = [
             {
                 name: 'Sophie L.',
-                text: `Excellent service chez ${data.salonName} ! L'équipe est très professionnelle et à l'écoute. Je recommande vivement !`
+                text: `Excellent service chez ${data.salonName || 'ce salon'} ! L'équipe est très professionnelle et à l'écoute. Je recommande vivement !`
             },
             {
                 name: 'Marie P.',
-                text: `Je suis cliente depuis plusieurs années et je ne suis jamais déçue. L'ambiance est chaleureuse et les résultats toujours parfaits.`
+            text: `Je suis cliente depuis plusieurs années et je ne suis jamais déçue. L'ambiance est chaleureuse et les résultats toujours parfaits.`
             },
             {
                 name: 'Julie M.',
@@ -1397,7 +1028,7 @@ class SalonGenerator {
                 /style of a salon by the kind of furniture[\s\S]*?minds\./,
                 /salon stock taking a crucial task[\s\S]*?online\./
             ];
-            
+
             if (oldTexts[index]) {
                 html = html.replace(oldTexts[index], testimonial.text);
             }
@@ -1405,23 +1036,23 @@ class SalonGenerator {
 
         // Remplacer les informations de copyright
         html = html.replace(/Copyright &copy; 2018 Design By <a href="https:\/\/boostraptheme\.com\/">Boostraptheme<\/a>/, 
-            `Copyright &copy; ${new Date().getFullYear()} ${data.salonName}`);
+            `Copyright &copy; ${new Date().getFullYear()} ${data.salonName || 'Mon Salon'}`);
 
         return html;
     }
 
     async prepareFilesForDownload() {
         this.generatedFiles.clear();
-        
+
         // Ajouter le fichier HTML généré
         this.generatedFiles.set('index.html', this.generatedHTML);
-        
+
         // Copier tous les fichiers CSS depuis .templates/
         const cssFiles = [
             'css/animate.min.css', 'css/app.css', 'css/bootstrap.css', 
             'css/magnific-popup.css', 'css/owl.carousel.min.css', 'css/owl.theme.default.min.css'
         ];
-        
+
         for (const cssFile of cssFiles) {
             try {
                 const response = await fetch(`.templates/${cssFile}`);
@@ -1435,14 +1066,14 @@ class SalonGenerator {
                 console.warn(`Erreur CSS ${cssFile}:`, error.message);
             }
         }
-        
+
         // Copier tous les fichiers JS depuis .templates/
         const jsFiles = [
             'js/app.js', 'js/bootstrap.min.js', 'js/contact_me.js', 'js/contact_me.min.js',
             'js/jqBootstrapValidation.min.js', 'js/jquery.easing.min.js', 'js/jquery.magnific-popup.min.js',
             'js/jquery.min.js', 'js/owl.carousel.min.js', 'js/popper.min.js', 'js/wow.min.js'
         ];
-        
+
         for (const jsFile of jsFiles) {
             try {
                 const response = await fetch(`.templates/${jsFile}`);
@@ -1459,7 +1090,7 @@ class SalonGenerator {
 
         // Ajouter les images personnalisées comme fichiers séparés (optionnel pour backup)
         await this.addCustomImagesToFiles();
-        
+
         // Copier les images originales non remplacées
         await this.copyOriginalImages();
     }
@@ -1467,47 +1098,55 @@ class SalonGenerator {
     async addCustomImagesToFiles() {
         // Convertir les images base64 en fichiers binaires et les ajouter au zip
         for (const [key, imageData] of this.customImages.entries()) {
-            if (key === 'portfolioImages') {
+            if (key === 'portfolioImages' && Array.isArray(imageData)) {
                 // Pour le portfolio, ajouter chaque image
                 imageData.forEach((image, index) => {
-                    const extension = image.type.split('/')[1] || 'jpg';
-                    const filename = `img/portfolio/custom-portfolio-${index + 1}.${extension}`;
-                    const binaryData = this.base64ToBinary(image.data);
-                    this.generatedFiles.set(filename, binaryData);
+                    try {
+                        const extension = image.type ? image.type.split('/')[1] : 'jpg';
+                        const filename = `img/portfolio/custom-portfolio-${index + 1}.${extension}`;
+                        const binaryData = this.base64ToBinary(image.data);
+                        this.generatedFiles.set(filename, binaryData);
+                    } catch (error) {
+                        console.warn(`Erreur lors de l'ajout de l'image portfolio ${index + 1}:`, error);
+                    }
                 });
-            } else {
+            } else if (imageData && imageData.data) {
                 // Pour les images individuelles
-                const extension = imageData.type.split('/')[1] || 'jpg';
-                let filename;
-                
-                switch (key) {
-                    case 'heroImage':
-                        filename = `img/custom-header-background.${extension}`;
-                        break;
-                    case 'aboutImage':
-                        filename = `img/custom-perfect-style.${extension}`;
-                        break;
-                    case 'logoImage':
-                        filename = `img/custom-logo.${extension}`;
-                        break;
-                    case 'footerImage':
-                        filename = `img/custom-bg-footer.${extension}`;
-                        break;
-                    case 'team1Image':
-                        filename = `img/team/custom-team-1.${extension}`;
-                        break;
-                    case 'team2Image':
-                        filename = `img/team/custom-team-2.${extension}`;
-                        break;
-                    case 'team3Image':
-                        filename = `img/team/custom-team-3.${extension}`;
-                        break;
-                    default:
-                        filename = `img/custom-${key}.${extension}`;
+                try {
+                    const extension = imageData.type ? imageData.type.split('/')[1] : 'jpg';
+                    let filename;
+
+                    switch (key) {
+                        case 'heroImage':
+                            filename = `img/custom-header-background.${extension}`;
+                            break;
+                        case 'aboutImage':
+                            filename = `img/custom-perfect-style.${extension}`;
+                            break;
+                        case 'logoImage':
+                            filename = `img/custom-logo.${extension}`;
+                            break;
+                        case 'footerImage':
+                            filename = `img/custom-bg-footer.${extension}`;
+                            break;
+                        case 'team1Image':
+                            filename = `img/team/custom-team-1.${extension}`;
+                            break;
+                        case 'team2Image':
+                            filename = `img/team/custom-team-2.${extension}`;
+                            break;
+                        case 'team3Image':
+                            filename = `img/team/custom-team-3.${extension}`;
+                            break;
+                        default:
+                            filename = `img/custom-${key}.${extension}`;
+                    }
+
+                    const binaryData = this.base64ToBinary(imageData.data);
+                    this.generatedFiles.set(filename, binaryData);
+                } catch (error) {
+                    console.warn(`Erreur lors de l'ajout de l'image ${key}:`, error);
                 }
-                
-                const binaryData = this.base64ToBinary(imageData.data);
-                this.generatedFiles.set(filename, binaryData);
             }
         }
     }
@@ -1519,7 +1158,7 @@ class SalonGenerator {
             'img/client/client-1.jpg', 'img/client/client-2.jpg', 'img/client/client-3.jpg',
             'img/service/service-1.jpg', 'img/service/service-2.jpg', 'img/service/service-3.jpg', 'img/service/service-4.jpg',
             'img/loading.gif', 'img/treamer-small.png',
-            
+
             // Images principales (toujours inclure pour templates complets)
             'img/header-background-1.jpg', 'img/header-background-2.jpg',
             'img/perfect-style.jpg',
@@ -1552,24 +1191,44 @@ class SalonGenerator {
     }
 
     base64ToBinary(base64String) {
-        // Supprimer le préfixe data:image/...;base64,
-        const base64Data = base64String.split(',')[1];
-        const binaryString = atob(base64Data);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
+        try {
+            // Supprimer le préfixe data:image/...;base64,
+            const base64Data = base64String.split(',')[1];
+            const binaryString = atob(base64Data);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes;
+        } catch (error) {
+            console.error('Erreur lors de la conversion base64:', error);
+            return new Uint8Array(0);
         }
-        return bytes;
     }
 
     showPreview() {
-        const previewFrame = document.getElementById('previewFrame');
-        const blob = new Blob([this.generatedHTML], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        previewFrame.src = url;
-        
-        const modal = new bootstrap.Modal(document.getElementById('previewModal'));
-        modal.show();
+        try {
+            const previewFrame = document.getElementById('previewFrame');
+            if (previewFrame && this.generatedHTML) {
+                const blob = new Blob([this.generatedHTML], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                previewFrame.src = url;
+
+                // Nettoyer l'URL après un délai
+                setTimeout(() => URL.revokeObjectURL(url), 10000);
+
+                // Afficher le modal si Bootstrap est disponible
+                if (typeof bootstrap !== 'undefined') {
+                    const modal = new bootstrap.Modal(document.getElementById('previewModal'));
+                    modal.show();
+                } else {
+                    console.warn('Bootstrap Modal non disponible');
+                }
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'affichage de l\'aperçu:', error);
+            alert('Erreur lors de l\'affichage de l\'aperçu.');
+        }
     }
 
     async downloadZip() {
@@ -1591,29 +1250,38 @@ class SalonGenerator {
         // Afficher indicateur de téléchargement
         const downloadBtn = document.getElementById('downloadBtn');
         const downloadFromPreview = document.getElementById('downloadFromPreview');
-        const originalText = downloadBtn.innerHTML;
-        const originalTextPreview = downloadFromPreview.innerHTML;
-        
-        downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Préparation...';
-        downloadFromPreview.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Préparation...';
-        downloadBtn.disabled = true;
-        downloadFromPreview.disabled = true;
 
-        const zip = new JSZip();
-        
-        // Ajouter tous les fichiers au zip
-        this.generatedFiles.forEach((content, filepath) => {
-            zip.file(filepath, content);
-        });
-        
-        // Ajouter un dossier pour les images (vide, mais structure préservée)
-        zip.folder('img/client');
-        zip.folder('img/portfolio');
-        zip.folder('img/service');
-        zip.folder('img/team');
-        
-        // Ajouter un fichier README
-        const readmeContent = `# Site Salon Généré
+        let originalText = 'Télécharger le Site';
+        let originalTextPreview = 'Télécharger';
+
+        if (downloadBtn) {
+            originalText = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Préparation...';
+            downloadBtn.disabled = true;
+        }
+
+        if (downloadFromPreview) {
+            originalTextPreview = downloadFromPreview.innerHTML;
+            downloadFromPreview.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Préparation...';
+            downloadFromPreview.disabled = true;
+        }
+
+        try {
+            const zip = new JSZip();
+
+            // Ajouter tous les fichiers au zip
+            this.generatedFiles.forEach((content, filepath) => {
+                zip.file(filepath, content);
+            });
+
+            // Ajouter un dossier pour les images (vide, mais structure préservée)
+            zip.folder('img/client');
+            zip.folder('img/portfolio');
+            zip.folder('img/service');
+            zip.folder('img/team');
+
+            // Ajouter un fichier README
+            const readmeContent = `# Site Salon Généré
 
 Ce site a été généré automatiquement avec le Générateur de Site Salon.
 
@@ -1630,10 +1298,9 @@ Ce site a été généré automatiquement avec le Générateur de Site Salon.
 
 Bonne chance avec votre nouveau site !
 `;
-        
-        zip.file('README.md', readmeContent);
-        
-        try {
+
+            zip.file('README.md', readmeContent);
+
             const content = await zip.generateAsync({ 
                 type: 'blob',
                 compression: "DEFLATE",
@@ -1641,7 +1308,7 @@ Bonne chance avec votre nouveau site !
                     level: 6
                 }
             });
-            
+
             const url = URL.createObjectURL(content);
             const a = document.createElement('a');
             a.href = url;
@@ -1650,34 +1317,49 @@ Bonne chance avec votre nouveau site !
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            
+
             // Restaurer les boutons
-            downloadBtn.innerHTML = '<i class="fas fa-check"></i> Téléchargé !';
-            downloadFromPreview.innerHTML = '<i class="fas fa-check"></i> Téléchargé !';
-            
-            setTimeout(() => {
-                downloadBtn.innerHTML = originalText;
-                downloadFromPreview.innerHTML = originalTextPreview;
-                downloadBtn.disabled = false;
-                downloadFromPreview.disabled = false;
-            }, 2000);
-            
+            if (downloadBtn) {
+                downloadBtn.innerHTML = '<i class="fas fa-check"></i> Téléchargé !';
+                setTimeout(() => {
+                    downloadBtn.innerHTML = originalText;
+                    downloadBtn.disabled = false;
+                }, 2000);
+            }
+
+            if (downloadFromPreview) {
+                downloadFromPreview.innerHTML = '<i class="fas fa-check"></i> Téléchargé !';
+                setTimeout(() => {
+                    downloadFromPreview.innerHTML = originalTextPreview;
+                    downloadFromPreview.disabled = false;
+                }, 2000);
+            }
+
             console.log(`Téléchargement terminé: salon-website-${this.selectedTemplate}.zip`);
-            
+
         } catch (error) {
             console.error('Erreur lors de la création du zip:', error);
             alert('Erreur lors du téléchargement. Veuillez réessayer.');
-            
+
             // Restaurer les boutons en cas d'erreur
-            downloadBtn.innerHTML = originalText;
-            downloadFromPreview.innerHTML = originalTextPreview;
-            downloadBtn.disabled = false;
-            downloadFromPreview.disabled = false;
+            if (downloadBtn) {
+                downloadBtn.innerHTML = originalText;
+                downloadBtn.disabled = false;
+            }
+            if (downloadFromPreview) {
+                downloadFromPreview.innerHTML = originalTextPreview;
+                downloadFromPreview.disabled = false;
+            }
         }
     }
 }
 
 // Initialiser l'application
 document.addEventListener('DOMContentLoaded', () => {
-    new SalonGenerator();
+    try {
+        new SalonGenerator();
+    } catch (error) {
+        console.error('Erreur lors de l\'initialisation du générateur:', error);
+        alert('Erreur lors du chargement du générateur. Veuillez recharger la page.');
+    }
 });
