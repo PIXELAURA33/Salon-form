@@ -47,6 +47,26 @@ class SalonGenerator {
             'creative': {
                 'heroImageInfo': 'JPG, PNG, WEBP (tous formats) | 1920x1080px | Max: 7MB',
                 'logoImageInfo': 'PNG, SVG, WEBP (créativité maximale) | 200x200px | Max: 4MB'
+            },
+            'spa': {
+                'heroImageInfo': 'JPG, PNG, WEBP (zen optimisé) | 1920x1080px | Max: 4MB',
+                'logoImageInfo': 'PNG, SVG, WEBP (style zen) | 200x200px | Max: 2MB'
+            },
+            'futuristic': {
+                'heroImageInfo': 'JPG, PNG, WEBP (haute qualité) | 1920x1080px | Max: 8MB',
+                'logoImageInfo': 'PNG, SVG, WEBP (SVG pour animations) | 200x200px | Max: 4MB'
+            },
+            'vintage': {
+                'heroImageInfo': 'JPG, PNG (style rétro) | 1920x1080px | Max: 6MB',
+                'logoImageInfo': 'PNG, SVG (style vintage) | 200x200px | Max: 3MB'
+            },
+            'urban': {
+                'heroImageInfo': 'JPG, PNG, WEBP (street style) | 1920x1080px | Max: 7MB',
+                'logoImageInfo': 'PNG, SVG, WEBP (style urbain) | 200x200px | Max: 3MB'
+            },
+            'nature': {
+                'heroImageInfo': 'JPG, PNG, WEBP (bio optimisé) | 1920x1080px | Max: 5MB',
+                'logoImageInfo': 'PNG, SVG, WEBP (style nature) | 200x200px | Max: 2MB'
             }
         };
 
@@ -518,6 +538,216 @@ class SalonGenerator {
                     maxSize: 6 * 1024 * 1024, // 6MB - Plus grand pour créatif
                     name: 'Image portfolio (Creative)'
                 }
+            },
+            'spa': {
+                'heroImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 4 * 1024 * 1024, // 4MB - Optimisé pour zen
+                    name: 'Image d\'en-tête (Spa - Zen)'
+                },
+                'aboutImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 4 * 1024 * 1024, // 4MB
+                    name: 'Image À propos (Spa)'
+                },
+                'logoImage': {
+                    formats: ['image/png', 'image/svg+xml', 'image/webp'],
+                    maxSize: 2 * 1024 * 1024, // 2MB
+                    name: 'Logo (Spa - Zen style)'
+                },
+                'footerImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 4 * 1024 * 1024, // 4MB
+                    name: 'Image de pied de page (Spa)'
+                },
+                'team1Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 3 * 1024 * 1024, // 3MB
+                    name: 'Photo équipe 1 (Spa)'
+                },
+                'team2Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 3 * 1024 * 1024, // 3MB
+                    name: 'Photo équipe 2 (Spa)'
+                },
+                'team3Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 3 * 1024 * 1024, // 3MB
+                    name: 'Photo équipe 3 (Spa)'
+                },
+                'portfolioImages': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 4 * 1024 * 1024, // 4MB
+                    name: 'Image portfolio (Spa)'
+                }
+            },
+            'futuristic': {
+                'heroImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 8 * 1024 * 1024, // 8MB - Haute qualité pour futuriste
+                    name: 'Image d\'en-tête (Futuristic - High-tech)'
+                },
+                'aboutImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 6 * 1024 * 1024, // 6MB
+                    name: 'Image À propos (Futuristic)'
+                },
+                'logoImage': {
+                    formats: ['image/png', 'image/svg+xml', 'image/webp'],
+                    maxSize: 4 * 1024 * 1024, // 4MB - SVG pour animations
+                    name: 'Logo (Futuristic - SVG recommandé)'
+                },
+                'footerImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 6 * 1024 * 1024, // 6MB
+                    name: 'Image de pied de page (Futuristic)'
+                },
+                'team1Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Photo équipe 1 (Futuristic)'
+                },
+                'team2Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Photo équipe 2 (Futuristic)'
+                },
+                'team3Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Photo équipe 3 (Futuristic)'
+                },
+                'portfolioImages': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 6 * 1024 * 1024, // 6MB
+                    name: 'Image portfolio (Futuristic)'
+                }
+            },
+            'vintage': {
+                'heroImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 6 * 1024 * 1024, // 6MB - Style vintage
+                    name: 'Image d\'en-tête (Vintage - Style rétro)'
+                },
+                'aboutImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Image À propos (Vintage)'
+                },
+                'logoImage': {
+                    formats: ['image/png', 'image/svg+xml'],
+                    maxSize: 3 * 1024 * 1024, // 3MB
+                    name: 'Logo (Vintage - Style rétro)'
+                },
+                'footerImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Image de pied de page (Vintage)'
+                },
+                'team1Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 4 * 1024 * 1024, // 4MB
+                    name: 'Photo équipe 1 (Vintage)'
+                },
+                'team2Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 4 * 1024 * 1024, // 4MB
+                    name: 'Photo équipe 2 (Vintage)'
+                },
+                'team3Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 4 * 1024 * 1024, // 4MB
+                    name: 'Photo équipe 3 (Vintage)'
+                },
+                'portfolioImages': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Image portfolio (Vintage)'
+                }
+            },
+            'urban': {
+                'heroImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 7 * 1024 * 1024, // 7MB - Style urbain
+                    name: 'Image d\'en-tête (Urban - Street style)'
+                },
+                'aboutImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Image À propos (Urban)'
+                },
+                'logoImage': {
+                    formats: ['image/png', 'image/svg+xml', 'image/webp'],
+                    maxSize: 3 * 1024 * 1024, // 3MB
+                    name: 'Logo (Urban - Street style)'
+                },
+                'footerImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Image de pied de page (Urban)'
+                },
+                'team1Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 4 * 1024 * 1024, // 4MB
+                    name: 'Photo équipe 1 (Urban)'
+                },
+                'team2Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 4 * 1024 * 1024, // 4MB
+                    name: 'Photo équipe 2 (Urban)'
+                },
+                'team3Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 4 * 1024 * 1024, // 4MB
+                    name: 'Photo équipe 3 (Urban)'
+                },
+                'portfolioImages': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Image portfolio (Urban)'
+                }
+            },
+            'nature': {
+                'heroImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 5 * 1024 * 1024, // 5MB - Style nature
+                    name: 'Image d\'en-tête (Nature - Bio style)'
+                },
+                'aboutImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 4 * 1024 * 1024, // 4MB
+                    name: 'Image À propos (Nature)'
+                },
+                'logoImage': {
+                    formats: ['image/png', 'image/svg+xml', 'image/webp'],
+                    maxSize: 2 * 1024 * 1024, // 2MB
+                    name: 'Logo (Nature - Bio style)'
+                },
+                'footerImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 4 * 1024 * 1024, // 4MB
+                    name: 'Image de pied de page (Nature)'
+                },
+                'team1Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 3 * 1024 * 1024, // 3MB
+                    name: 'Photo équipe 1 (Nature)'
+                },
+                'team2Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 3 * 1024 * 1024, // 3MB
+                    name: 'Photo équipe 2 (Nature)'
+                },
+                'team3Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 3 * 1024 * 1024, // 3MB
+                    name: 'Photo équipe 3 (Nature)'
+                },
+                'portfolioImages': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 4 * 1024 * 1024, // 4MB
+                    name: 'Image portfolio (Nature)'
+                }
             }
         };
 
@@ -646,7 +876,12 @@ class SalonGenerator {
             'luxury': await this.getLuxuryTemplate(),
             'minimal': await this.getMinimalTemplate(),
             'barber': await this.getBarberTemplate(),
-            'creative': await this.getCreativeTemplate()
+            'creative': await this.getCreativeTemplate(),
+            'spa': await this.getSpaTemplate(),
+            'futuristic': await this.getFuturisticTemplate(),
+            'vintage': await this.getVintageTemplate(),
+            'urban': await this.getUrbanTemplate(),
+            'nature': await this.getNatureTemplate()
         };
         return templates[templateType] || templates['classic'];
     }
@@ -688,6 +923,26 @@ class SalonGenerator {
         return this.getTemplateVariation('creative');
     }
 
+    async getSpaTemplate() {
+        return this.getTemplateVariation('spa');
+    }
+
+    async getFuturisticTemplate() {
+        return this.getTemplateVariation('futuristic');
+    }
+
+    async getVintageTemplate() {
+        return this.getTemplateVariation('vintage');
+    }
+
+    async getUrbanTemplate() {
+        return this.getTemplateVariation('urban');
+    }
+
+    async getNatureTemplate() {
+        return this.getTemplateVariation('nature');
+    }
+
     async getTemplateVariation(type) {
         const baseTemplate = await this.getDefaultTemplate();
         return this.applyTemplateStyle(baseTemplate, type);
@@ -719,6 +974,31 @@ class SalonGenerator {
                 gradient: 'linear-gradient(45deg, #ff9a9e, #fecfef)',
                 fontFamily: 'Fredoka One, cursive',
                 buttonStyle: 'border-radius: 50px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4);'
+            },
+            'spa': {
+                gradient: 'linear-gradient(45deg, #a8edea, #f5f7fa)',
+                fontFamily: 'Nunito, sans-serif',
+                buttonStyle: 'border-radius: 30px; background: linear-gradient(45deg, #56ab2f, #a8e6cf); box-shadow: 0 4px 15px rgba(86, 171, 47, 0.3);'
+            },
+            'futuristic': {
+                gradient: 'linear-gradient(45deg, #667eea, #764ba2, #f093fb)',
+                fontFamily: 'Orbitron, monospace',
+                buttonStyle: 'border-radius: 0; background: linear-gradient(45deg, #00d4ff, #090979); border: 1px solid #00d4ff; text-transform: uppercase;'
+            },
+            'vintage': {
+                gradient: 'linear-gradient(45deg, #d4af37, #ffd700)',
+                fontFamily: 'Dancing Script, cursive',
+                buttonStyle: 'border-radius: 15px; background: linear-gradient(45deg, #8b4513, #daa520); border: 2px solid #d4af37; font-weight: bold;'
+            },
+            'urban': {
+                gradient: 'linear-gradient(45deg, #2c2c2c, #434343)',
+                fontFamily: 'Roboto Condensed, sans-serif',
+                buttonStyle: 'border-radius: 0; background: linear-gradient(45deg, #ff6b35, #f7931e); border: none; text-transform: uppercase; font-weight: bold;'
+            },
+            'nature': {
+                gradient: 'linear-gradient(45deg, #56ab2f, #a8e6cf)',
+                fontFamily: 'Merriweather, serif',
+                buttonStyle: 'border-radius: 25px; background: linear-gradient(45deg, #2d5016, #56ab2f); border: 2px solid #7fcdcd;'
             }
         };
 
