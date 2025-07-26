@@ -340,25 +340,11 @@
                 templateInfo.style.display = 'block';
             }
 
-            // Masquer les sections non utilisées selon le template
+            // Masquer les sections d'images non utilisées selon le template
             if (!config.showTeamImages) {
-                const teamImagesSection = document.querySelector('.row').children[2]; // Section équipe
-                if (teamImagesSection) {
-                    teamImagesSection.style.display = 'none';
-                }
-            }
-
-            if (!config.showAboutImage) {
-                const aboutImageSection = document.querySelector('label[for="aboutImage"]');
-                if (aboutImageSection) {
-                    aboutImageSection.parentElement.style.display = 'none';
-                }
-            }
-
-            if (!config.showFooterImage) {
-                const footerImageSection = document.querySelector('label[for="footerImage"]');
-                if (footerImageSection) {
-                    footerImageSection.parentElement.style.display = 'none';
+                const teamImagesRow = document.querySelector('.row:has(label[for="team1Image"])');
+                if (teamImagesRow) {
+                    teamImagesRow.style.display = 'none';
                 }
             }
 
@@ -367,37 +353,18 @@
             if (portfolioLabel) {
                 portfolioLabel.textContent = `Images portfolio (max ${config.maxPortfolio})`;
             }
-        });
-    </script>
 
-                'romantic': 'Salon Romantique',
-                'scandinavian': 'Salon Scandinave',
-                'tropical': 'Salon Tropical',
-                'artdeco': 'Salon Art Déco',
-                'cyber': 'Salon Cyber'
+            // Mettre à jour le nom et la description du template
+            const templateNames = {
+                'barber': 'Template Barber X',
+                'alotan': 'Template Alotan',
+                'grafreez': 'Template Grafreez'
             };
 
             const templateDescriptions = {
-                'classic': 'Personnalisez votre template classique et élégant',
-                'modern': 'Personnalisez votre template moderne et dynamique',
-                'luxury': 'Personnalisez votre template premium et raffiné',
-                'minimal': 'Personnalisez votre template épuré et sophistiqué',
-                'grafreez': 'Personnalisez votre template professionnel avec navigation fixe',
                 'barber': 'Personnalisez votre template masculin et traditionnel',
-                'creative': 'Personnalisez votre template artistique et original',
-                'spa': 'Personnalisez votre template zen et relaxant',
-                'futuristic': 'Personnalisez votre template high-tech et avant-gardiste',
-                'vintage': 'Personnalisez votre template rétro et nostalgique',
-                'urban': 'Personnalisez votre template street et moderne',
-                'nature': 'Personnalisez votre template bio et éco-responsable',
-                'bohemian': 'Personnalisez votre template bohème et décontracté',
-                'neon': 'Personnalisez votre template électrisant et branché',
-                'industrial': 'Personnalisez votre template industriel et urbain',
-                'romantic': 'Personnalisez votre template romantique et féminin',
-                'scandinavian': 'Personnalisez votre template nordique et cosy',
-                'tropical': 'Personnalisez votre template exotique et estival',
-                'artdeco': 'Personnalisez votre template Art Déco sophistiqué',
-                'cyber': 'Personnalisez votre template cyberpunk et futuriste'
+                'alotan': 'Personnalisez votre template moderne et élégant',
+                'grafreez': 'Personnalisez votre template professionnel avec navigation fixe'
             };
 
             document.getElementById('templateName').textContent = templateNames[template] || 'Template Sélectionné';

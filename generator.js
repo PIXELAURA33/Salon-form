@@ -201,8 +201,8 @@ class SalonGenerator {
 
     getTemplateImageInputs() {
         const templateInputs = {
-            'barber': ['heroImage', 'aboutImage', 'logoImage', 'footerImage', 'team1Image', 'team2Image', 'team3Image'],
-            'alotan': ['heroImage', 'aboutImage', 'logoImage'],
+            'barber': ['heroImage', 'logoImage', 'team1Image', 'team2Image', 'team3Image'],
+            'alotan': ['heroImage', 'logoImage'],
             'grafreez': ['heroImage', 'logoImage']
         };
 
@@ -387,20 +387,10 @@ class SalonGenerator {
                     maxSize: 5 * 1024 * 1024,
                     name: 'Image d\'en-tête (Barber X)'
                 },
-                'aboutImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 5 * 1024 * 1024,
-                    name: 'Image À propos (Barber X)'
-                },
                 'logoImage': {
                     formats: ['image/png', 'image/svg+xml'],
                     maxSize: 2 * 1024 * 1024,
                     name: 'Logo (Barber X)'
-                },
-                'footerImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 5 * 1024 * 1024,
-                    name: 'Image de pied de page (Barber X)'
                 },
                 'team1Image': {
                     formats: ['image/jpeg', 'image/jpg', 'image/png'],
@@ -428,11 +418,6 @@ class SalonGenerator {
                     formats: ['image/jpeg', 'image/jpg', 'image/png'],
                     maxSize: 5 * 1024 * 1024,
                     name: 'Image d\'en-tête (Alotan)'
-                },
-                'aboutImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                    maxSize: 5 * 1024 * 1024,
-                    name: 'Image À propos (Alotan)'
                 },
                 'logoImage': {
                     formats: ['image/png', 'image/svg+xml'],
@@ -741,53 +726,53 @@ class SalonGenerator {
         // Image hero/header - utiliser l'image personnalisée ou conserver la par défaut
         if (this.customImages.has('heroImage')) {
             const heroImg = this.customImages.get('heroImage');
-            // Remplacer dans les styles CSS et attributs src
-            html = html.replace(/url\("\.\.\/img\/header-background-1\.jpg"\)/g, `url("${heroImg.data}")`);
-            html = html.replace(/url\("\.\.\/img\/header-background-2\.jpg"\)/g, `url("${heroImg.data}")`);
+            // Remplacements pour tous les templates
+            html = html.replace(/url\(['"]?\.?\.?\/img\/header-background-1\.jpg['"]?\)/g, `url("${heroImg.data}")`);
+            html = html.replace(/url\(['"]?\.?\.?\/img\/header-background-2\.jpg['"]?\)/g, `url("${heroImg.data}")`);
+            html = html.replace(/src=['"]img\/header-background-1\.jpg['"]/g, `src="${heroImg.data}"`);
+            html = html.replace(/src=['"]img\/header-background-2\.jpg['"]/g, `src="${heroImg.data}"`);
             html = html.replace(/header-background-1\.jpg/g, heroImg.data);
             html = html.replace(/header-background-2\.jpg/g, heroImg.data);
-        }
-
-        // Image "À propos" / Perfect Style
-        if (this.customImages.has('aboutImage')) {
-            const aboutImg = this.customImages.get('aboutImage');
-            html = html.replace(/url\("\.\.\/img\/perfect-style\.jpg"\)/g, `url("${aboutImg.data}")`);
-            html = html.replace(/perfect-style\.jpg/g, aboutImg.data);
-        }
-
-        // Footer background
-        if (this.customImages.has('footerImage')) {
-            const footerImg = this.customImages.get('footerImage');
-            html = html.replace(/url\("\.\.\/img\/bg-footer1\.jpg"\)/g, `url("${footerImg.data}")`);
-            html = html.replace(/bg-footer1\.jpg/g, footerImg.data);
+            
+            // Pour template Alotan et Grafreez (autres noms possibles)
+            html = html.replace(/url\(['"]?\.?\.?\/img\/hero\.jpg['"]?\)/g, `url("${heroImg.data}")`);
+            html = html.replace(/url\(['"]?\.?\.?\/img\/banner\.jpg['"]?\)/g, `url("${heroImg.data}")`);
+            html = html.replace(/src=['"]img\/hero\.jpg['"]/g, `src="${heroImg.data}"`);
+            html = html.replace(/src=['"]img\/banner\.jpg['"]/g, `src="${heroImg.data}"`);
         }
 
         // Logo
         if (this.customImages.has('logoImage')) {
             const logoImg = this.customImages.get('logoImage');
-            html = html.replace(/src="img\/logo\.png"/g, `src="${logoImg.data}"`);
-            html = html.replace(/src="img\/beauty-salon_logo_96dp\.png"/g, `src="${logoImg.data}"`);
+            html = html.replace(/src=['"]img\/logo\.png['"]/g, `src="${logoImg.data}"`);
+            html = html.replace(/src=['"]img\/beauty-salon_logo_96dp\.png['"]/g, `src="${logoImg.data}"`);
+            html = html.replace(/src=['"]img\/logo\.svg['"]/g, `src="${logoImg.data}"`);
             html = html.replace(/logo\.png/g, logoImg.data);
             html = html.replace(/beauty-salon_logo_96dp\.png/g, logoImg.data);
+            html = html.replace(/logo\.svg/g, logoImg.data);
         }
 
-        // Images d'équipe
-        ['team1Image', 'team2Image', 'team3Image'].forEach((teamKey, index) => {
-            const teamNumber = index + 1;
-            if (this.customImages.has(teamKey)) {
-                const teamImg = this.customImages.get(teamKey);
-                html = html.replace(new RegExp(`src="img/team/team-${teamNumber}\\.jpg"`, 'g'), `src="${teamImg.data}"`);
-                html = html.replace(new RegExp(`team-${teamNumber}\\.jpg`, 'g'), teamImg.data);
-            }
-        });
+        // Images d'équipe (seulement pour template Barber)
+        if (this.selectedTemplate === 'barber') {
+            ['team1Image', 'team2Image', 'team3Image'].forEach((teamKey, index) => {
+                const teamNumber = index + 1;
+                if (this.customImages.has(teamKey)) {
+                    const teamImg = this.customImages.get(teamKey);
+                    html = html.replace(new RegExp(`src=['"]img/team/team-${teamNumber}\\.jpg['"]`, 'g'), `src="${teamImg.data}"`);
+                    html = html.replace(new RegExp(`team-${teamNumber}\\.jpg`, 'g'), teamImg.data);
+                }
+            });
+        }
 
-        // Portfolio images
+        // Portfolio images (pour tous les templates)
         if (this.customImages.has('portfolioImages')) {
             const portfolioImages = this.customImages.get('portfolioImages');
-            portfolioImages.forEach((image, index) => {
+            const maxImages = this.selectedTemplate === 'alotan' ? 4 : 6;
+            
+            portfolioImages.slice(0, maxImages).forEach((image, index) => {
                 const portfolioIndex = index + 1;
                 html = html.replace(
-                    new RegExp(`src="img/portfolio/portfolio-${portfolioIndex}\\.jpg"`, 'g'), 
+                    new RegExp(`src=['"]img/portfolio/portfolio-${portfolioIndex}\\.jpg['"]`, 'g'), 
                     `src="${image.data}"`
                 );
                 html = html.replace(
