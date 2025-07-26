@@ -1390,51 +1390,7 @@ Bonne chance avec votre nouveau site !
         }
     }
 
-    setupMapsExtractorIntegration() {
-        // Écouter les mises à jour de l'extracteur Google Maps
-        document.addEventListener('formDataUpdated', (event) => {
-            if (event.detail && event.detail.source === 'mapsExtractor') {
-                console.log('Données extraites de Google Maps - Mise à jour du preview');
-
-                // Mettre à jour le preview après un court délai pour laisser les animations se terminer
-                setTimeout(() => {
-                    this.showPreview();
-                }, 500);
-
-                // Maintenir les styles du template sélectionné
-                this.preserveTemplateStyles();
-            }
-        });
-    }
-
-    preserveTemplateStyles() {
-        try {
-            // Réappliquer les classes CSS spécifiques au template
-            const formControls = document.querySelectorAll('.form-control');
-            formControls.forEach(control => {
-                // Maintenir les transitions CSS
-                if (!control.style.transition) {
-                    control.style.transition = 'border-color 0.3s ease, box-shadow 0.3s ease';
-                }
-
-                // Réappliquer les styles de focus
-                control.addEventListener('focus', () => {
-                    control.style.borderColor = '#667eea';
-                    control.style.boxShadow = '0 0 0 0.2rem rgba(102, 126, 234, 0.25)';
-                });
-
-                control.addEventListener('blur', () => {
-                    if (!control.classList.contains('field-filled')) {
-                        control.style.borderColor = '';
-                        control.style.boxShadow = '';
-                    }
-                });
-            });
-
-        } catch (error) {
-            console.warn('Erreur lors de la préservation des styles:', error);
-        }
-    }
+    
 }
 
 // Initialiser l'application
