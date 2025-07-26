@@ -118,17 +118,29 @@ class SalonGenerator {
     }
 
     updateImageFormatInfo() {
-        // Informations de format pour le template Barber X
+        // Informations de format selon le template sélectionné
         const templateFormatInfo = {
-            'heroImageInfo': 'JPG, PNG uniquement | 1920x1080px | Max: 5MB',
-            'logoImageInfo': 'PNG, SVG (style vintage) | 200x200px | Max: 2MB'
+            'barber': {
+                'heroImageInfo': 'JPG, PNG uniquement | 1920x1080px | Max: 5MB',
+                'logoImageInfo': 'PNG, SVG (style vintage) | 200x200px | Max: 2MB'
+            },
+            'alotan': {
+                'heroImageInfo': 'JPG, PNG uniquement | 1920x1080px | Max: 5MB',
+                'logoImageInfo': 'PNG, SVG (style moderne) | 150x150px | Max: 2MB'
+            },
+            'grafreez': {
+                'heroImageInfo': 'JPG, PNG uniquement | 1920x1080px | Max: 5MB',
+                'logoImageInfo': 'PNG, SVG (style professionnel) | 180x180px | Max: 2MB'
+            }
         };
 
+        const currentTemplateInfo = templateFormatInfo[this.selectedTemplate] || templateFormatInfo['barber'];
+
         // Mettre à jour les éléments si ils existent
-        Object.keys(templateFormatInfo).forEach(infoId => {
+        Object.keys(currentTemplateInfo).forEach(infoId => {
             const element = document.getElementById(infoId);
             if (element) {
-                const parts = templateFormatInfo[infoId].split(' | ');
+                const parts = currentTemplateInfo[infoId].split(' | ');
                 element.innerHTML = `
                     <strong>Format:</strong> ${parts[0]}<br>
                     <strong>Dimension recommandée:</strong> ${parts[1]}<br>
@@ -140,10 +152,10 @@ class SalonGenerator {
 
     initImageUploads() {
         try {
-            // Gestion des uploads d'images individuelles
-            const singleImageInputs = ['heroImage', 'aboutImage', 'logoImage', 'footerImage', 'team1Image', 'team2Image', 'team3Image'];
+            // Gestion des uploads d'images selon le template
+            const templateImageInputs = this.getTemplateImageInputs();
 
-            singleImageInputs.forEach(inputId => {
+            templateImageInputs.forEach(inputId => {
                 const input = document.getElementById(inputId);
                 if (input) {
                     input.addEventListener('change', (e) => this.handleSingleImageUpload(e, inputId));
@@ -185,6 +197,18 @@ class SalonGenerator {
     }
 
     handleDrop(e, inputId) {
+
+
+    getTemplateImageInputs() {
+        const templateInputs = {
+            'barber': ['heroImage', 'aboutImage', 'logoImage', 'footerImage', 'team1Image', 'team2Image', 'team3Image'],
+            'alotan': ['heroImage', 'aboutImage', 'logoImage'],
+            'grafreez': ['heroImage', 'logoImage']
+        };
+
+        return templateInputs[this.selectedTemplate] || templateInputs['barber'];
+    }
+
         e.preventDefault();
         e.currentTarget.classList.remove('drag-over');
 
@@ -355,52 +379,93 @@ class SalonGenerator {
             return { isValid: false, error: 'Le fichier doit être une image.' };
         }
 
-        // Règles de validation pour le template Barber X
+        // Règles de validation selon le template sélectionné
         const templateValidationRules = {
-            'heroImage': {
-                formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                maxSize: 5 * 1024 * 1024,
-                name: 'Image d\'en-tête (Barber X)'
+            'barber': {
+                'heroImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 5 * 1024 * 1024,
+                    name: 'Image d\'en-tête (Barber X)'
+                },
+                'aboutImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 5 * 1024 * 1024,
+                    name: 'Image À propos (Barber X)'
+                },
+                'logoImage': {
+                    formats: ['image/png', 'image/svg+xml'],
+                    maxSize: 2 * 1024 * 1024,
+                    name: 'Logo (Barber X)'
+                },
+                'footerImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 5 * 1024 * 1024,
+                    name: 'Image de pied de page (Barber X)'
+                },
+                'team1Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 3 * 1024 * 1024,
+                    name: 'Photo équipe 1 (Barber X)'
+                },
+                'team2Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 3 * 1024 * 1024,
+                    name: 'Photo équipe 2 (Barber X)'
+                },
+                'team3Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 3 * 1024 * 1024,
+                    name: 'Photo équipe 3 (Barber X)'
+                },
+                'portfolioImages': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 4 * 1024 * 1024,
+                    name: 'Image portfolio (Barber X)'
+                }
             },
-            'aboutImage': {
-                formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                maxSize: 5 * 1024 * 1024,
-                name: 'Image À propos (Barber X)'
+            'alotan': {
+                'heroImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 5 * 1024 * 1024,
+                    name: 'Image d\'en-tête (Alotan)'
+                },
+                'aboutImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 5 * 1024 * 1024,
+                    name: 'Image À propos (Alotan)'
+                },
+                'logoImage': {
+                    formats: ['image/png', 'image/svg+xml'],
+                    maxSize: 2 * 1024 * 1024,
+                    name: 'Logo (Alotan)'
+                },
+                'portfolioImages': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 4 * 1024 * 1024,
+                    name: 'Image portfolio (Alotan)'
+                }
             },
-            'logoImage': {
-                formats: ['image/png', 'image/svg+xml'],
-                maxSize: 2 * 1024 * 1024,
-                name: 'Logo (Barber X)'
-            },
-            'footerImage': {
-                formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                maxSize: 5 * 1024 * 1024,
-                name: 'Image de pied de page (Barber X)'
-            },
-            'team1Image': {
-                formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                maxSize: 3 * 1024 * 1024,
-                name: 'Photo équipe 1 (Barber X)'
-            },
-            'team2Image': {
-                formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                maxSize: 3 * 1024 * 1024,
-                name: 'Photo équipe 2 (Barber X)'
-            },
-            'team3Image': {
-                formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                maxSize: 3 * 1024 * 1024,
-                name: 'Photo équipe 3 (Barber X)'
-            },
-            'portfolioImages': {
-                formats: ['image/jpeg', 'image/jpg', 'image/png'],
-                maxSize: 4 * 1024 * 1024,
-                name: 'Image portfolio (Barber X)'
+            'grafreez': {
+                'heroImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 5 * 1024 * 1024,
+                    name: 'Image d\'en-tête (Grafreez)'
+                },
+                'logoImage': {
+                    formats: ['image/png', 'image/svg+xml'],
+                    maxSize: 2 * 1024 * 1024,
+                    name: 'Logo (Grafreez)'
+                },
+                'portfolioImages': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 4 * 1024 * 1024,
+                    name: 'Image portfolio (Grafreez)'
+                }
             }
         };
 
-        // Obtenir les règles pour le type d'image
-        const templateRules = templateValidationRules;
+        // Obtenir les règles pour le template actuel
+        const templateRules = templateValidationRules[this.selectedTemplate] || templateValidationRules['barber'];
         const rules = templateRules[inputId];
 
         if (!rules) {
@@ -740,7 +805,7 @@ class SalonGenerator {
     }
 
     replaceTemplateData(html, data) {
-        // Remplacements pour les nouveaux templates
+        // Remplacements communs à tous les templates
         html = html.replace(/{{SALON_NAME}}/g, data.salonName || 'Mon Salon');
         html = html.replace(/{{PHONE}}/g, data.phone || '');
         html = html.replace(/{{ADDRESS}}/g, data.address || '');
@@ -753,6 +818,9 @@ class SalonGenerator {
         // Horaires pour l'affichage dans la top bar
         const hoursDisplay = data.hours ? data.hours.split('\n')[0] || '9h-18h' : '9h-18h';
         html = html.replace(/{{HOURS_DISPLAY}}/g, hoursDisplay);
+
+        // Remplacements spécifiques selon le template
+        html = this.applyTemplateSpecificReplacements(html, data);
 
         // Sections conditionnelles
         const emailSection = data.email ? `<p><strong>Email :</strong> <a href="mailto:${data.email}">${data.email}</a></p>` : '';
@@ -1041,6 +1109,61 @@ class SalonGenerator {
 
         // Copier toutes les images pour avoir des templates complets
         for (const imagePath of allRequiredImages) {
+
+
+    applyTemplateSpecificReplacements(html, data) {
+        switch(this.selectedTemplate) {
+            case 'barber':
+                return this.applyBarberReplacements(html, data);
+            case 'alotan':
+                return this.applyAlotanReplacements(html, data);
+            case 'grafreez':
+                return this.applyGrafreezReplacements(html, data);
+            default:
+                return this.applyBarberReplacements(html, data);
+        }
+    }
+
+    applyBarberReplacements(html, data) {
+        // Remplacements spécifiques au template Barber
+        html = html.replace(/Beauty &amp; Salon - Free Bootstrap 4 Template/g, `${data.salonName || 'Mon Salon'} - Salon de Coiffure`);
+        html = html.replace(/Beauty and Salon - Free Bootstrap 4 Template \| Boostraptheme/g, `${data.salonName || 'Mon Salon'} - Salon de Coiffure`);
+        
+        // Remplacer les informations de contact dans le header
+        html = html.replace(/\(91\) 999 9999 99/g, data.phone || '');
+        html = html.replace(/Dros Began, India 222312/g, data.address || '');
+        
+        // Remplacer le nom du salon dans le contenu
+        html = html.replace(/Fascinating than any <br> fashion salon/g, `Bienvenue chez <br> ${data.salonName || 'notre salon'}`);
+        html = html.replace(/your hair style <br> our passionate team/g, `${data.salonName || 'Notre salon'} <br> Votre style, notre passion`);
+        
+        return html;
+    }
+
+    applyAlotanReplacements(html, data) {
+        // Remplacements spécifiques au template Alotan
+        html = html.replace(/Alotan - Beauty Salon/g, `${data.salonName || 'Mon Salon'} - Salon de Beauté`);
+        html = html.replace(/Professional Beauty Services/g, data.description || 'Services de beauté professionnels');
+        
+        // Remplacer les sections spécifiques à Alotan
+        html = html.replace(/Welcome to Alotan/g, `Bienvenue chez ${data.salonName || 'notre salon'}`);
+        html = html.replace(/Your Beauty is Our Priority/g, 'Votre beauté est notre priorité');
+        
+        return html;
+    }
+
+    applyGrafreezReplacements(html, data) {
+        // Remplacements spécifiques au template Grafreez
+        html = html.replace(/Grafreez - Hair Salon/g, `${data.salonName || 'Mon Salon'} - Salon de Coiffure`);
+        html = html.replace(/Modern Hair Styling/g, data.description || 'Coiffure moderne et professionnelle');
+        
+        // Remplacer les sections spécifiques à Grafreez
+        html = html.replace(/Expert Hair Stylists/g, 'Coiffeurs experts');
+        html = html.replace(/Quality Hair Care/g, 'Soins capillaires de qualité');
+        
+        return html;
+    }
+
             try {
                 const response = await fetch(`.templates/${imagePath}`);
                 if (response.ok) {

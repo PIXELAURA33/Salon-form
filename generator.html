@@ -134,6 +134,9 @@
                                 <h5><i class="fas fa-images"></i> Images (optionnel)</h5>
                                 <hr>
                                 <p class="text-muted">Uploadez vos propres images pour personnaliser votre site. Si aucune image n'est fournie, les images par défaut du template seront utilisées.</p>
+                                <div id="templateSpecificInfo" class="alert alert-info" style="display: none;">
+                                    <i class="fas fa-info-circle"></i> <span id="templateInfoText"></span>
+                                </div>
                             </div>
 
                             <!-- Image hero -->
@@ -294,6 +297,79 @@
                 'bohemian': 'Salon Bohème',
                 'neon': 'Salon Néon',
                 'industrial': 'Salon Industriel',
+
+
+    <script>
+        // Adapter l'interface selon le template sélectionné
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const template = urlParams.get('template') || 'barber';
+
+            // Configuration spécifique par template
+            const templateConfig = {
+                'barber': {
+                    showTeamImages: true,
+                    showAboutImage: true,
+                    showFooterImage: true,
+                    maxPortfolio: 6,
+                    infoText: 'Template Barber X - Toutes les sections d\'images sont disponibles pour personnalisation'
+                },
+                'alotan': {
+                    showTeamImages: false,
+                    showAboutImage: true,
+                    showFooterImage: false,
+                    maxPortfolio: 4,
+                    infoText: 'Template Alotan - Focus sur l\'image hero, logo et portfolio (max 4 images)'
+                },
+                'grafreez': {
+                    showTeamImages: false,
+                    showAboutImage: false,
+                    showFooterImage: false,
+                    maxPortfolio: 6,
+                    infoText: 'Template Grafreez - Style minimaliste avec image hero, logo et portfolio'
+                }
+            };
+
+            const config = templateConfig[template] || templateConfig['barber'];
+
+            // Afficher les informations spécifiques au template
+            const templateInfo = document.getElementById('templateSpecificInfo');
+            const templateInfoText = document.getElementById('templateInfoText');
+            if (templateInfo && templateInfoText) {
+                templateInfoText.textContent = config.infoText;
+                templateInfo.style.display = 'block';
+            }
+
+            // Masquer les sections non utilisées selon le template
+            if (!config.showTeamImages) {
+                const teamImagesSection = document.querySelector('.row').children[2]; // Section équipe
+                if (teamImagesSection) {
+                    teamImagesSection.style.display = 'none';
+                }
+            }
+
+            if (!config.showAboutImage) {
+                const aboutImageSection = document.querySelector('label[for="aboutImage"]');
+                if (aboutImageSection) {
+                    aboutImageSection.parentElement.style.display = 'none';
+                }
+            }
+
+            if (!config.showFooterImage) {
+                const footerImageSection = document.querySelector('label[for="footerImage"]');
+                if (footerImageSection) {
+                    footerImageSection.parentElement.style.display = 'none';
+                }
+            }
+
+            // Adapter le texte du portfolio selon le template
+            const portfolioLabel = document.querySelector('label[for="portfolioImages"]');
+            if (portfolioLabel) {
+                portfolioLabel.textContent = `Images portfolio (max ${config.maxPortfolio})`;
+            }
+        });
+    </script>
+
                 'romantic': 'Salon Romantique',
                 'scandinavian': 'Salon Scandinave',
                 'tropical': 'Salon Tropical',
