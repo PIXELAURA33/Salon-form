@@ -1,5 +1,4 @@
 
-
 class GoogleMapsExtractor {
     constructor() {
         this.corsProxyUrl = 'https://api.allorigins.win/raw?url=';
@@ -79,9 +78,9 @@ class GoogleMapsExtractor {
     validateUrl() {
         const mapsUrlInput = document.getElementById('mapsUrl');
         const extractBtn = document.getElementById('extractBtn');
-        const url = mapsUrlInput.value.trim();
+        const url = mapsUrlInput?.value?.trim() || '';
 
-        const isValidMapsUrl = url.includes('google.com/maps') && url.includes('place/');
+        const isValidMapsUrl = url.includes('google.com/maps') && (url.includes('place/') || url.includes('search/'));
         
         if (extractBtn) {
             extractBtn.disabled = !isValidMapsUrl;
@@ -97,7 +96,7 @@ class GoogleMapsExtractor {
     async extractFromMaps() {
         const mapsUrlInput = document.getElementById('mapsUrl');
         const extractBtn = document.getElementById('extractBtn');
-        const url = mapsUrlInput.value.trim();
+        const url = mapsUrlInput?.value?.trim() || '';
 
         if (!url) {
             this.showError('Veuillez saisir une URL Google Maps.');
@@ -105,8 +104,10 @@ class GoogleMapsExtractor {
         }
 
         this.showStatus('Extraction en cours...', 'info');
-        extractBtn.disabled = true;
-        extractBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Extraction...';
+        if (extractBtn) {
+            extractBtn.disabled = true;
+            extractBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Extraction...';
+        }
 
         try {
             // Méthode 1: Extraction avancée depuis l'URL
@@ -117,16 +118,13 @@ class GoogleMapsExtractor {
                 await this.enrichDataWithMultipleServices(extractedData);
             }
             
-            // Méthode 3: Extraction via Place ID si disponible
-            if (extractedData.placeId) {
-                await this.enrichWithPlaceId(extractedData);
-            }
-            
-            // Méthode 4: Extraction depuis le contenu de la page
+            // Méthode 3: Extraction depuis le contenu de la page
             await this.extractFromPageContent(url, extractedData);
             
-            // Méthode 5: Recherche intelligente des réseaux sociaux
-            await this.findSocialMediaLinks(extractedData);
+            // Méthode 4: Recherche intelligente des réseaux sociaux
+            if (extractedData.name) {
+                await this.findSocialMediaLinks(extractedData);
+            }
             
             if (extractedData && Object.keys(extractedData).length > 0) {
                 this.fillFormWithData(extractedData);
@@ -139,8 +137,10 @@ class GoogleMapsExtractor {
             console.error('Erreur extraction:', error);
             this.showError('Erreur lors de l\'extraction. Veuillez saisir les informations manuellement.');
         } finally {
-            extractBtn.disabled = false;
-            extractBtn.innerHTML = '<i class="fas fa-magic"></i> Extraire les données';
+            if (extractBtn) {
+                extractBtn.disabled = false;
+                extractBtn.innerHTML = '<i class="fas fa-magic"></i> Extraire les données';
+            }
             this.hideStatus();
         }
     }
@@ -180,29 +180,20 @@ class GoogleMapsExtractor {
                 }
             }
 
-            // Extraire Place ID (formats multiples)
-            const placeIdPatterns = [
-                /place_id:([a-zA-Z0-9_-]+)/,
-                /!1s0x[a-f0-9]+:0x([a-f0-9]+)/i,
-                /data=.*?1s0x[a-f0-9]+:0x([a-f0-9]+)/i,
-                /ftid=0x[a-f0-9]+:0x([a-f0-9]+)/i
+            // Extraire numéro de téléphone directement de l'URL
+            const phonePatterns = [
+                /phone[=:]([+\d\s\-\(\)]+)/i,
+                /tel[=:]([+\d\s\-\(\)]+)/i,
+                /(\+33[1-9][\d\s\-\.]{8,})/,
+                /(0[1-9][\d\s\-\.]{8,})/
             ];
             
-            for (const pattern of placeIdPatterns) {
+            for (const pattern of phonePatterns) {
                 const match = url.match(pattern);
                 if (match) {
-                    data.placeId = match[1];
+                    data.phone = this.cleanPhoneNumber(match[1]);
                     break;
                 }
-            }
-
-            // Extraire numéro de téléphone directement de l'URL
-            const phoneMatch = url.match(/phone[=:]([+\d\s\-\(\)]+)/i) ||
-                              url.match(/tel[=:]([+\d\s\-\(\)]+)/i) ||
-                              url.match(/(\+33[1-9][\d\s\-\.]{8,})/);
-            
-            if (phoneMatch) {
-                data.phone = this.cleanPhoneNumber(phoneMatch[1]);
             }
 
             return data;
@@ -220,9 +211,6 @@ class GoogleMapsExtractor {
             
             // Service 2: Places API alternatif
             await this.enrichWithAlternativePlacesAPI(data);
-            
-            // Service 3: Recherche par coordonnées avec services multiples
-            await this.searchByCoordinates(data);
 
         } catch (error) {
             console.warn('Erreur enrichissement:', error);
@@ -257,65 +245,90 @@ class GoogleMapsExtractor {
                 // Tags détaillés
                 if (result.extratags) {
                     const tags = result.extratags;
-                    
-                    if (tags.phone && !data.phone) {
-                        data.phone = this.cleanPhoneNumber(tags.phone);
-                    }
-                    
-                    if (tags['contact:phone'] && !data.phone) {
-                        data.phone = this.cleanPhoneNumber(tags['contact:phone']);
-                    }
-                    
-                    if (tags.website && !data.website) {
-                        data.website = this.cleanUrl(tags.website);
-                    }
-                    
-                    if (tags['contact:website'] && !data.website) {
-                        data.website = this.cleanUrl(tags['contact:website']);
-                    }
-                    
-                    if (tags.email && !data.email) {
-                        data.email = tags.email;
-                    }
-                    
-                    if (tags['contact:email'] && !data.email) {
-                        data.email = tags['contact:email'];
-                    }
-                    
-                    if (tags['opening_hours'] && !data.hours) {
-                        data.hours = this.formatOpeningHours(tags['opening_hours']);
-                    }
-                    
-                    // Réseaux sociaux
-                    if (tags.facebook && !data.facebook) {
-                        data.facebook = this.cleanSocialUrl(tags.facebook, 'facebook');
-                    }
-                    
-                    if (tags['contact:facebook'] && !data.facebook) {
-                        data.facebook = this.cleanSocialUrl(tags['contact:facebook'], 'facebook');
-                    }
-                    
-                    if (tags.instagram && !data.instagram) {
-                        data.instagram = this.cleanSocialUrl(tags.instagram, 'instagram');
-                    }
-                    
-                    if (tags['contact:instagram'] && !data.instagram) {
-                        data.instagram = this.cleanSocialUrl(tags['contact:instagram'], 'instagram');
-                    }
-                    
-                    // WhatsApp
-                    if (tags.whatsapp && !data.whatsapp) {
-                        data.whatsapp = this.extractWhatsAppNumber(tags.whatsapp);
-                    }
-                    
-                    if (tags['contact:whatsapp'] && !data.whatsapp) {
-                        data.whatsapp = this.extractWhatsAppNumber(tags['contact:whatsapp']);
-                    }
+                    this.extractTagsData(tags, data);
+                }
+
+                // Adresse structurée
+                if (result.address && !data.address) {
+                    data.address = this.buildAddressFromComponents(result.address);
                 }
             }
         } catch (error) {
             console.warn('Erreur Nominatim:', error);
         }
+    }
+
+    extractTagsData(tags, data) {
+        // Téléphone
+        const phoneFields = ['phone', 'contact:phone', 'mobile', 'contact:mobile'];
+        for (const field of phoneFields) {
+            if (tags[field] && !data.phone) {
+                data.phone = this.cleanPhoneNumber(tags[field]);
+                break;
+            }
+        }
+        
+        // Site web
+        const websiteFields = ['website', 'contact:website', 'url'];
+        for (const field of websiteFields) {
+            if (tags[field] && !data.website) {
+                data.website = this.cleanUrl(tags[field]);
+                break;
+            }
+        }
+        
+        // Email
+        const emailFields = ['email', 'contact:email'];
+        for (const field of emailFields) {
+            if (tags[field] && !data.email) {
+                data.email = tags[field];
+                break;
+            }
+        }
+        
+        // Horaires
+        if (tags['opening_hours'] && !data.hours) {
+            data.hours = this.formatOpeningHours(tags['opening_hours']);
+        }
+        
+        // Réseaux sociaux
+        const facebookFields = ['facebook', 'contact:facebook'];
+        for (const field of facebookFields) {
+            if (tags[field] && !data.facebook) {
+                data.facebook = this.cleanSocialUrl(tags[field], 'facebook');
+                break;
+            }
+        }
+        
+        const instagramFields = ['instagram', 'contact:instagram'];
+        for (const field of instagramFields) {
+            if (tags[field] && !data.instagram) {
+                data.instagram = this.cleanSocialUrl(tags[field], 'instagram');
+                break;
+            }
+        }
+        
+        // WhatsApp
+        const whatsappFields = ['whatsapp', 'contact:whatsapp'];
+        for (const field of whatsappFields) {
+            if (tags[field] && !data.whatsapp) {
+                data.whatsapp = this.extractWhatsAppNumber(tags[field]);
+                break;
+            }
+        }
+    }
+
+    buildAddressFromComponents(address) {
+        const components = [];
+        
+        if (address.house_number) components.push(address.house_number);
+        if (address.road) components.push(address.road);
+        if (address.postcode) components.push(address.postcode);
+        if (address.city || address.town || address.village) {
+            components.push(address.city || address.town || address.village);
+        }
+        
+        return components.join(', ');
     }
 
     async enrichWithAlternativePlacesAPI(data) {
@@ -324,9 +337,9 @@ class GoogleMapsExtractor {
             const overpassQuery = `
                 [out:json][timeout:25];
                 (
-                  node(around:50,${data.latitude},${data.longitude})["amenity"~"^(hairdresser|beauty_salon)$"];
-                  way(around:50,${data.latitude},${data.longitude})["amenity"~"^(hairdresser|beauty_salon)$"];
-                  relation(around:50,${data.latitude},${data.longitude})["amenity"~"^(hairdresser|beauty_salon)$"];
+                  node(around:100,${data.latitude},${data.longitude})["amenity"~"^(hairdresser|beauty_salon)$"];
+                  way(around:100,${data.latitude},${data.longitude})["amenity"~"^(hairdresser|beauty_salon)$"];
+                  relation(around:100,${data.latitude},${data.longitude})["amenity"~"^(hairdresser|beauty_salon)$"];
                 );
                 out tags;
             `;
@@ -346,47 +359,7 @@ class GoogleMapsExtractor {
                     const element = result.elements[0];
                     const tags = element.tags || {};
                     
-                    // Extraire toutes les informations disponibles
-                    if (tags.name && !data.name) {
-                        data.name = tags.name;
-                    }
-                    
-                    if (tags.phone && !data.phone) {
-                        data.phone = this.cleanPhoneNumber(tags.phone);
-                    }
-                    
-                    if (tags['addr:full'] && !data.address) {
-                        data.address = tags['addr:full'];
-                    } else if (!data.address) {
-                        const addr = [
-                            tags['addr:housenumber'],
-                            tags['addr:street'],
-                            tags['addr:postcode'],
-                            tags['addr:city']
-                        ].filter(Boolean).join(', ');
-                        
-                        if (addr) data.address = addr;
-                    }
-                    
-                    if (tags.website && !data.website) {
-                        data.website = this.cleanUrl(tags.website);
-                    }
-                    
-                    if (tags.email && !data.email) {
-                        data.email = tags.email;
-                    }
-                    
-                    if (tags.facebook && !data.facebook) {
-                        data.facebook = this.cleanSocialUrl(tags.facebook, 'facebook');
-                    }
-                    
-                    if (tags.instagram && !data.instagram) {
-                        data.instagram = this.cleanSocialUrl(tags.instagram, 'instagram');
-                    }
-                    
-                    if (tags.whatsapp && !data.whatsapp) {
-                        data.whatsapp = this.extractWhatsAppNumber(tags.whatsapp);
-                    }
+                    this.extractTagsData(tags, data);
                 }
             }
         } catch (error) {
@@ -394,110 +367,30 @@ class GoogleMapsExtractor {
         }
     }
 
-    async searchByCoordinates(data) {
-        try {
-            // Recherche dans Foursquare
-            await this.searchFoursquare(data);
-            
-            // Recherche dans Yelp (si disponible)
-            await this.searchYelp(data);
-            
-        } catch (error) {
-            console.warn('Erreur recherche coordonnées:', error);
-        }
-    }
-
-    async searchFoursquare(data) {
-        try {
-            // Utiliser l'API publique de Foursquare
-            const response = await fetch(
-                `https://api.foursquare.com/v3/places/search?ll=${data.latitude},${data.longitude}&radius=100&categories=11013,11014&limit=5`,
-                {
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                }
-            );
-
-            if (response.ok) {
-                const result = await response.json();
-                
-                if (result.results && result.results.length > 0) {
-                    const place = result.results[0];
-                    
-                    if (place.name && !data.name) {
-                        data.name = place.name;
-                    }
-                    
-                    if (place.location && place.location.formatted_address && !data.address) {
-                        data.address = place.location.formatted_address;
-                    }
-                    
-                    if (place.tel && !data.phone) {
-                        data.phone = this.cleanPhoneNumber(place.tel);
-                    }
-                    
-                    if (place.website && !data.website) {
-                        data.website = this.cleanUrl(place.website);
-                    }
-                    
-                    // Chercher les réseaux sociaux dans les liens
-                    if (place.social_media) {
-                        if (place.social_media.facebook && !data.facebook) {
-                            data.facebook = this.cleanSocialUrl(place.social_media.facebook, 'facebook');
-                        }
-                        
-                        if (place.social_media.instagram && !data.instagram) {
-                            data.instagram = this.cleanSocialUrl(place.social_media.instagram, 'instagram');
-                        }
-                    }
-                }
-            }
-        } catch (error) {
-            console.warn('Erreur Foursquare:', error);
-        }
-    }
-
     async extractFromPageContent(url, data) {
         try {
-            // Essayer d'extraire le contenu de la page Google Maps
-            const proxyUrl = `${this.corsProxyUrl}${encodeURIComponent(url)}`;
-            const response = await fetch(proxyUrl);
-            
-            if (response.ok) {
-                const html = await response.text();
-                
-                // Rechercher les numéros de téléphone dans le HTML
-                const phoneMatches = html.match(/(?:\+33|0)[1-9](?:[\s\-\.]?\d{2}){4}/g);
-                if (phoneMatches && !data.phone) {
-                    data.phone = this.cleanPhoneNumber(phoneMatches[0]);
-                }
-                
-                // Rechercher les emails
-                const emailMatches = html.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g);
-                if (emailMatches && !data.email) {
-                    data.email = emailMatches[0];
-                }
-                
-                // Rechercher Facebook
-                const facebookMatches = html.match(/(?:https?:\/\/)?(?:www\.)?facebook\.com\/[a-zA-Z0-9._-]+/g);
-                if (facebookMatches && !data.facebook) {
-                    data.facebook = this.cleanSocialUrl(facebookMatches[0], 'facebook');
-                }
-                
-                // Rechercher Instagram
-                const instagramMatches = html.match(/(?:https?:\/\/)?(?:www\.)?instagram\.com\/[a-zA-Z0-9._-]+/g);
-                if (instagramMatches && !data.instagram) {
-                    data.instagram = this.cleanSocialUrl(instagramMatches[0], 'instagram');
-                }
-                
-                // Rechercher WhatsApp
-                const whatsappMatches = html.match(/(?:https?:\/\/)?(?:wa\.me|whatsapp\.com\/send)\?phone=(\d+)/g);
-                if (whatsappMatches && !data.whatsapp) {
-                    const match = whatsappMatches[0].match(/phone=(\d+)/);
-                    if (match) {
-                        data.whatsapp = match[1];
+            // Essayer plusieurs proxies CORS
+            const proxies = [
+                this.corsProxyUrl,
+                'https://api.codetabs.com/v1/proxy?quest=',
+                'https://cors-anywhere.herokuapp.com/'
+            ];
+
+            for (const proxy of proxies) {
+                try {
+                    const proxyUrl = `${proxy}${encodeURIComponent(url)}`;
+                    const response = await fetch(proxyUrl, {
+                        timeout: 10000
+                    });
+                    
+                    if (response.ok) {
+                        const text = await response.text();
+                        this.parsePageContent(text, data);
+                        break; // Sortir si succès
                     }
+                } catch (error) {
+                    console.warn(`Proxy ${proxy} failed:`, error);
+                    continue;
                 }
             }
         } catch (error) {
@@ -505,39 +398,99 @@ class GoogleMapsExtractor {
         }
     }
 
+    parsePageContent(html, data) {
+        // Rechercher les numéros de téléphone français
+        if (!data.phone) {
+            const phonePatterns = [
+                /(?:\+33|0)[1-9](?:[\s\-\.]?\d{2}){4}/g,
+                /(?:\+33\s?|0)(?:[1-7]|8[0-9]|9[0-6])(?:[\s\-\.]?\d{2}){4}/g
+            ];
+            
+            for (const pattern of phonePatterns) {
+                const matches = html.match(pattern);
+                if (matches && matches.length > 0) {
+                    data.phone = this.cleanPhoneNumber(matches[0]);
+                    break;
+                }
+            }
+        }
+        
+        // Rechercher les emails
+        if (!data.email) {
+            const emailMatches = html.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g);
+            if (emailMatches && emailMatches.length > 0) {
+                data.email = emailMatches[0];
+            }
+        }
+        
+        // Rechercher Facebook
+        if (!data.facebook) {
+            const facebookMatches = html.match(/(?:https?:\/\/)?(?:www\.)?facebook\.com\/[a-zA-Z0-9._-]+/g);
+            if (facebookMatches && facebookMatches.length > 0) {
+                data.facebook = this.cleanSocialUrl(facebookMatches[0], 'facebook');
+            }
+        }
+        
+        // Rechercher Instagram
+        if (!data.instagram) {
+            const instagramMatches = html.match(/(?:https?:\/\/)?(?:www\.)?instagram\.com\/[a-zA-Z0-9._-]+/g);
+            if (instagramMatches && instagramMatches.length > 0) {
+                data.instagram = this.cleanSocialUrl(instagramMatches[0], 'instagram');
+            }
+        }
+        
+        // Rechercher WhatsApp
+        if (!data.whatsapp) {
+            const whatsappPatterns = [
+                /(?:https?:\/\/)?(?:wa\.me|whatsapp\.com\/send)\?phone=(\d+)/g,
+                /whatsapp:\/\/send\?phone=(\d+)/g
+            ];
+            
+            for (const pattern of whatsappPatterns) {
+                const matches = html.match(pattern);
+                if (matches && matches.length > 0) {
+                    const match = matches[0].match(/phone=(\d+)/);
+                    if (match) {
+                        data.whatsapp = match[1];
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     async findSocialMediaLinks(data) {
         if (!data.name) return;
         
         try {
-            // Générer des URLs probables pour les réseaux sociaux
             const normalizedName = this.normalizeName(data.name);
             
-            // Tester les URLs Facebook probables
+            // Générer des URLs probables pour Facebook
             if (!data.facebook) {
                 const facebookUrls = [
-                    `https://www.facebook.com/${normalizedName}`,
-                    `https://www.facebook.com/${normalizedName.replace(/\s+/g, '')}`,
-                    `https://www.facebook.com/${normalizedName.replace(/\s+/g, '.')}`
-                ];
+                    normalizedName.replace(/\s+/g, ''),
+                    normalizedName.replace(/\s+/g, '.'),
+                    normalizedName.replace(/\s+/g, '-')
+                ].map(name => `https://www.facebook.com/${name}`);
                 
                 for (const url of facebookUrls) {
-                    if (await this.checkUrlExists(url)) {
+                    if (await this.checkSocialUrlExists(url)) {
                         data.facebook = url;
                         break;
                     }
                 }
             }
             
-            // Tester les URLs Instagram probables
+            // Générer des URLs probables pour Instagram
             if (!data.instagram) {
                 const instagramUrls = [
-                    `https://www.instagram.com/${normalizedName.replace(/\s+/g, '')}`,
-                    `https://www.instagram.com/${normalizedName.replace(/\s+/g, '_')}`,
-                    `https://www.instagram.com/${normalizedName.replace(/\s+/g, '.')}`
-                ];
+                    normalizedName.replace(/\s+/g, ''),
+                    normalizedName.replace(/\s+/g, '_'),
+                    normalizedName.replace(/\s+/g, '.')
+                ].map(name => `https://www.instagram.com/${name}`);
                 
                 for (const url of instagramUrls) {
-                    if (await this.checkUrlExists(url)) {
+                    if (await this.checkSocialUrlExists(url)) {
                         data.instagram = url;
                         break;
                     }
@@ -549,10 +502,14 @@ class GoogleMapsExtractor {
         }
     }
 
-    async checkUrlExists(url) {
+    async checkSocialUrlExists(url) {
         try {
-            const response = await fetch(url, { method: 'HEAD', mode: 'no-cors' });
-            return true; // Si pas d'erreur, l'URL existe probablement
+            // Utiliser un proxy pour vérifier l'existence
+            const response = await fetch(`${this.corsProxyUrl}${encodeURIComponent(url)}`, { 
+                method: 'HEAD',
+                timeout: 5000
+            });
+            return response.ok;
         } catch (error) {
             return false;
         }
@@ -574,8 +531,8 @@ class GoogleMapsExtractor {
             .replace(/[^\d\+]/g, '')
             .trim();
         
-        // Convertir au format international si nécessaire
-        if (cleaned.startsWith('0')) {
+        // Convertir au format international français si nécessaire
+        if (cleaned.startsWith('0') && cleaned.length === 10) {
             cleaned = '+33' + cleaned.substring(1);
         }
         
@@ -586,13 +543,21 @@ class GoogleMapsExtractor {
         if (!whatsapp) return '';
         
         // Extraire le numéro de différents formats WhatsApp
-        const match = whatsapp.match(/(\+?\d{10,15})/);
-        if (match) {
-            let number = match[1];
-            if (number.startsWith('+')) {
-                number = number.substring(1);
+        const patterns = [
+            /(\+?\d{10,15})/,
+            /phone=(\d+)/,
+            /(\d{10,15})/
+        ];
+        
+        for (const pattern of patterns) {
+            const match = whatsapp.match(pattern);
+            if (match) {
+                let number = match[1];
+                if (number.startsWith('+')) {
+                    number = number.substring(1);
+                }
+                return number;
             }
-            return number;
         }
         
         return '';
@@ -770,7 +735,7 @@ class GoogleMapsExtractor {
 
     showTemporaryMessage(message, type = 'info') {
         const messageDiv = document.createElement('div');
-        messageDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        messageDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed temp-message`;
         messageDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 300px;';
         messageDiv.innerHTML = `
             <i class="fas fa-check-circle"></i> ${message}
@@ -839,9 +804,11 @@ class GoogleMapsExtractor {
             
             dataElement.innerHTML = extractedInfo;
             resultsElement.style.display = 'block';
+            resultsElement.classList.add('extraction-success-animation');
             
             setTimeout(() => {
                 resultsElement.style.display = 'none';
+                resultsElement.classList.remove('extraction-success-animation');
             }, 15000);
         }
         
@@ -878,11 +845,12 @@ class GoogleMapsExtractor {
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         try {
-            new GoogleMapsExtractor();
-            console.log('✅ Extracteur Google Maps amélioré initialisé');
+            if (!window.mapsExtractor) {
+                window.mapsExtractor = new GoogleMapsExtractor();
+                console.log('✅ Extracteur Google Maps corrigé et initialisé');
+            }
         } catch (error) {
             console.error('❌ Erreur initialisation extracteur:', error);
         }
-    }, 500);
+    }, 1000);
 });
-
