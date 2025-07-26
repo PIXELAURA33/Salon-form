@@ -1243,6 +1243,7 @@ class SalonGenerator {
         }
 
         if (typeof JSZip === 'undefined') {
+            console.error('JSZip non disponible');
             alert('Erreur: Bibliothèque JSZip non chargée. Veuillez recharger la page.');
             return;
         }
