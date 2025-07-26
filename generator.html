@@ -7,13 +7,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="generator.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 </head>
 <body>
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-10 mx-auto">
                 <div class="template-header mb-4">
-                    <a href="index.html" class="btn btn-outline-secondary">
+                    <a href="index.html" class="btn btn-outline-light">
                         <i class="fas fa-arrow-left"></i> Retour aux templates
                     </a>
                     <div class="template-info mt-3" id="templateInfo">
@@ -89,192 +90,155 @@
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="facebook" class="form-label">Facebook</label>
-                                        <input type="url" class="form-control" id="facebook" placeholder="https://facebook.com/...">
+                                        <input type="url" class="form-control" id="facebook" placeholder="https://facebook.com/votre-page">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="instagram" class="form-label">Instagram</label>
-                                        <input type="url" class="form-control" id="instagram" placeholder="https://instagram.com/...">
+                                        <input type="url" class="form-control" id="instagram" placeholder="https://instagram.com/votre-compte">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="whatsapp" class="form-label">WhatsApp</label>
-                                        <input type="tel" class="form-control" id="whatsapp" placeholder="+33...">
+                                        <input type="tel" class="form-control" id="whatsapp" placeholder="33123456789">
+                                        <small class="form-text text-muted">Format international sans le +</small>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Images du template -->
+                            <!-- Couleurs -->
                             <div class="section-header mt-4">
-                                <h5><i class="fas fa-image"></i> Personnalisation des images</h5>
+                                <h5><i class="fas fa-palette"></i> Couleurs</h5>
                                 <hr>
                             </div>
 
-                            <div class="row" id="imageOptions">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Image d'en-tête / Hero</label>
-                                    <div class="image-upload-container">
-                                        <input type="file" id="heroImage" class="form-control" accept="image/jpeg,image/jpg,image/png,image/webp">
-                                        <small class="form-text text-muted" id="heroImageInfo">
-                            <strong>Format:</strong> JPG, PNG, WEBP uniquement<br>
-                            <strong>Dimension recommandée:</strong> 1920x1080px<br>
-                            <strong>Taille max:</strong> 5MB
-                        </small>
-                                        <div class="image-preview mt-2" id="heroImagePreview" style="display: none;">
-                                            <img src="" alt="Aperçu" style="max-width: 200px; max-height: 120px; border-radius: 5px;">
-                                        </div>
-                                        <div class="alert alert-danger mt-2" id="heroImageError" style="display: none; padding: 8px; font-size: 12px;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Image "À propos" / Perfect Style</label>
-                                    <div class="image-upload-container">
-                                        <input type="file" id="aboutImage" class="form-control" accept="image/jpeg,image/jpg,image/png,image/webp">
-                                        <small class="form-text text-muted">
-                                            <strong>Format:</strong> JPG, PNG, WEBP uniquement<br>
-                                            <strong>Dimension recommandée:</strong> 800x600px<br>
-                                            <strong>Taille max:</strong> 5MB
-                                        </small>
-                                        <div class="image-preview mt-2" id="aboutImagePreview" style="display: none;">
-                                            <img src="" alt="Aperçu" style="max-width: 200px; max-height: 150px; border-radius: 5px;">
-                                        </div>
-                                        <div class="alert alert-danger mt-2" id="aboutImageError" style="display: none; padding: 8px; font-size: 12px;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label">Équipe - Photo 1</label>
-                                    <div class="image-upload-container">
-                                        <input type="file" id="team1Image" class="form-control" accept="image/jpeg,image/jpg,image/png,image/webp">
-                                        <small class="form-text text-muted">
-                                            <strong>Format:</strong> JPG, PNG, WEBP<br>
-                                            <strong>Dimension:</strong> 400x400px (carré)<br>
-                                            <strong>Taille max:</strong> 3MB
-                                        </small>
-                                        <div class="image-preview mt-2" id="team1ImagePreview" style="display: none;">
-                                            <img src="" alt="Aperçu" style="max-width: 100px; max-height: 100px; border-radius: 50%;">
-                                        </div>
-                                        <div class="alert alert-danger mt-2" id="team1ImageError" style="display: none; padding: 8px; font-size: 12px;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label">Équipe - Photo 2</label>
-                                    <div class="image-upload-container">
-                                        <input type="file" id="team2Image" class="form-control" accept="image/jpeg,image/jpg,image/png,image/webp">
-                                        <small class="form-text text-muted">
-                                            <strong>Format:</strong> JPG, PNG, WEBP<br>
-                                            <strong>Dimension:</strong> 400x400px (carré)<br>
-                                            <strong>Taille max:</strong> 3MB
-                                        </small>
-                                        <div class="image-preview mt-2" id="team2ImagePreview" style="display: none;">
-                                            <img src="" alt="Aperçu" style="max-width: 100px; max-height: 100px; border-radius: 50%;">
-                                        </div>
-                                        <div class="alert alert-danger mt-2" id="team2ImageError" style="display: none; padding: 8px; font-size: 12px;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label">Équipe - Photo 3</label>
-                                    <div class="image-upload-container">
-                                        <input type="file" id="team3Image" class="form-control" accept="image/jpeg,image/jpg,image/png,image/webp">
-                                        <small class="form-text text-muted">
-                                            <strong>Format:</strong> JPG, PNG, WEBP<br>
-                                            <strong>Dimension:</strong> 400x400px (carré)<br>
-                                            <strong>Taille max:</strong> 3MB
-                                        </small>
-                                        <div class="image-preview mt-2" id="team3ImagePreview" style="display: none;">
-                                            <img src="" alt="Aperçu" style="max-width: 100px; max-height: 100px; border-radius: 50%;">
-                                        </div>
-                                        <div class="alert alert-danger mt-2" id="team3ImageError" style="display: none; padding: 8px; font-size: 12px;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="col-12 mb-3">
-                                    <label class="form-label">Portfolio / Galerie (jusqu'à 6 images)</label>
-                                    <div class="image-upload-container">
-                                        <input type="file" id="portfolioImages" class="form-control" accept="image/jpeg,image/jpg,image/png,image/webp" multiple>
-                                        <small class="form-text text-muted">
-                                            <strong>Format:</strong> JPG, PNG, WEBP uniquement<br>
-                                            <strong>Dimension recommandée:</strong> 600x600px (carré de préférence)<br>
-                                            <strong>Nombre max:</strong> 6 images | <strong>Taille max par image:</strong> 4MB
-                                        </small>
-                                        <div class="image-preview mt-2" id="portfolioImagesPreview" style="display: none;">
-                                            <div class="d-flex flex-wrap gap-2" id="portfolioPreviewContainer"></div>
-                                        </div>
-                                        <div class="alert alert-danger mt-2" id="portfolioImagesError" style="display: none; padding: 8px; font-size: 12px;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Logo du salon</label>
-                                    <div class="image-upload-container">
-                                        <input type="file" id="logoImage" class="form-control" accept="image/png,image/svg+xml,image/webp">
-                                        <small class="form-text text-muted" id="logoImageInfo">
-                            <strong>Format:</strong> PNG, SVG, WEBP (fond transparent recommandé)<br>
-                            <strong>Dimension recommandée:</strong> 200x200px ou ratio 1:1<br>
-                            <strong>Taille max:</strong> 2MB
-                        </small>
-                                        <div class="image-preview mt-2" id="logoImagePreview" style="display: none;">
-                                            <img src="" alt="Aperçu" style="max-width: 100px; max-height: 100px; border-radius: 5px;">
-                                        </div>
-                                        <div class="alert alert-danger mt-2" id="logoImageError" style="display: none; padding: 8px; font-size: 12px;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Image de pied de page</label>
-                                    <div class="image-upload-container">
-                                        <input type="file" id="footerImage" class="form-control" accept="image/jpeg,image/jpg,image/png,image/webp">
-                                        <small class="form-text text-muted">
-                                            <strong>Format:</strong> JPG, PNG, WEBP uniquement<br>
-                                            <strong>Dimension recommandée:</strong> 1920x400px (format paysage)<br>
-                                            <strong>Taille max:</strong> 5MB
-                                        </small>
-                                        <div class="image-preview mt-2" id="footerImagePreview" style="display: none;">
-                                            <img src="" alt="Aperçu" style="max-width: 200px; max-height: 50px; border-radius: 5px;">
-                                        </div>
-                                        <div class="alert alert-danger mt-2" id="footerImageError" style="display: none; padding: 8px; font-size: 12px;"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Couleurs du template (selon le template choisi) -->
-                            <div class="section-header mt-4" id="colorSection">
-                                <h5><i class="fas fa-palette"></i> Personnalisation des couleurs</h5>
-                                <hr>
-                            </div>
-
-                            <div class="row" id="colorOptions">
+                            <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="primaryColor" class="form-label">Couleur principale</label>
-                                        <input type="color" class="form-control form-control-color" id="primaryColor" value="#667eea">
+                                        <input type="color" class="form-control color-input" id="primaryColor" value="#667eea">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="secondaryColor" class="form-label">Couleur secondaire</label>
-                                        <input type="color" class="form-control form-control-color" id="secondaryColor" value="#764ba2">
+                                        <input type="color" class="form-control color-input" id="secondaryColor" value="#764ba2">
                                     </div>
                                 </div>
                             </div>
 
+                            <!-- Images -->
+                            <div class="section-header mt-4">
+                                <h5><i class="fas fa-images"></i> Images (optionnel)</h5>
+                                <hr>
+                                <p class="text-muted">Uploadez vos propres images pour personnaliser votre site. Si aucune image n'est fournie, les images par défaut du template seront utilisées.</p>
+                            </div>
+
+                            <!-- Image hero -->
+                            <div class="mb-4">
+                                <label for="heroImage" class="form-label">Image d'en-tête principale</label>
+                                <div class="upload-zone" onclick="document.getElementById('heroImage').click()">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <div class="upload-text">Cliquez ou glissez votre image ici</div>
+                                </div>
+                                <input type="file" id="heroImage" accept="image/*" style="display: none;">
+                                <div id="heroImageInfo" class="format-info"></div>
+                                <div id="heroImageError" class="error-message" style="display: none;"></div>
+                                <div id="heroImagePreview" class="image-preview" style="display: none;">
+                                    <img src="" alt="Aperçu">
+                                </div>
+                            </div>
+
+                            <!-- Logo -->
+                            <div class="mb-4">
+                                <label for="logoImage" class="form-label">Logo du salon</label>
+                                <div class="upload-zone" onclick="document.getElementById('logoImage').click()">
+                                    <i class="fas fa-image"></i>
+                                    <div class="upload-text">Cliquez ou glissez votre logo ici</div>
+                                </div>
+                                <input type="file" id="logoImage" accept="image/*" style="display: none;">
+                                <div id="logoImageInfo" class="format-info"></div>
+                                <div id="logoImageError" class="error-message" style="display: none;"></div>
+                                <div id="logoImagePreview" class="image-preview" style="display: none;">
+                                    <img src="" alt="Aperçu logo">
+                                </div>
+                            </div>
+
+                            <!-- Images équipe -->
+                            <div class="row">
+                                <div class="col-md-4 mb-4">
+                                    <label for="team1Image" class="form-label">Photo équipe 1</label>
+                                    <div class="upload-zone" onclick="document.getElementById('team1Image').click()">
+                                        <i class="fas fa-user"></i>
+                                        <div class="upload-text">Photo membre 1</div>
+                                    </div>
+                                    <input type="file" id="team1Image" accept="image/*" style="display: none;">
+                                    <div id="team1ImageError" class="error-message" style="display: none;"></div>
+                                    <div id="team1ImagePreview" class="image-preview" style="display: none;">
+                                        <img src="" alt="Aperçu équipe 1">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <label for="team2Image" class="form-label">Photo équipe 2</label>
+                                    <div class="upload-zone" onclick="document.getElementById('team2Image').click()">
+                                        <i class="fas fa-user"></i>
+                                        <div class="upload-text">Photo membre 2</div>
+                                    </div>
+                                    <input type="file" id="team2Image" accept="image/*" style="display: none;">
+                                    <div id="team2ImageError" class="error-message" style="display: none;"></div>
+                                    <div id="team2ImagePreview" class="image-preview" style="display: none;">
+                                        <img src="" alt="Aperçu équipe 2">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <label for="team3Image" class="form-label">Photo équipe 3</label>
+                                    <div class="upload-zone" onclick="document.getElementById('team3Image').click()">
+                                        <i class="fas fa-user"></i>
+                                        <div class="upload-text">Photo membre 3</div>
+                                    </div>
+                                    <input type="file" id="team3Image" accept="image/*" style="display: none;">
+                                    <div id="team3ImageError" class="error-message" style="display: none;"></div>
+                                    <div id="team3ImagePreview" class="image-preview" style="display: none;">
+                                        <img src="" alt="Aperçu équipe 3">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Portfolio -->
+                            <div class="mb-4">
+                                <label for="portfolioImages" class="form-label">Images portfolio (max 6)</label>
+                                <div class="upload-zone" onclick="document.getElementById('portfolioImages').click()">
+                                    <i class="fas fa-images"></i>
+                                    <div class="upload-text">Cliquez ou glissez vos images portfolio ici</div>
+                                </div>
+                                <input type="file" id="portfolioImages" accept="image/*" multiple style="display: none;">
+                                <div id="portfolioImagesError" class="error-message" style="display: none;"></div>
+                                <div id="portfolioImagesPreview" class="image-preview" style="display: none;">
+                                    <div id="portfolioPreviewContainer" class="portfolio-preview-container"></div>
+                                </div>
+                            </div>
+
                             <!-- Boutons d'action -->
-                            <div class="action-buttons mt-4">
-                                <div class="d-grid gap-2">
-                                    <button type="submit" class="btn btn-primary btn-lg">
-                                        <i class="fas fa-magic"></i> Générer le site
-                                    </button>
-                                    <button type="button" id="previewBtn" class="btn btn-info" disabled onclick="document.getElementById('salonForm').dispatchEvent(new Event('submit'))">
-                                        <i class="fas fa-eye"></i> Aperçu du site
-                                    </button>
-                                    <button type="button" id="downloadBtn" class="btn btn-success" disabled>
-                                        <i class="fas fa-download"></i> Télécharger le site (.zip)
-                                    </button>
+                            <div class="section-header mt-5">
+                                <h5><i class="fas fa-rocket"></i> Génération</h5>
+                                <hr>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-primary btn-lg">
+                                            <i class="fas fa-magic"></i> Générer le site
+                                        </button>
+                                        <button type="button" id="previewBtn" class="btn btn-info" disabled onclick="document.getElementById('salonForm').dispatchEvent(new Event('submit'))">
+                                            <i class="fas fa-eye"></i> Aperçu du site
+                                        </button>
+                                        <button type="button" id="downloadBtn" class="btn btn-success" disabled>
+                                            <i class="fas fa-download"></i> Télécharger le site (.zip)
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -292,12 +256,12 @@
                     <h5 class="modal-title">Aperçu du site généré</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <iframe id="previewFrame" style="width: 100%; height: 70vh; border: none;"></iframe>
+                <div class="modal-body p-0">
+                    <iframe id="previewFrame" src="about:blank"></iframe>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                    <button type="button" id="downloadFromPreview" class="btn btn-success">
+                    <button type="button" id="downloadFromPreview" class="btn btn-success" disabled>
                         <i class="fas fa-download"></i> Télécharger
                     </button>
                 </div>
@@ -306,67 +270,61 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="generator.js"></script>
 
     <script>
-        // Détecter le template sélectionné depuis l'URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const selectedTemplate = urlParams.get('template') || 'classic';
-
-        // Mettre à jour l'interface selon le template
+        // Initialiser les informations du template selon l'URL
         document.addEventListener('DOMContentLoaded', function() {
-            updateTemplateInfo(selectedTemplate);
-            updateColorOptions(selectedTemplate);
+            const urlParams = new URLSearchParams(window.location.search);
+            const template = urlParams.get('template') || 'classic';
+
+            const templateNames = {
+                'classic': 'Salon Classique',
+                'modern': 'Salon Moderne',
+                'luxury': 'Salon Luxe',
+                'minimal': 'Salon Minimaliste',
+                'barber': 'Salon Barbier',
+                'creative': 'Salon Créatif',
+                'spa': 'Salon Spa',
+                'futuristic': 'Salon Futuriste',
+                'vintage': 'Salon Vintage',
+                'urban': 'Salon Urbain',
+                'nature': 'Salon Nature',
+                'bohemian': 'Salon Bohème',
+                'neon': 'Salon Néon',
+                'industrial': 'Salon Industriel',
+                'romantic': 'Salon Romantique',
+                'scandinavian': 'Salon Scandinave',
+                'tropical': 'Salon Tropical',
+                'artdeco': 'Salon Art Déco',
+                'cyber': 'Salon Cyber'
+            };
+
+            const templateDescriptions = {
+                'classic': 'Personnalisez votre template classique et élégant',
+                'modern': 'Personnalisez votre template moderne et dynamique',
+                'luxury': 'Personnalisez votre template premium et raffiné',
+                'minimal': 'Personnalisez votre template épuré et sophistiqué',
+                'barber': 'Personnalisez votre template masculin et traditionnel',
+                'creative': 'Personnalisez votre template artistique et original',
+                'spa': 'Personnalisez votre template zen et relaxant',
+                'futuristic': 'Personnalisez votre template high-tech et avant-gardiste',
+                'vintage': 'Personnalisez votre template rétro et nostalgique',
+                'urban': 'Personnalisez votre template street et moderne',
+                'nature': 'Personnalisez votre template bio et éco-responsable',
+                'bohemian': 'Personnalisez votre template bohème et décontracté',
+                'neon': 'Personnalisez votre template électrisant et branché',
+                'industrial': 'Personnalisez votre template industriel et urbain',
+                'romantic': 'Personnalisez votre template romantique et féminin',
+                'scandinavian': 'Personnalisez votre template nordique et cosy',
+                'tropical': 'Personnalisez votre template exotique et estival',
+                'artdeco': 'Personnalisez votre template Art Déco sophistiqué',
+                'cyber': 'Personnalisez votre template cyberpunk et futuriste'
+            };
+
+            document.getElementById('templateName').textContent = templateNames[template] || 'Template Sélectionné';
+            document.getElementById('templateDescription').textContent = templateDescriptions[template] || 'Personnalisez votre template';
         });
-
-        function updateTemplateInfo(template) {
-            const templateInfo = {
-                'classic': {
-                    name: '🎨 Salon Classique',
-                    description: 'Template élégant et professionnel pour salons traditionnels'
-                },
-                'modern': {
-                    name: '✨ Salon Moderne', 
-                    description: 'Design contemporain avec animations fluides'
-                },
-                'luxury': {
-                    name: '💎 Salon Luxury',
-                    description: 'Template haut de gamme pour salons premium'
-                },
-                'minimal': {
-                    name: '🌿 Salon Minimaliste',
-                    description: 'Design épuré et clean'
-                },
-                'barber': {
-                    name: '✂️ Salon Barbier',
-                    description: 'Style masculin et vintage pour barbershops'
-                },
-                'creative': {
-                    name: '🎨 Salon Créatif',
-                    description: 'Design coloré et artistique'
-                }
-            };
-
-            const info = templateInfo[template] || templateInfo['classic'];
-            document.getElementById('templateName').textContent = info.name;
-            document.getElementById('templateDescription').textContent = info.description;
-        }
-
-        function updateColorOptions(template) {
-            const colorPresets = {
-                'classic': { primary: '#667eea', secondary: '#764ba2' },
-                'modern': { primary: '#f093fb', secondary: '#f5576c' },
-                'luxury': { primary: '#ffecd2', secondary: '#fcb69f' },
-                'minimal': { primary: '#a8edea', secondary: '#fed6e3' },
-                'barber': { primary: '#434343', secondary: '#000000' },
-                'creative': { primary: '#ff9a9e', secondary: '#fecfef' }
-            };
-
-            const colors = colorPresets[template] || colorPresets['classic'];
-            document.getElementById('primaryColor').value = colors.primary;
-            document.getElementById('secondaryColor').value = colors.secondary;
-        }
     </script>
 </body>
 </html>

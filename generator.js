@@ -86,6 +86,38 @@ class SalonGenerator {
             'nature': {
                 'heroImageInfo': 'JPG, PNG, WEBP (bio optimisé) | 1920x1080px | Max: 5MB',
                 'logoImageInfo': 'PNG, SVG, WEBP (style nature) | 200x200px | Max: 2MB'
+            },
+            'bohemian': {
+                'heroImageInfo': 'JPG, PNG, WEBP (style bohème) | 1920x1080px | Max: 6MB',
+                'logoImageInfo': 'PNG, SVG, WEBP (artistique) | 200x200px | Max: 3MB'
+            },
+            'neon': {
+                'heroImageInfo': 'JPG, PNG, WEBP (haute saturation) | 1920x1080px | Max: 7MB',
+                'logoImageInfo': 'PNG, SVG, WEBP (effets néon) | 200x200px | Max: 4MB'
+            },
+            'industrial': {
+                'heroImageInfo': 'JPG, PNG, WEBP (style industriel) | 1920x1080px | Max: 6MB',
+                'logoImageInfo': 'PNG, SVG, WEBP (métallique) | 200x200px | Max: 3MB'
+            },
+            'romantic': {
+                'heroImageInfo': 'JPG, PNG, WEBP (tons pastel) | 1920x1080px | Max: 5MB',
+                'logoImageInfo': 'PNG, SVG, WEBP (romantique) | 200x200px | Max: 3MB'
+            },
+            'scandinavian': {
+                'heroImageInfo': 'JPG, PNG, WEBP (lumière naturelle) | 1920x1080px | Max: 4MB',
+                'logoImageInfo': 'PNG, SVG, WEBP (minimaliste) | 200x200px | Max: 2MB'
+            },
+            'tropical': {
+                'heroImageInfo': 'JPG, PNG, WEBP (couleurs vives) | 1920x1080px | Max: 6MB',
+                'logoImageInfo': 'PNG, SVG, WEBP (exotique) | 200x200px | Max: 3MB'
+            },
+            'artdeco': {
+                'heroImageInfo': 'JPG, PNG (qualité premium) | 1920x1080px | Max: 8MB',
+                'logoImageInfo': 'PNG, SVG (géométrique) | 200x200px | Max: 4MB'
+            },
+            'cyber': {
+                'heroImageInfo': 'JPG, PNG, WEBP (high-tech) | 1920x1080px | Max: 8MB',
+                'logoImageInfo': 'PNG, SVG, WEBP (futuriste) | 200x200px | Max: 4MB'
             }
         };
 
@@ -361,7 +393,7 @@ class SalonGenerator {
 
         // Ajouter les autres templates avec des règles similaires
         const baseRules = templateValidationRules.classic;
-        ['modern', 'luxury', 'minimal', 'barber', 'creative', 'spa', 'futuristic', 'vintage', 'urban', 'nature'].forEach(template => {
+        ['modern', 'luxury', 'minimal', 'barber', 'creative', 'spa', 'futuristic', 'vintage', 'urban', 'nature', 'bohemian', 'neon', 'industrial', 'romantic', 'scandinavian', 'tropical', 'artdeco', 'cyber'].forEach(template => {
             templateValidationRules[template] = JSON.parse(JSON.stringify(baseRules));
         });
 
@@ -523,7 +555,15 @@ class SalonGenerator {
             'futuristic': () => this.getFuturisticTemplate(),
             'vintage': () => this.getVintageTemplate(),
             'urban': () => this.getUrbanTemplate(),
-            'nature': () => this.getNatureTemplate()
+            'nature': () => this.getNatureTemplate(),
+            'bohemian': () => this.getBohemianTemplate(),
+            'neon': () => this.getNeonTemplate(),
+            'industrial': () => this.getIndustrialTemplate(),
+            'romantic': () => this.getRomanticTemplate(),
+            'scandinavian': () => this.getScandinavianTemplate(),
+            'tropical': () => this.getTropicalTemplate(),
+            'artdeco': () => this.getArtDecoTemplate(),
+            'cyber': () => this.getCyberTemplate()
         };
 
         const templateLoader = templates[templateType] || templates['classic'];
@@ -587,6 +627,38 @@ class SalonGenerator {
         return this.getTemplateVariation('nature');
     }
 
+    async getBohemianTemplate() {
+        return this.getTemplateVariation('bohemian');
+    }
+
+    async getNeonTemplate() {
+        return this.getTemplateVariation('neon');
+    }
+
+    async getIndustrialTemplate() {
+        return this.getTemplateVariation('industrial');
+    }
+
+    async getRomanticTemplate() {
+        return this.getTemplateVariation('romantic');
+    }
+
+    async getScandinavianTemplate() {
+        return this.getTemplateVariation('scandinavian');
+    }
+
+    async getTropicalTemplate() {
+        return this.getTemplateVariation('tropical');
+    }
+
+    async getArtDecoTemplate() {
+        return this.getTemplateVariation('artdeco');
+    }
+
+    async getCyberTemplate() {
+        return this.getTemplateVariation('cyber');
+    }
+
     async getTemplateVariation(type) {
         const baseTemplate = await this.getDefaultTemplate();
         return this.applyTemplateStyle(baseTemplate, type);
@@ -643,6 +715,46 @@ class SalonGenerator {
                 gradient: 'linear-gradient(45deg, #56ab2f, #a8e6cf)',
                 fontFamily: 'Merriweather, serif',
                 buttonStyle: 'border-radius: 25px; background: linear-gradient(45deg, #2d5016, #56ab2f); border: 2px solid #7fcdcd;'
+            },
+            'bohemian': {
+                gradient: 'linear-gradient(45deg, #b7937d, #f5deb3)',
+                fontFamily: 'Libre Baskerville, serif',
+                buttonStyle: 'border-radius: 20px; background: linear-gradient(45deg, #8b4513, #deb887); border: 2px solid #daa520;'
+            },
+            'neon': {
+                gradient: 'linear-gradient(45deg, #ff0080, #00ff80)',
+                fontFamily: 'Neon, monospace',
+                buttonStyle: 'border-radius: 30px; background: linear-gradient(45deg, #ff0080, #00ff80); box-shadow: 0 0 20px rgba(255, 0, 128, 0.5);'
+            },
+            'industrial': {
+                gradient: 'linear-gradient(45deg, #555555, #888888)',
+                fontFamily: 'Industrial, sans-serif',
+                buttonStyle: 'border-radius: 0; background: linear-gradient(45deg, #333, #666); border: 2px solid #ffa500;'
+            },
+            'romantic': {
+                gradient: 'linear-gradient(45deg, #ffc0cb, #ffb6c1)',
+                fontFamily: 'Parisienne, cursive',
+                buttonStyle: 'border-radius: 25px; background: linear-gradient(45deg, #ff69b4, #ffb6c1); color: white;'
+            },
+            'scandinavian': {
+                gradient: 'linear-gradient(45deg, #f0f8ff, #e6f3ff)',
+                fontFamily: 'Source Sans Pro, sans-serif',
+                buttonStyle: 'border-radius: 3px; background: linear-gradient(45deg, #4682b4, #87ceeb); color: white;'
+            },
+            'tropical': {
+                gradient: 'linear-gradient(45deg, #ff7f50, #ffb347)',
+                fontFamily: 'Kaushan Script, cursive',
+                buttonStyle: 'border-radius: 30px; background: linear-gradient(45deg, #ff6347, #ffa500); color: white;'
+            },
+            'artdeco': {
+                gradient: 'linear-gradient(45deg, #d4af37, #1a1a1a)',
+                fontFamily: 'Cinzel, serif',
+                buttonStyle: 'border-radius: 0; background: linear-gradient(45deg, #d4af37, #b8860b); color: #000; border: 2px solid #ffd700;'
+            },
+            'cyber': {
+                gradient: 'linear-gradient(45deg, #00ffff, #ff00ff)',
+                fontFamily: 'Orbitron, monospace',
+                buttonStyle: 'border-radius: 0; background: linear-gradient(45deg, #00ffff, #ff00ff); color: #000; text-shadow: 0 0 10px #fff;'
             }
         };
 
