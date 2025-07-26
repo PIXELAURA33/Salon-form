@@ -447,16 +447,83 @@ class GoogleMapsExtractor {
                     const processedValue = field.transformer ? 
                         field.transformer.call(this, field.value) : field.value;
                     
+                    // Préserver les animations et transitions CSS existantes
+                    const originalTransition = input.style.transition;
+                    const originalAnimation = input.style.animation;
+                    
                     input.value = processedValue;
+                    
+                    // Déclencher les événements nécessaires pour maintenir la cohérence du template
                     input.dispatchEvent(new Event('input', { bubbles: true }));
                     input.dispatchEvent(new Event('change', { bubbles: true }));
+                    input.dispatchEvent(new Event('blur', { bubbles: true }));
+                    
+                    // Restaurer les propriétés CSS si elles ont été modifiées
+                    if (originalTransition) input.style.transition = originalTransition;
+                    if (originalAnimation) input.style.animation = originalAnimation;
+                    
+                    // Maintenir les classes CSS du template
+                    this.preserveTemplateClasses(input);
                 }
             });
 
+            // Déclencher la mise à jour du preview si elle existe
+            this.triggerPreviewUpdate();
+            
             this.highlightFilledFields();
 
         } catch (error) {
             console.error('Erreur lors du remplissage:', error);
+        }
+    }
+
+    preserveTemplateClasses(input) {
+        try {
+            // Préserver les classes importantes du template
+            const importantClasses = ['form-control', 'form-control-lg', 'form-control-sm', 
+                                    'field-filled', 'is-valid', 'is-invalid'];
+            
+            importantClasses.forEach(className => {
+                if (input.classList.contains(className)) {
+                    // Réappliquer la classe après un court délai pour maintenir les animations
+                    setTimeout(() => {
+                        if (!input.classList.contains(className)) {
+                            input.classList.add(className);
+                        }
+                    }, 50);
+                }
+            });
+
+            // Préserver les attributs de style inline importants
+            const computedStyle = window.getComputedStyle(input);
+            const importantStyles = ['border-radius', 'box-shadow', 'background-color'];
+            
+            importantStyles.forEach(styleProp => {
+                if (computedStyle[styleProp]) {
+                    input.style.setProperty(styleProp, computedStyle[styleProp], 'important');
+                }
+            });
+
+        } catch (error) {
+            console.warn('Erreur lors de la préservation des classes:', error);
+        }
+    }
+
+    triggerPreviewUpdate() {
+        try {
+            // Chercher les fonctions de mise à jour du générateur
+            if (typeof window.siteGenerator !== 'undefined' && window.siteGenerator.updatePreview) {
+                window.siteGenerator.updatePreview();
+            }
+            
+            // Déclencher un événement personnalisé pour notifier les autres composants
+            const updateEvent = new CustomEvent('formDataUpdated', {
+                detail: { source: 'mapsExtractor' }
+            });
+            document.dispatchEvent(updateEvent);
+            
+        } catch (error) {
+            console.warn('Erreur lors de la mise à jour du preview:', error);
         }
     }
 
@@ -471,24 +538,57 @@ class GoogleMapsExtractor {
             return field && field.value.trim();
         });
 
-        filledFields.forEach(fieldId => {
+        filledFields.forEach((fieldId, index) => {
             const field = document.getElementById(fieldId);
             if (field) {
-                field.style.backgroundColor = '#e8f5e8';
-                field.style.border = '2px solid #28a745';
-                field.style.transition = 'all 0.3s ease';
-                
+                // Attendre un délai progressif pour un effet cascade
                 setTimeout(() => {
-                    field.style.backgroundColor = '';
-                    field.style.border = '';
-                }, 3000);
+                    // Sauvegarder les styles originaux
+                    const originalBorder = field.style.border;
+                    const originalBackground = field.style.backgroundColor;
+                    const originalBoxShadow = field.style.boxShadow;
+                    
+                    // Ajouter la classe d'animation CSS existante si elle existe
+                    field.classList.add('field-filled');
+                    
+                    // Appliquer l'animation de remplissage
+                    field.style.backgroundColor = '#e8f5e8';
+                    field.style.border = '2px solid #28a745';
+                    field.style.boxShadow = '0 0 10px rgba(40, 167, 69, 0.3)';
+                    field.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                    field.style.transform = 'scale(1.02)';
+                    
+                    // Animation de "pulse" pour attirer l'attention
+                    field.style.animation = 'fillSuccess 1s ease-in-out';
+                    
+                    setTimeout(() => {
+                        // Retour à l'état normal avec préservation du style du template
+                        field.style.transform = 'scale(1)';
+                        field.style.backgroundColor = originalBackground || '';
+                        field.style.border = originalBorder || '';
+                        field.style.boxShadow = originalBoxShadow || '';
+                        field.style.animation = '';
+                        
+                        // Garder une bordure verte discrète pour indiquer le remplissage
+                        if (!originalBorder) {
+                            field.style.borderLeft = '4px solid #28a745';
+                        }
+                        
+                        // Supprimer la bordure verte après quelques secondes
+                        setTimeout(() => {
+                            field.style.borderLeft = '';
+                            field.classList.remove('field-filled');
+                        }, 5000);
+                        
+                    }, 2000);
+                }, index * 150); // Délai progressif pour effet cascade
             }
         });
 
-        // Afficher un message de succès
+        // Afficher un message de succès avec animation
         if (filledFields.length > 0) {
             this.showTemporaryMessage(
-                `${filledFields.length} champ(s) rempli(s) automatiquement !`, 
+                `✨ ${filledFields.length} champ(s) rempli(s) automatiquement !`, 
                 'success'
             );
         }

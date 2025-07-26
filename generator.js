@@ -44,7 +44,7 @@ class SalonGenerator {
     initFormValidation() {
         // Validation en temps réel des champs obligatoires
         const requiredFields = ['salonName', 'phone', 'address'];
-        
+
         requiredFields.forEach(fieldId => {
             const field = document.getElementById(fieldId);
             if (field) {
@@ -69,7 +69,7 @@ class SalonGenerator {
     validateRequiredField(field) {
         const value = field.value.trim();
         const isValid = value.length > 0;
-        
+
         if (isValid) {
             field.classList.remove('is-invalid');
             field.classList.add('is-valid');
@@ -77,7 +77,7 @@ class SalonGenerator {
             field.classList.remove('is-valid');
             field.classList.add('is-invalid');
         }
-        
+
         return isValid;
     }
 
@@ -85,7 +85,7 @@ class SalonGenerator {
         const value = field.value.trim();
         const phoneRegex = /^[\d\s\-\+\(\)\.]{8,}$/;
         const isValid = value === '' || phoneRegex.test(value);
-        
+
         if (isValid && value !== '') {
             field.classList.remove('is-invalid');
             field.classList.add('is-valid');
@@ -95,7 +95,7 @@ class SalonGenerator {
         } else {
             field.classList.remove('is-valid', 'is-invalid');
         }
-        
+
         return isValid;
     }
 
@@ -103,7 +103,7 @@ class SalonGenerator {
         const value = field.value.trim();
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const isValid = value === '' || emailRegex.test(value);
-        
+
         if (isValid && value !== '') {
             field.classList.remove('is-invalid');
             field.classList.add('is-valid');
@@ -113,7 +113,7 @@ class SalonGenerator {
         } else {
             field.classList.remove('is-valid', 'is-invalid');
         }
-        
+
         return isValid;
     }
 
@@ -1448,7 +1448,7 @@ class SalonGenerator {
         }
 
         console.log(`Images copiées: ${copiedCount}/${allRequiredImages.length} fichiers copiés, ${errorCount} erreurs`);
-        
+
         if (errorCount > 0) {
             console.warn(`Attention: ${errorCount} images n'ont pas pu être copiées. Le site pourrait avoir des images manquantes.`);
         }
@@ -1624,6 +1624,52 @@ Bonne chance avec votre nouveau site !
                 downloadFromPreview.innerHTML = originalTextPreview;
                 downloadFromPreview.disabled = false;
             }
+        }
+    }
+
+    setupMapsExtractorIntegration() {
+        // Écouter les mises à jour de l'extracteur Google Maps
+        document.addEventListener('formDataUpdated', (event) => {
+            if (event.detail && event.detail.source === 'mapsExtractor') {
+                console.log('Données extraites de Google Maps - Mise à jour du preview');
+
+                // Mettre à jour le preview après un court délai pour laisser les animations se terminer
+                setTimeout(() => {
+                    this.showPreview();
+                }, 500);
+
+                // Maintenir les styles du template sélectionné
+                this.preserveTemplateStyles();
+            }
+        });
+    }
+
+    preserveTemplateStyles() {
+        try {
+            // Réappliquer les classes CSS spécifiques au template
+            const formControls = document.querySelectorAll('.form-control');
+            formControls.forEach(control => {
+                // Maintenir les transitions CSS
+                if (!control.style.transition) {
+                    control.style.transition = 'border-color 0.3s ease, box-shadow 0.3s ease';
+                }
+
+                // Réappliquer les styles de focus
+                control.addEventListener('focus', () => {
+                    control.style.borderColor = '#667eea';
+                    control.style.boxShadow = '0 0 0 0.2rem rgba(102, 126, 234, 0.25)';
+                });
+
+                control.addEventListener('blur', () => {
+                    if (!control.classList.contains('field-filled')) {
+                        control.style.borderColor = '';
+                        control.style.boxShadow = '';
+                    }
+                });
+            });
+
+        } catch (error) {
+            console.warn('Erreur lors de la préservation des styles:', error);
         }
     }
 }

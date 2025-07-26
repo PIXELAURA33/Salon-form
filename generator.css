@@ -153,23 +153,71 @@ body {
 /* Animation pour les champs remplis */
 .field-filled {
     animation: fillSuccess 2s ease-in-out;
+    position: relative;
+}
+
+.field-filled::before {
+    content: '✓';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #28a745;
+    font-weight: bold;
+    opacity: 0;
+    animation: checkAppear 0.5s ease-in-out 1s forwards;
 }
 
 @keyframes fillSuccess {
     0% { 
         background-color: #ffffff;
         border: 1px solid #ced4da;
+        transform: scale(1);
+        box-shadow: none;
+    }
+    25% {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(40, 167, 69, 0.4);
     }
     50% { 
         background-color: #d4edda;
         border: 2px solid #28a745;
         transform: scale(1.02);
+        box-shadow: 0 0 20px rgba(40, 167, 69, 0.6);
+    }
+    75% {
+        transform: scale(1.01);
     }
     100% { 
         background-color: #e8f5e8;
         border: 2px solid #28a745;
         transform: scale(1);
+        box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
     }
+}
+
+@keyframes checkAppear {
+    0% {
+        opacity: 0;
+        transform: translateY(-50%) scale(0);
+    }
+    50% {
+        transform: translateY(-50%) scale(1.2);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+    }
+}
+
+/* Animation spéciale pour les textarea */
+textarea.field-filled {
+    resize: vertical;
+}
+
+textarea.field-filled::before {
+    top: 15px;
+    transform: none;
 }
 
 /* Styles supplémentaires pour l'extracteur */
