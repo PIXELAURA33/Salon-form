@@ -386,7 +386,55 @@ class GoogleMapsExtractor {
 
     triggerPreviewUpdate() {
         try {
+            // Déclencher une mise à jour du preview si disponible
+            const event = new CustomEvent('formDataUpdated', {
+                detail: {
+                    source: 'mapsExtractor',
+                    timestamp: new Date().toISOString()
+                }
+            });
+            document.dispatchEvent(event);
+            
             if (typeof window.siteGenerator !== 'undefined' && window.siteGenerator.updatePreview) {
+                window.siteGenerator.updatePreview();
+            }
+        } catch (error) {
+            console.warn('Erreur lors de la mise à jour du preview:', error);
+        }
+    }
+
+    highlightFilledFields() {
+        const filledFields = ['salonName', 'phone', 'address', 'email', 'description', 'hours', 'facebook', 'instagram', 'whatsapp']
+            .filter(fieldId => {
+                const field = document.getElementById(fieldId);
+                return field && field.value.trim();
+            });
+
+        filledFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.classList.add('field-filled');
+                field.style.borderColor = '#28a745';
+                field.style.boxShadow = '0 0 0 0.2rem rgba(40, 167, 69, 0.25)';
+                
+                setTimeout(() => {
+                    field.style.borderColor = '';
+                    field.style.boxShadow = '';
+                    field.classList.remove('field-filled');
+                }, 3000);
+            }
+        });
+    }
+}
+
+// Initialiser l'extracteur Google Maps
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        new GoogleMapsExtractor();
+    } catch (error) {
+        console.error('Erreur lors de l\'initialisation de l\'extracteur Google Maps:', error);
+    }
+});view) {
                 window.siteGenerator.updatePreview();
             }
 

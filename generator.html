@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -170,7 +171,7 @@
                             </div>
 
                             <!-- Images équipe -->
-                            <div class="row">
+                            <div class="row" id="teamImagesSection">
                                 <div class="col-md-4 mb-4">
                                     <label for="team1Image" class="form-label">Photo équipe 1</label>
                                     <div class="upload-zone" onclick="document.getElementById('team1Image').click()">
@@ -277,29 +278,6 @@
     <script src="maps-extractor.js"></script>
 
     <script>
-        // Initialiser les informations du template selon l'URL
-        document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const template = urlParams.get('template') || 'classic';
-
-            const templateNames = {
-                'classic': 'Salon Classique',
-                'modern': 'Salon Moderne',
-                'luxury': 'Salon Luxe',
-                'minimal': 'Salon Minimaliste',
-                'barber': 'Salon Barbier',
-                'creative': 'Salon Créatif',
-                'spa': 'Salon Spa',
-                'futuristic': 'Salon Futuriste',
-                'vintage': 'Salon Vintage',
-                'urban': 'Salon Urbain',
-                'nature': 'Salon Nature',
-                'bohemian': 'Salon Bohème',
-                'neon': 'Salon Néon',
-                'industrial': 'Salon Industriel',
-
-
-    <script>
         // Adapter l'interface selon le template sélectionné
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -342,9 +320,9 @@
 
             // Masquer les sections d'images non utilisées selon le template
             if (!config.showTeamImages) {
-                const teamImagesRow = document.querySelector('.row:has(label[for="team1Image"])');
-                if (teamImagesRow) {
-                    teamImagesRow.style.display = 'none';
+                const teamImagesSection = document.getElementById('teamImagesSection');
+                if (teamImagesSection) {
+                    teamImagesSection.style.display = 'none';
                 }
             }
 

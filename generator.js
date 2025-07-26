@@ -20,7 +20,7 @@ class SalonGenerator {
     init() {
         try {
             console.log('Initialisation du générateur de salon...');
-            
+
             const form = document.getElementById('salonForm');
             const downloadBtn = document.getElementById('downloadBtn');
             const downloadFromPreview = document.getElementById('downloadFromPreview');
@@ -28,31 +28,31 @@ class SalonGenerator {
             if (form) {
                 // Supprimer tous les anciens gestionnaires d'événements
                 form.removeEventListener('submit', this.handleFormSubmit);
-                
+
                 // Ajouter le nouveau gestionnaire
                 form.addEventListener('submit', (e) => {
                     console.log('Événement submit déclenché');
                     return this.handleFormSubmit(e);
                 });
-                
+
                 // Ajouter un gestionnaire pour empêcher la soumission par défaut
                 form.addEventListener('submit', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
                 }, true);
-                
+
                 console.log('Gestionnaire de formulaire initialisé');
             } else {
                 console.error('Formulaire #salonForm non trouvé');
             }
-            
+
             if (downloadBtn) {
                 downloadBtn.addEventListener('click', () => this.downloadZip());
             }
             if (downloadFromPreview) {
                 downloadFromPreview.addEventListener('click', () => this.downloadZip());
             }
-            
+
             // Gestionnaire pour le bouton aperçu
             const previewBtn = document.getElementById('previewBtn');
             if (previewBtn) {
@@ -69,7 +69,7 @@ class SalonGenerator {
             this.initImageUploads();
             this.updateImageFormatInfo();
             this.initFormValidation();
-            
+
             console.log('Initialisation terminée');
         } catch (error) {
             console.error('Erreur lors de l\'initialisation:', error);
@@ -232,18 +232,6 @@ class SalonGenerator {
     }
 
     handleDrop(e, inputId) {
-
-
-    getTemplateImageInputs() {
-        const templateInputs = {
-            'barber': ['heroImage', 'logoImage', 'team1Image', 'team2Image', 'team3Image'],
-            'alotan': ['heroImage', 'logoImage'],
-            'grafreez': ['heroImage', 'logoImage']
-        };
-
-        return templateInputs[this.selectedTemplate] || templateInputs['barber'];
-    }
-
         e.preventDefault();
         e.currentTarget.classList.remove('drag-over');
 
@@ -268,6 +256,16 @@ class SalonGenerator {
                 }
             }
         }
+    }
+
+    getTemplateImageInputs() {
+        const templateInputs = {
+            'barber': ['heroImage', 'logoImage', 'team1Image', 'team2Image', 'team3Image'],
+            'alotan': ['heroImage', 'logoImage'],
+            'grafreez': ['heroImage', 'logoImage']
+        };
+
+        return templateInputs[this.selectedTemplate] || templateInputs['barber'];
     }
 
     async handleSingleImageUpload(e, inputId) {
@@ -548,7 +546,7 @@ class SalonGenerator {
 
         try {
             console.log('Début de la génération du site...');
-            
+
             // Validation des champs obligatoires
             const salonName = document.getElementById('salonName')?.value?.trim() || '';
             const phone = document.getElementById('phone')?.value?.trim() || '';
@@ -572,10 +570,10 @@ class SalonGenerator {
 
             console.log('Récupération des données du formulaire...');
             const formData = this.getFormData();
-            
+
             console.log('Génération du site avec les données:', formData);
             await this.generateSite(formData);
-            
+
             console.log('Affichage de l\'aperçu...');
             this.showPreview();
 
@@ -588,7 +586,7 @@ class SalonGenerator {
             // Succès
             submitBtn.innerHTML = '<i class="fas fa-check"></i> Site généré !';
             console.log('Site généré avec succès !');
-            
+
             setTimeout(() => {
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
@@ -606,7 +604,7 @@ class SalonGenerator {
                 submitBtn.innerHTML = '<i class="fas fa-magic"></i> Générer le site';
                 submitBtn.disabled = false;
             }
-            
+
             return false;
         }
     }
@@ -744,7 +742,7 @@ class SalonGenerator {
         }
     }
 
-    
+
 
     async generateSite(data) {
         try {
@@ -782,7 +780,7 @@ class SalonGenerator {
             html = html.replace(/src=['"]img\/header-background-2\.jpg['"]/g, `src="${heroImg.data}"`);
             html = html.replace(/header-background-1\.jpg/g, heroImg.data);
             html = html.replace(/header-background-2\.jpg/g, heroImg.data);
-            
+
             // Pour template Alotan et Grafreez (autres noms possibles)
             html = html.replace(/url\(['"]?\.?\.?\/img\/hero\.jpg['"]?\)/g, `url("${heroImg.data}")`);
             html = html.replace(/url\(['"]?\.?\.?\/img\/banner\.jpg['"]?\)/g, `url("${heroImg.data}")`);
@@ -817,7 +815,7 @@ class SalonGenerator {
         if (this.customImages.has('portfolioImages')) {
             const portfolioImages = this.customImages.get('portfolioImages');
             const maxImages = this.selectedTemplate === 'alotan' ? 4 : 6;
-            
+
             portfolioImages.slice(0, maxImages).forEach((image, index) => {
                 const portfolioIndex = index + 1;
                 html = html.replace(
@@ -869,7 +867,7 @@ class SalonGenerator {
                     <p><a href="mailto:${data.email}">${data.email}</a></p>
                 </div>
             </div>` : '';
-        
+
         const emailFooterSection = data.email ? `<p><i class="fa fa-envelope"></i><a href="mailto:${data.email}">${data.email}</a></p>` : '';
 
         // Réseaux sociaux pour différentes sections
@@ -1143,61 +1141,6 @@ class SalonGenerator {
 
         // Copier toutes les images pour avoir des templates complets
         for (const imagePath of allRequiredImages) {
-
-
-    applyTemplateSpecificReplacements(html, data) {
-        switch(this.selectedTemplate) {
-            case 'barber':
-                return this.applyBarberReplacements(html, data);
-            case 'alotan':
-                return this.applyAlotanReplacements(html, data);
-            case 'grafreez':
-                return this.applyGrafreezReplacements(html, data);
-            default:
-                return this.applyBarberReplacements(html, data);
-        }
-    }
-
-    applyBarberReplacements(html, data) {
-        // Remplacements spécifiques au template Barber
-        html = html.replace(/Beauty &amp; Salon - Free Bootstrap 4 Template/g, `${data.salonName || 'Mon Salon'} - Salon de Coiffure`);
-        html = html.replace(/Beauty and Salon - Free Bootstrap 4 Template \| Boostraptheme/g, `${data.salonName || 'Mon Salon'} - Salon de Coiffure`);
-        
-        // Remplacer les informations de contact dans le header
-        html = html.replace(/\(91\) 999 9999 99/g, data.phone || '');
-        html = html.replace(/Dros Began, India 222312/g, data.address || '');
-        
-        // Remplacer le nom du salon dans le contenu
-        html = html.replace(/Fascinating than any <br> fashion salon/g, `Bienvenue chez <br> ${data.salonName || 'notre salon'}`);
-        html = html.replace(/your hair style <br> our passionate team/g, `${data.salonName || 'Notre salon'} <br> Votre style, notre passion`);
-        
-        return html;
-    }
-
-    applyAlotanReplacements(html, data) {
-        // Remplacements spécifiques au template Alotan
-        html = html.replace(/Alotan - Beauty Salon/g, `${data.salonName || 'Mon Salon'} - Salon de Beauté`);
-        html = html.replace(/Professional Beauty Services/g, data.description || 'Services de beauté professionnels');
-        
-        // Remplacer les sections spécifiques à Alotan
-        html = html.replace(/Welcome to Alotan/g, `Bienvenue chez ${data.salonName || 'notre salon'}`);
-        html = html.replace(/Your Beauty is Our Priority/g, 'Votre beauté est notre priorité');
-        
-        return html;
-    }
-
-    applyGrafreezReplacements(html, data) {
-        // Remplacements spécifiques au template Grafreez
-        html = html.replace(/Grafreez - Hair Salon/g, `${data.salonName || 'Mon Salon'} - Salon de Coiffure`);
-        html = html.replace(/Modern Hair Styling/g, data.description || 'Coiffure moderne et professionnelle');
-        
-        // Remplacer les sections spécifiques à Grafreez
-        html = html.replace(/Expert Hair Stylists/g, 'Coiffeurs experts');
-        html = html.replace(/Quality Hair Care/g, 'Soins capillaires de qualité');
-        
-        return html;
-    }
-
             try {
                 const response = await fetch(`.templates/${imagePath}`);
                 if (response.ok) {
@@ -1219,6 +1162,59 @@ class SalonGenerator {
         if (errorCount > 0) {
             console.warn(`Attention: ${errorCount} images n'ont pas pu être copiées. Le site pourrait avoir des images manquantes.`);
         }
+    }
+
+    applyTemplateSpecificReplacements(html, data) {
+        switch(this.selectedTemplate) {
+            case 'barber':
+                return this.applyBarberReplacements(html, data);
+            case 'alotan':
+                return this.applyAlotanReplacements(html, data);
+            case 'grafreez':
+                return this.applyGrafreezReplacements(html, data);
+            default:
+                return this.applyBarberReplacements(html, data);
+        }
+    }
+
+    applyBarberReplacements(html, data) {
+        // Remplacements spécifiques au template Barber
+        html = html.replace(/Beauty &amp; Salon - Free Bootstrap 4 Template/g, `${data.salonName || 'Mon Salon'} - Salon de Coiffure`);
+        html = html.replace(/Beauty and Salon - Free Bootstrap 4 Template \| Boostraptheme/g, `${data.salonName || 'Mon Salon'} - Salon de Coiffure`);
+
+        // Remplacer les informations de contact dans le header
+        html = html.replace(/\(91\) 999 9999 99/g, data.phone || '');
+        html = html.replace(/Dros Began, India 222312/g, data.address || '');
+
+        // Remplacer le nom du salon dans le contenu
+        html = html.replace(/Fascinating than any <br> fashion salon/g, `Bienvenue chez <br> ${data.salonName || 'notre salon'}`);
+        html = html.replace(/your hair style <br> our passionate team/g, `${data.salonName || 'Notre salon'} <br> Votre style, notre passion`);
+
+        return html;
+    }
+
+    applyAlotanReplacements(html, data) {
+        // Remplacements spécifiques au template Alotan
+        html = html.replace(/Alotan - Beauty Salon/g, `${data.salonName || 'Mon Salon'} - Salon de Beauté`);
+        html = html.replace(/Professional Beauty Services/g, data.description || 'Services de beauté professionnels');
+
+        // Remplacer les sections spécifiques à Alotan
+        html = html.replace(/Welcome to Alotan/g, `Bienvenue chez ${data.salonName || 'notre salon'}`);
+        html = html.replace(/Your Beauty is Our Priority/g, 'Votre beauté est notre priorité');
+
+        return html;
+    }
+
+    applyGrafreezReplacements(html, data) {
+        // Remplacements spécifiques au template Grafreez
+        html = html.replace(/Grafreez - Hair Salon/g, `${data.salonName || 'Mon Salon'} - Salon de Coiffure`);
+        html = html.replace(/Modern Hair Styling/g, data.description || 'Coiffure moderne et professionnelle');
+
+        // Remplacer les sections spécifiques à Grafreez
+        html = html.replace(/Expert Hair Stylists/g, 'Coiffeurs experts');
+        html = html.replace(/Quality Hair Care/g, 'Soins capillaires de qualité');
+
+        return html;
     }
 
     base64ToBinary(base64String) {
