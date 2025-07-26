@@ -10,10 +10,10 @@ class SalonGenerator {
     getSelectedTemplate() {
         try {
             const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('template') || 'classic';
+            return urlParams.get('template') || 'barber';
         } catch (error) {
             console.warn('Erreur lors de la lecture des paramètres URL:', error);
-            return 'classic';
+            return 'barber';
         }
     }
 
@@ -118,93 +118,17 @@ class SalonGenerator {
     }
 
     updateImageFormatInfo() {
-        // Mettre à jour les informations de format selon le template sélectionné
+        // Informations de format pour le template Barber X
         const templateFormatInfo = {
-            'classic': {
-                'heroImageInfo': 'JPG, PNG, WEBP uniquement | 1920x1080px | Max: 5MB',
-                'logoImageInfo': 'PNG, SVG, WEBP (transparent recommandé) | 200x200px | Max: 2MB'
-            },
-            'modern': {
-                'heroImageInfo': 'JPG, PNG, WEBP uniquement | 1920x1080px | Max: 6MB (qualité moderne)',
-                'logoImageInfo': 'PNG, SVG, WEBP (SVG recommandé) | 200x200px | Max: 3MB'
-            },
-            'luxury': {
-                'heroImageInfo': 'JPG, PNG uniquement (haute qualité) | 1920x1080px | Max: 8MB',
-                'logoImageInfo': 'PNG, SVG uniquement (premium) | 200x200px | Max: 3MB'
-            },
-            'minimal': {
-                'heroImageInfo': 'JPG, WEBP uniquement (optimisé) | 1920x1080px | Max: 3MB',
-                'logoImageInfo': 'SVG, PNG (SVG recommandé) | 200x200px | Max: 1MB'
-            },
-            'barber': {
-                'heroImageInfo': 'JPG, PNG uniquement | 1920x1080px | Max: 5MB',
-                'logoImageInfo': 'PNG, SVG (style vintage) | 200x200px | Max: 2MB'
-            },
-            'creative': {
-                'heroImageInfo': 'JPG, PNG, WEBP (tous formats) | 1920x1080px | Max: 7MB',
-                'logoImageInfo': 'PNG, SVG, WEBP (créativité maximale) | 200x200px | Max: 4MB'
-            },
-            'spa': {
-                'heroImageInfo': 'JPG, PNG, WEBP (zen optimisé) | 1920x1080px | Max: 4MB',
-                'logoImageInfo': 'PNG, SVG, WEBP (style zen) | 200x200px | Max: 2MB'
-            },
-            'futuristic': {
-                'heroImageInfo': 'JPG, PNG, WEBP (haute qualité) | 1920x1080px | Max: 8MB',
-                'logoImageInfo': 'PNG, SVG, WEBP (SVG pour animations) | 200x200px | Max: 4MB'
-            },
-            'vintage': {
-                'heroImageInfo': 'JPG, PNG (style rétro) | 1920x1080px | Max: 6MB',
-                'logoImageInfo': 'PNG, SVG (style vintage) | 200x200px | Max: 3MB'
-            },
-            'urban': {
-                'heroImageInfo': 'JPG, PNG, WEBP (street style) | 1920x1080px | Max: 7MB',
-                'logoImageInfo': 'PNG, SVG, WEBP (style urbain) | 200x200px | Max: 3MB'
-            },
-            'nature': {
-                'heroImageInfo': 'JPG, PNG, WEBP (bio optimisé) | 1920x1080px | Max: 5MB',
-                'logoImageInfo': 'PNG, SVG, WEBP (style nature) | 200x200px | Max: 2MB'
-            },
-            'bohemian': {
-                'heroImageInfo': 'JPG, PNG, WEBP (style bohème) | 1920x1080px | Max: 6MB',
-                'logoImageInfo': 'PNG, SVG, WEBP (artistique) | 200x200px | Max: 3MB'
-            },
-            'neon': {
-                'heroImageInfo': 'JPG, PNG, WEBP (haute saturation) | 1920x1080px | Max: 7MB',
-                'logoImageInfo': 'PNG, SVG, WEBP (effets néon) | 200x200px | Max: 4MB'
-            },
-            'industrial': {
-                'heroImageInfo': 'JPG, PNG, WEBP (style industriel) | 1920x1080px | Max: 6MB',
-                'logoImageInfo': 'PNG, SVG, WEBP (métallique) | 200x200px | Max: 3MB'
-            },
-            'romantic': {
-                'heroImageInfo': 'JPG, PNG, WEBP (tons pastel) | 1920x1080px | Max: 5MB',
-                'logoImageInfo': 'PNG, SVG, WEBP (romantique) | 200x200px | Max: 3MB'
-            },
-            'scandinavian': {
-                'heroImageInfo': 'JPG, PNG, WEBP (lumière naturelle) | 1920x1080px | Max: 4MB',
-                'logoImageInfo': 'PNG, SVG, WEBP (minimaliste) | 200x200px | Max: 2MB'
-            },
-            'tropical': {
-                'heroImageInfo': 'JPG, PNG, WEBP (couleurs vives) | 1920x1080px | Max: 6MB',
-                'logoImageInfo': 'PNG, SVG, WEBP (exotique) | 200x200px | Max: 3MB'
-            },
-            'artdeco': {
-                'heroImageInfo': 'JPG, PNG (qualité premium) | 1920x1080px | Max: 8MB',
-                'logoImageInfo': 'PNG, SVG (géométrique) | 200x200px | Max: 4MB'
-            },
-            'cyber': {
-                'heroImageInfo': 'JPG, PNG, WEBP (high-tech) | 1920x1080px | Max: 8MB',
-                'logoImageInfo': 'PNG, SVG, WEBP (futuriste) | 200x200px | Max: 4MB'
-            }
+            'heroImageInfo': 'JPG, PNG uniquement | 1920x1080px | Max: 5MB',
+            'logoImageInfo': 'PNG, SVG (style vintage) | 200x200px | Max: 2MB'
         };
 
-        const templateInfo = templateFormatInfo[this.selectedTemplate] || templateFormatInfo['classic'];
-
         // Mettre à jour les éléments si ils existent
-        Object.keys(templateInfo).forEach(infoId => {
+        Object.keys(templateFormatInfo).forEach(infoId => {
             const element = document.getElementById(infoId);
             if (element) {
-                const parts = templateInfo[infoId].split(' | ');
+                const parts = templateFormatInfo[infoId].split(' | ');
                 element.innerHTML = `
                     <strong>Format:</strong> ${parts[0]}<br>
                     <strong>Dimension recommandée:</strong> ${parts[1]}<br>
@@ -431,73 +355,52 @@ class SalonGenerator {
             return { isValid: false, error: 'Le fichier doit être une image.' };
         }
 
-        // Définir les règles de validation par template et par type d'image
+        // Règles de validation pour le template Barber X
         const templateValidationRules = {
-            'classic': {
-                'heroImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 5 * 1024 * 1024,
-                    name: 'Image d\'en-tête (Classic)'
-                },
-                'aboutImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 5 * 1024 * 1024,
-                    name: 'Image À propos (Classic)'
-                },
-                'logoImage': {
-                    formats: ['image/png', 'image/svg+xml', 'image/webp'],
-                    maxSize: 2 * 1024 * 1024,
-                    name: 'Logo (Classic)'
-                },
-                'footerImage': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 5 * 1024 * 1024,
-                    name: 'Image de pied de page (Classic)'
-                },
-                'team1Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 3 * 1024 * 1024,
-                    name: 'Photo équipe 1 (Classic)'
-                },
-                'team2Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 3 * 1024 * 1024,
-                    name: 'Photo équipe 2 (Classic)'
-                },
-                'team3Image': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 3 * 1024 * 1024,
-                    name: 'Photo équipe 3 (Classic)'
-                },
-                'portfolioImages': {
-                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                    maxSize: 4 * 1024 * 1024,
-                    name: 'Image portfolio (Classic)'
-                }
+            'heroImage': {
+                formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                maxSize: 5 * 1024 * 1024,
+                name: 'Image d\'en-tête (Barber X)'
+            },
+            'aboutImage': {
+                formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                maxSize: 5 * 1024 * 1024,
+                name: 'Image À propos (Barber X)'
+            },
+            'logoImage': {
+                formats: ['image/png', 'image/svg+xml'],
+                maxSize: 2 * 1024 * 1024,
+                name: 'Logo (Barber X)'
+            },
+            'footerImage': {
+                formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                maxSize: 5 * 1024 * 1024,
+                name: 'Image de pied de page (Barber X)'
+            },
+            'team1Image': {
+                formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                maxSize: 3 * 1024 * 1024,
+                name: 'Photo équipe 1 (Barber X)'
+            },
+            'team2Image': {
+                formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                maxSize: 3 * 1024 * 1024,
+                name: 'Photo équipe 2 (Barber X)'
+            },
+            'team3Image': {
+                formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                maxSize: 3 * 1024 * 1024,
+                name: 'Photo équipe 3 (Barber X)'
+            },
+            'portfolioImages': {
+                formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                maxSize: 4 * 1024 * 1024,
+                name: 'Image portfolio (Barber X)'
             }
         };
 
-        // Ajouter les autres templates avec des règles similaires
-        const baseRules = templateValidationRules.classic;
-        const otherTemplates = ['modern', 'luxury', 'minimal', 'barber', 'creative', 'spa', 'futuristic', 'vintage', 'urban', 'nature', 'bohemian', 'neon', 'industrial', 'romantic', 'scandinavian', 'tropical', 'artdeco', 'cyber'];
-
-        otherTemplates.forEach(template => {
-            templateValidationRules[template] = JSON.parse(JSON.stringify(baseRules));
-        });
-
-        // Personnaliser selon le template
-        if (this.selectedTemplate === 'luxury') {
-            Object.keys(templateValidationRules.luxury).forEach(key => {
-                templateValidationRules.luxury[key].maxSize = Math.min(templateValidationRules.luxury[key].maxSize * 1.5, 8 * 1024 * 1024);
-            });
-        } else if (this.selectedTemplate === 'minimal') {
-            Object.keys(templateValidationRules.minimal).forEach(key => {
-                templateValidationRules.minimal[key].maxSize = Math.max(templateValidationRules.minimal[key].maxSize * 0.6, 1 * 1024 * 1024);
-            });
-        }
-
-        // Obtenir les règles pour le template actuel
-        const templateRules = templateValidationRules[this.selectedTemplate] || templateValidationRules['classic'];
+        // Obtenir les règles pour le type d'image
+        const templateRules = templateValidationRules;
         const rules = templateRules[inputId];
 
         if (!rules) {
@@ -686,408 +589,26 @@ class SalonGenerator {
     }
 
     async loadTemplate(templateType) {
-        const templates = {
-            'classic': () => this.getClassicTemplate(),
-            'modern': () => this.getModernTemplate(),
-            'luxury': () => this.getLuxuryTemplate(),
-            'minimal': () => this.getMinimalTemplate(),
-            'barber': () => this.getBarberTemplate(),
-            'creative': () => this.getCreativeTemplate(),
-            'spa': () => this.getSpaTemplate(),
-            'futuristic': () => this.getFuturisticTemplate(),
-            'vintage': () => this.getVintageTemplate(),
-            'urban': () => this.getUrbanTemplate(),
-            'nature': () => this.getNatureTemplate(),
-            'bohemian': () => this.getBohemianTemplate(),
-            'neon': () => this.getNeonTemplate(),
-            'industrial': () => this.getIndustrialTemplate(),
-            'romantic': () => this.getRomanticTemplate(),
-            'scandinavian': () => this.getScandinavianTemplate(),
-            'tropical': () => this.getTropicalTemplate(),
-            'artdeco': () => this.getArtDecoTemplate(),
-            'cyber': () => this.getCyberTemplate()
-        };
-
-        const templateLoader = templates[templateType] || templates['classic'];
-        return await templateLoader();
-    }
-
-    async getClassicTemplate() {
-        try {
-            // Essayer de charger le template original depuis .templates/
-            const response = await fetch('.templates/index.html');
-            if (response.ok) {
-                const template = await response.text();
-                console.log('Template original chargé avec succès');
-                return template;
-            }
-        } catch (error) {
-            console.warn('Template original non trouvé, utilisation du template par défaut:', error.message);
-        }
-        // Fallback vers le template par défaut
-        console.log('Utilisation du template par défaut');
-        return this.getDefaultTemplate();
-    }
-
-    async getModernTemplate() {
-        return this.getTemplateVariation('modern');
-    }
-
-    async getLuxuryTemplate() {
-        return this.getTemplateVariation('luxury');
-    }
-
-    async getMinimalTemplate() {
-        return this.getTemplateVariation('minimal');
+        // Seul le template Barber X est disponible
+        return await this.getBarberTemplate();
     }
 
     async getBarberTemplate() {
-        return this.getTemplateVariation('barber');
-    }
-
-    async getCreativeTemplate() {
-        return this.getTemplateVariation('creative');
-    }
-
-    async getSpaTemplate() {
-        return this.getTemplateVariation('spa');
-    }
-
-    async getFuturisticTemplate() {
-        return this.getTemplateVariation('futuristic');
-    }
-
-    async getVintageTemplate() {
-        return this.getTemplateVariation('vintage');
-    }
-
-    async getUrbanTemplate() {
-        return this.getTemplateVariation('urban');
-    }
-
-    async getNatureTemplate() {
-        return this.getTemplateVariation('nature');
-    }
-
-    async getBohemianTemplate() {
-        return this.getTemplateVariation('bohemian');
-    }
-
-    async getNeonTemplate() {
-        return this.getTemplateVariation('neon');
-    }
-
-    async getIndustrialTemplate() {
-        return this.getTemplateVariation('industrial');
-    }
-
-    async getRomanticTemplate() {
-        return this.getTemplateVariation('romantic');
-    }
-
-    async getScandinavianTemplate() {
-        return this.getTemplateVariation('scandinavian');
-    }
-
-    async getTropicalTemplate() {
-        return this.getTemplateVariation('tropical');
-    }
-
-    async getArtDecoTemplate() {
-        return this.getTemplateVariation('artdeco');
-    }
-
-    async getCyberTemplate() {
-        return this.getTemplateVariation('cyber');
-    }
-
-    async getTemplateVariation(type) {
-        const baseTemplate = await this.getDefaultTemplate();
-        return this.applyTemplateStyle(baseTemplate, type);
-    }
-
-    applyTemplateStyle(html, type) {
-        const styles = {
-            'modern': {
-                gradient: 'linear-gradient(45deg, #f093fb, #f5576c)',
-                fontFamily: 'Montserrat, sans-serif',
-                buttonStyle: 'border-radius: 25px; background: linear-gradient(45deg, #f093fb, #f5576c);'
-            },
-            'luxury': {
-                gradient: 'linear-gradient(45deg, #ffecd2, #fcb69f)',
-                fontFamily: 'Playfair Display, serif',
-                buttonStyle: 'border-radius: 0; background: linear-gradient(45deg, #d4af37, #ffd700); color: #000;'
-            },
-            'minimal': {
-                gradient: 'linear-gradient(45deg, #f8f9fa, #e9ecef)',
-                fontFamily: 'Inter, sans-serif',
-                buttonStyle: 'border-radius: 2px; background: #212529; border: none;'
-            },
-            'barber': {
-                gradient: 'linear-gradient(45deg, #434343, #000000)',
-                fontFamily: 'Oswald, sans-serif',
-                buttonStyle: 'border-radius: 0; background: #dc3545; border: 2px solid #fff;'
-            },
-            'creative': {
-                gradient: 'linear-gradient(45deg, #ff9a9e, #fecfef)',
-                fontFamily: 'Fredoka One, cursive',
-                buttonStyle: 'border-radius: 50px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4);'
-            },
-            'spa': {
-                gradient: 'linear-gradient(45deg, #a8edea, #f5f7fa)',
-                fontFamily: 'Nunito, sans-serif',
-                buttonStyle: 'border-radius: 30px; background: linear-gradient(45deg, #56ab2f, #a8e6cf); box-shadow: 0 4px 15px rgba(86, 171, 47, 0.3);'
-            },
-            'futuristic': {
-                gradient: 'linear-gradient(45deg, #667eea, #764ba2, #f093fb)',
-                fontFamily: 'Orbitron, monospace',
-                buttonStyle: 'border-radius: 0; background: linear-gradient(45deg, #00d4ff, #090979); border: 1px solid #00d4ff; text-transform: uppercase;'
-            },
-            'vintage': {
-                gradient: 'linear-gradient(45deg, #d4af37, #ffd700)',
-                fontFamily: 'Dancing Script, cursive',
-                buttonStyle: 'border-radius: 15px; background: linear-gradient(45deg, #8b4513, #daa520); border: 2px solid #d4af37; font-weight: bold;'
-            },
-            'urban': {
-                gradient: 'linear-gradient(45deg, #2c2c2c, #434343)',
-                fontFamily: 'Roboto Condensed, sans-serif',
-                buttonStyle: 'border-radius: 0; background: linear-gradient(45deg, #ff6b35, #f7931e); border: none; text-transform: uppercase; font-weight: bold;'
-            },
-            'nature': {
-                gradient: 'linear-gradient(45deg, #56ab2f, #a8e6cf)',
-                fontFamily: 'Merriweather, serif',
-                buttonStyle: 'border-radius: 25px; background: linear-gradient(45deg, #2d5016, #56ab2f); border: 2px solid #7fcdcd;'
-            },
-            'bohemian': {
-                gradient: 'linear-gradient(45deg, #b7937d, #f5deb3)',
-                fontFamily: 'Libre Baskerville, serif',
-                buttonStyle: 'border-radius: 20px; background: linear-gradient(45deg, #8b4513, #deb887); border: 2px solid #daa520;'
-            },
-            'neon': {
-                gradient: 'linear-gradient(45deg, #ff0080, #00ff80)',
-                fontFamily: 'Neon, monospace',
-                buttonStyle: 'border-radius: 30px; background: linear-gradient(45deg, #ff0080, #00ff80); box-shadow: 0 0 20px rgba(255, 0, 128, 0.5);'
-            },
-            'industrial': {
-                gradient: 'linear-gradient(45deg, #555555, #888888)',
-                fontFamily: 'Industrial, sans-serif',
-                buttonStyle: 'border-radius: 0; background: linear-gradient(45deg, #333, #666); border: 2px solid #ffa500;'
-            },
-            'romantic': {
-                gradient: 'linear-gradient(45deg, #ffc0cb, #ffb6c1)',
-                fontFamily: 'Parisienne, cursive',
-                buttonStyle: 'border-radius: 25px; background: linear-gradient(45deg, #ff69b4, #ffb6c1); color: white;'
-            },
-            'scandinavian': {
-                gradient: 'linear-gradient(45deg, #f0f8ff, #e6f3ff)',
-                fontFamily: 'Source Sans Pro, sans-serif',
-                buttonStyle: 'border-radius: 3px; background: linear-gradient(45deg, #4682b4, #87ceeb); color: white;'
-            },
-            'tropical': {
-                gradient: 'linear-gradient(45deg, #ff7f50, #ffb347)',
-                fontFamily: 'Kaushan Script, cursive',
-                buttonStyle: 'border-radius: 30px; background: linear-gradient(45deg, #ff6347, #ffa500); color: white;'
-            },
-            'artdeco': {
-                gradient: 'linear-gradient(45deg, #d4af37, #1a1a1a)',
-                fontFamily: 'Cinzel, serif',
-                buttonStyle: 'border-radius: 0; background: linear-gradient(45deg, #d4af37, #b8860b); color: #000; border: 2px solid #ffd700;'
-            },
-            'cyber': {
-                gradient: 'linear-gradient(45deg, #00ffff, #ff00ff)',
-                fontFamily: 'Orbitron, monospace',
-                buttonStyle: 'border-radius: 0; background: linear-gradient(45deg, #00ffff, #ff00ff); color: #000; text-shadow: 0 0 10px #fff;'
+        try {
+            // Charger le template Barber X depuis .templates/
+            const response = await fetch('.templates/index.html');
+            if (response.ok) {
+                const template = await response.text();
+                console.log('Template Barber X chargé avec succès');
+                return template;
             }
-        };
-
-        const style = styles[type];
-        if (style) {
-            // Appliquer les styles personnalisés
-            html = html.replace(
-                /<head>/,
-                `<head>
-                <style>
-                    body { font-family: ${style.fontFamily} !important; }
-                    .btn-custom { ${style.buttonStyle} }
-                    .hero-section { background: ${style.gradient} !important; }
-                </style>`
-            );
+        } catch (error) {
+            console.warn('Template Barber X non trouvé:', error.message);
+            throw new Error('Template Barber X introuvable');
         }
-
-        return html;
     }
 
-    getDefaultTemplate() {
-        return `<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{SALON_NAME}} - Salon de Coiffure</title>
-    <meta name="description" content="{{SALON_NAME}} - Salon de coiffure professionnel situé à {{ADDRESS}}. Services de coupe, coloration, soins et styling.">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        .hero-section { 
-            background: linear-gradient(135deg, {{PRIMARY_COLOR}}, {{SECONDARY_COLOR}});
-            color: white; 
-            padding: 100px 0; 
-            text-align: center; 
-        }
-        .service-card { 
-            border: none; 
-            border-radius: 15px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
-            transition: transform 0.3s;
-        }
-        .service-card:hover { transform: translateY(-5px); }
-        .btn-custom { 
-            background: {{PRIMARY_COLOR}}; 
-            border: none; 
-            border-radius: 25px; 
-            padding: 12px 30px; 
-            color: white;
-        }
-        .contact-section { background: #f8f9fa; padding: 60px 0; }
-        .footer { background: #333; color: white; padding: 40px 0; }
-    </style>
-</head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="#"><strong>{{SALON_NAME}}</strong></a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="#services">Services</a>
-                <a class="nav-link" href="#about">À propos</a>
-                <a class="nav-link" href="#contact">Contact</a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="container">
-            <h1 class="display-4 mb-4">{{SALON_NAME}}</h1>
-            <p class="lead">{{DESCRIPTION}}</p>
-            <a href="#contact" class="btn btn-custom btn-lg">Prendre Rendez-vous</a>
-        </div>
-    </section>
-
-    <!-- Services -->
-    <section id="services" class="py-5">
-        <div class="container">
-            <h2 class="text-center mb-5">Nos Services</h2>
-            <div class="row">
-                <div class="col-md-3 mb-4">
-                    <div class="card service-card h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-cut fa-3x mb-3" style="color: {{PRIMARY_COLOR}};"></i>
-                            <h5>Coupe</h5>
-                            <p>Coupe personnalisée selon votre style</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <div class="card service-card h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-palette fa-3x mb-3" style="color: {{PRIMARY_COLOR}};"></i>
-                            <h5>Coloration</h5>
-                            <p>Couleurs tendance et naturelles</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <div class="card service-card h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-magic fa-3x mb-3" style="color: {{PRIMARY_COLOR}};"></i>
-                            <h5>Soins</h5>
-                            <p>Traitements capillaires professionnels</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <div class="card service-card h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-spa fa-3x mb-3" style="color: {{PRIMARY_COLOR}};"></i>
-                            <h5>Styling</h5>
-                            <p>Mise en forme et coiffage</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- About -->
-    <section id="about" class="py-5 bg-light">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <h2>À propos de {{SALON_NAME}}</h2>
-                    <p>{{DESCRIPTION}}</p>
-                    <p><strong>Horaires :</strong><br>{{HOURS}}</p>
-                    {{EMAIL_SECTION}}
-                    {{WEBSITE_SECTION}}
-                </div>
-                <div class="col-md-6">
-                    <div class="text-center">
-                        <i class="fas fa-cut fa-10x" style="color: {{PRIMARY_COLOR}}; opacity: 0.1;"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact -->
-    <section id="contact" class="contact-section">
-        <div class="container">
-            <h2 class="text-center mb-5">Nous Contacter</h2>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="contact-info">
-                        <div class="mb-4">
-                            <i class="fas fa-map-marker-alt fa-2x mb-3" style="color: {{PRIMARY_COLOR}};"></i>
-                            <h5>Adresse</h5>
-                            <p>{{ADDRESS}}</p>
-                        </div>
-                        <div class="mb-4">
-                            <i class="fas fa-phone fa-2x mb-3" style="color: {{PRIMARY_COLOR}};"></i>
-                            <h5>Téléphone</h5>
-                            <p>{{PHONE}}</p>
-                        </div>
-                        {{SOCIAL_SECTION}}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <form>
-                        <div class="mb-3">
-                            <input type="text" class="form-control" placeholder="Votre nom">
-                        </div>
-                        <div class="mb-3">
-                            <input type="email" class="form-control" placeholder="Votre email">
-                        </div>
-                        <div class="mb-3">
-                            <textarea class="form-control" rows="5" placeholder="Votre message"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-custom">Envoyer</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container text-center">
-            <p>&copy; 2024 {{SALON_NAME}}. Tous droits réservés.</p>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>`;
-    }
+    
 
     async generateSite(data) {
         try {
