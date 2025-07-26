@@ -195,11 +195,27 @@ class SalonGenerator {
     async handleFormSubmit(e) {
         e.preventDefault();
         
-        const formData = this.getFormData();
-        await this.generateSite(formData);
-        this.showPreview();
+        // Validation des champs obligatoires
+        const salonName = document.getElementById('salonName').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const address = document.getElementById('address').value.trim();
         
-        document.getElementById('downloadBtn').disabled = false;
+        if (!salonName || !phone || !address) {
+            alert('Veuillez remplir tous les champs obligatoires (nom du salon, téléphone, adresse).');
+            return;
+        }
+        
+        try {
+            const formData = this.getFormData();
+            await this.generateSite(formData);
+            this.showPreview();
+            
+            document.getElementById('downloadBtn').disabled = false;
+            document.getElementById('previewBtn').disabled = false;
+        } catch (error) {
+            console.error('Erreur lors de la génération:', error);
+            alert('Une erreur est survenue lors de la génération du site. Veuillez réessayer.');
+        }
     }
 
     getFormData() {
@@ -232,8 +248,16 @@ class SalonGenerator {
     }
 
     async getClassicTemplate() {
-        // Utiliser le template par défaut pour l'instant car le template original n'est pas dans .templates/
-        // TODO: Copier le template original du salon dans .templates/ si nécessaire
+        try {
+            // Essayer de charger le template original depuis .templates/
+            const response = await fetch('.templates/index.html');
+            if (response.ok) {
+                return await response.text();
+            }
+        } catch (error) {
+            console.warn('Template original non trouvé, utilisation du template par défaut');
+        }
+        // Fallback vers le template par défaut
         return this.getDefaultTemplate();
     }
 
@@ -315,6 +339,7 @@ class SalonGenerator {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{SALON_NAME}} - Salon de Coiffure</title>
+    <meta name="description" content="{{SALON_NAME}} - Salon de coiffure professionnel situé à {{ADDRESS}}. Services de coupe, coloration, soins et styling.">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -675,38 +700,43 @@ class SalonGenerator {
         this.generatedFiles.set('index.html', this.generatedHTML);
         
         // Copier tous les fichiers CSS depuis .templates/
-        const cssFiles = ['.templates/css/animate.min.css', '.templates/css/app.css', '.templates/css/bootstrap.css', '.templates/css/magnific-popup.css', '.templates/css/owl.carousel.min.css', '.templates/css/owl.theme.default.min.css'];
+        const cssFiles = [
+            'css/animate.min.css', 'css/app.css', 'css/bootstrap.css', 
+            'css/magnific-popup.css', 'css/owl.carousel.min.css', 'css/owl.theme.default.min.css'
+        ];
         
         for (const cssFile of cssFiles) {
             try {
-                const response = await fetch(cssFile);
+                const response = await fetch(`.templates/${cssFile}`);
                 if (response.ok) {
                     const content = await response.text();
-                    const relativePath = cssFile.replace('.templates/', '');
-                    this.generatedFiles.set(relativePath, content);
+                    this.generatedFiles.set(cssFile, content);
+                } else {
+                    console.warn(`CSS non trouvé: ${cssFile} (${response.status})`);
                 }
             } catch (error) {
-                console.warn(`Impossible de charger ${cssFile}`);
+                console.warn(`Erreur CSS ${cssFile}:`, error.message);
             }
         }
         
         // Copier tous les fichiers JS depuis .templates/
         const jsFiles = [
-            '.templates/js/app.js', '.templates/js/bootstrap.min.js', '.templates/js/contact_me.js', '.templates/js/contact_me.min.js',
-            '.templates/js/jqBootstrapValidation.min.js', '.templates/js/jquery.easing.min.js', '.templates/js/jquery.magnific-popup.min.js',
-            '.templates/js/jquery.min.js', '.templates/js/owl.carousel.min.js', '.templates/js/popper.min.js', '.templates/js/wow.min.js'
+            'js/app.js', 'js/bootstrap.min.js', 'js/contact_me.js', 'js/contact_me.min.js',
+            'js/jqBootstrapValidation.min.js', 'js/jquery.easing.min.js', 'js/jquery.magnific-popup.min.js',
+            'js/jquery.min.js', 'js/owl.carousel.min.js', 'js/popper.min.js', 'js/wow.min.js'
         ];
         
         for (const jsFile of jsFiles) {
             try {
-                const response = await fetch(jsFile);
+                const response = await fetch(`.templates/${jsFile}`);
                 if (response.ok) {
                     const content = await response.text();
-                    const relativePath = jsFile.replace('.templates/', '');
-                    this.generatedFiles.set(relativePath, content);
+                    this.generatedFiles.set(jsFile, content);
+                } else {
+                    console.warn(`JS non trouvé: ${jsFile} (${response.status})`);
                 }
             } catch (error) {
-                console.warn(`Impossible de charger ${jsFile}`);
+                console.warn(`Erreur JS ${jsFile}:`, error.message);
             }
         }
 
@@ -775,13 +805,13 @@ class SalonGenerator {
 
         // Ajouter les images originales non remplacées
         if (!this.customImages.has('heroImage')) {
-            imagePaths.push('img/header-background-1.jpg');
+            imagePaths.push('img/header-background-1.jpg', 'img/header-background-2.jpg');
         }
         if (!this.customImages.has('aboutImage')) {
             imagePaths.push('img/perfect-style.jpg');
         }
         if (!this.customImages.has('logoImage')) {
-            imagePaths.push('img/logo.png');
+            imagePaths.push('img/logo.png', 'img/beauty-salon_logo_96dp.png');
         }
         if (!this.customImages.has('footerImage')) {
             imagePaths.push('img/bg-footer1.jpg');
@@ -809,9 +839,11 @@ class SalonGenerator {
                 if (response.ok) {
                     const blob = await response.blob();
                     this.generatedFiles.set(imagePath, blob);
+                } else {
+                    console.warn(`Image non trouvée: ${imagePath} (${response.status})`);
                 }
             } catch (error) {
-                console.warn(`Impossible de charger ${imagePath}`);
+                console.warn(`Erreur lors du chargement de ${imagePath}:`, error.message);
             }
         }
     }

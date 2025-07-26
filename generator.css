@@ -126,3 +126,51 @@ h5 {
 .image-upload-container input[type="file"] {
     margin-bottom: 10px;
 }
+
+.template-header {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 20px;
+    color: white;
+}
+
+.template-info h3 {
+    color: white;
+    margin-bottom: 5px;
+}
+
+.template-info p {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0;
+}
+
+.section-header {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.section-header h5 {
+    color: #495057;
+    font-weight: 700;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 10px;
+}
+
+/* Styles pour les alertes et messages d'erreur */
+.alert-custom {
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: none;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+    color: white;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+    color: white;
+}
