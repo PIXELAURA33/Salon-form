@@ -211,7 +211,7 @@ class SalonGenerator {
     }
 
     async handleSingleImageUpload(e, inputId) {
-        const file = e.target.files[0];
+        const file = e.target && e.target.files ? e.target.files[0] : null;
         if (!file) return;
 
         // Effacer les erreurs précédentes
@@ -246,7 +246,7 @@ class SalonGenerator {
     }
 
     async handlePortfolioImagesUpload(e) {
-        const files = Array.from(e.target.files);
+        const files = e.target && e.target.files ? Array.from(e.target.files) : [];
         if (!files.length) return;
 
         // Effacer les erreurs précédentes
@@ -263,7 +263,7 @@ class SalonGenerator {
             const portfolioImages = [];
             const errors = [];
 
-            for (let file of files) {
+            for (const file of files) {
                 const validationResult = this.validateImageFile(file, 'portfolioImages');
                 if (!validationResult.isValid) {
                     errors.push(`${file.name}: ${validationResult.error}`);
@@ -393,7 +393,9 @@ class SalonGenerator {
 
         // Ajouter les autres templates avec des règles similaires
         const baseRules = templateValidationRules.classic;
-        ['modern', 'luxury', 'minimal', 'barber', 'creative', 'spa', 'futuristic', 'vintage', 'urban', 'nature', 'bohemian', 'neon', 'industrial', 'romantic', 'scandinavian', 'tropical', 'artdeco', 'cyber'].forEach(template => {
+        const otherTemplates = ['modern', 'luxury', 'minimal', 'barber', 'creative', 'spa', 'futuristic', 'vintage', 'urban', 'nature', 'bohemian', 'neon', 'industrial', 'romantic', 'scandinavian', 'tropical', 'artdeco', 'cyber'];
+        
+        otherTemplates.forEach(template => {
             templateValidationRules[template] = JSON.parse(JSON.stringify(baseRules));
         });
 
@@ -1305,7 +1307,10 @@ class SalonGenerator {
     base64ToBinary(base64String) {
         try {
             // Supprimer le préfixe data:image/...;base64,
-            const base64Data = base64String.split(',')[1];
+            const base64Data = base64String.includes(',') ? base64String.split(',')[1] : base64String;
+            if (!base64Data) {
+                throw new Error('Données base64 invalides');
+            }
             const binaryString = atob(base64Data);
             const bytes = new Uint8Array(binaryString.length);
             for (let i = 0; i < binaryString.length; i++) {
