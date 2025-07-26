@@ -27,19 +27,16 @@ class SalonGenerator {
 
             if (form) {
                 // Supprimer tous les anciens gestionnaires d'événements
-                form.removeEventListener('submit', this.handleFormSubmit);
+                const newForm = form.cloneNode(true);
+                form.parentNode.replaceChild(newForm, form);
 
                 // Ajouter le nouveau gestionnaire
-                form.addEventListener('submit', (e) => {
+                newForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     console.log('Événement submit déclenché');
                     return this.handleFormSubmit(e);
                 });
-
-                // Ajouter un gestionnaire pour empêcher la soumission par défaut
-                form.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }, true);
 
                 console.log('Gestionnaire de formulaire initialisé');
             } else {
@@ -56,13 +53,10 @@ class SalonGenerator {
             // Gestionnaire pour le bouton aperçu
             const previewBtn = document.getElementById('previewBtn');
             if (previewBtn) {
-                previewBtn.addEventListener('click', async () => {
+                previewBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
                     console.log('Bouton aperçu cliqué');
-                    const form = document.getElementById('salonForm');
-                    if (form) {
-                        const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-                        form.dispatchEvent(submitEvent);
-                    }
+                    this.generateAndPreview();
                 });
             }
 
@@ -540,6 +534,35 @@ class SalonGenerator {
         }
     }
 
+    async generateAndPreview() {
+        try {
+            console.log('Génération et aperçu...');
+
+            const salonName = document.getElementById('salonName')?.value?.trim() || '';
+            const phone = document.getElementById('phone')?.value?.trim() || '';
+            const address = document.getElementById('address')?.value?.trim() || '';
+
+            if (!salonName || !phone || !address) {
+                alert('Veuillez remplir tous les champs obligatoires (nom du salon, téléphone, adresse).');
+                return;
+            }
+
+            const formData = this.getFormData();
+            await this.generateSite(formData);
+            this.showPreview();
+
+            // Activer les boutons de téléchargement
+            const downloadBtn = document.getElementById('downloadBtn');
+            const downloadFromPreview = document.getElementById('downloadFromPreview');
+            if (downloadBtn) downloadBtn.disabled = false;
+            if (downloadFromPreview) downloadFromPreview.disabled = false;
+
+        } catch (error) {
+            console.error('Erreur lors de la génération:', error);
+            alert('Une erreur est survenue lors de la génération du site.');
+        }
+    }
+
     async handleFormSubmit(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -558,10 +581,10 @@ class SalonGenerator {
             }
 
             // Trouver le bouton de soumission
-            const submitBtn = document.querySelector('button[type="submit"]') || e.target.querySelector('button[type="submit"]');
+            const submitBtn = document.querySelector('button[type="submit"]');
             if (!submitBtn) {
                 console.error('Bouton de soumission non trouvé');
-                return false;
+                return this.generateAndPreview();
             }
 
             const originalText = submitBtn.innerHTML;
@@ -1396,9 +1419,24 @@ Bonne chance avec votre nouveau site !
 // Initialiser l'application
 document.addEventListener('DOMContentLoaded', () => {
     try {
-        new SalonGenerator();
+        console.log('🚀 Initialisation du générateur de salon...');
+        const generator = new SalonGenerator();
+        console.log('✅ Générateur initialisé avec succès');
+        
+        // Test de fonctionnement
+        setTimeout(() => {
+            const form = document.getElementById('salonForm');
+            const submitBtn = document.querySelector('button[type="submit"]');
+            
+            if (form && submitBtn) {
+                console.log('✅ Formulaire et bouton de soumission détectés');
+            } else {
+                console.error('❌ Problème détecté:', { form: !!form, submitBtn: !!submitBtn });
+            }
+        }, 1000);
+        
     } catch (error) {
-        console.error('Erreur lors de l\'initialisation du générateur:', error);
+        console.error('❌ Erreur lors de l\'initialisation du générateur:', error);
         alert('Erreur lors du chargement du générateur. Veuillez recharger la page.');
     }
 });
