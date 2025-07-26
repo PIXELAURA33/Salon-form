@@ -394,7 +394,7 @@ class SalonGenerator {
         // Ajouter les autres templates avec des règles similaires
         const baseRules = templateValidationRules.classic;
         const otherTemplates = ['modern', 'luxury', 'minimal', 'barber', 'creative', 'spa', 'futuristic', 'vintage', 'urban', 'nature', 'bohemian', 'neon', 'industrial', 'romantic', 'scandinavian', 'tropical', 'artdeco', 'cyber'];
-        
+
         otherTemplates.forEach(template => {
             templateValidationRules[template] = JSON.parse(JSON.stringify(baseRules));
         });
@@ -736,7 +736,8 @@ class SalonGenerator {
             'romantic': {
                 gradient: 'linear-gradient(45deg, #ffc0cb, #ffb6c1)',
                 fontFamily: 'Parisienne, cursive',
-                buttonStyle: 'border-radius: 25px; background: linear-gradient(45deg, #ff69b4, #ffb6c1); color: white;'
+                buttonStyle: 'border-radius: 25px; background```python
+: linear-gradient(45deg, #ff69b4, #ffb6c1); color: white;'
             },
             'scandinavian': {
                 gradient: 'linear-gradient(45deg, #f0f8ff, #e6f3ff)',
