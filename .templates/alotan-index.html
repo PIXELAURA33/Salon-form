@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <title>{{SALON_NAME}} - Salon de Coiffure</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="{{DESCRIPTION}}">
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet"> 
+
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/magnific-popup.css">
+
+    <link rel="stylesheet" href="fonts/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="fonts/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
+
+    <!-- Template Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+      :root {
+        --primary-color: {{PRIMARY_COLOR}};
+        --secondary-color: {{SECONDARY_COLOR}};
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+      }
+
+      .btn-primary:hover {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+      }
+
+      .custom-icon {
+        color: var(--primary-color);
+      }
+
+      .icon-wrap {
+        background-color: var(--primary-color);
+      }
+    </style>
+  </head>
+  <body>
+
+    <header role="banner">
+      <nav class="navbar navbar-expand-md navbar-dark bg-light">
+        <div class="container">
+          <a class="navbar-brand" href="#hero">{{SALON_NAME}}</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05" aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse navbar-light" id="navbarsExample05">
+            <ul class="navbar-nav ml-auto pl-lg-5 pl-0">
+              <li class="nav-item">
+                <a class="nav-link active" href="#hero">Accueil</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#services" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Services</a>
+                <div class="dropdown-menu" aria-labelledby="dropdown04">
+                  <a class="dropdown-item" href="#services">Coupe Homme</a>
+                  <a class="dropdown-item" href="#services">Coupe Classique</a>
+                  <a class="dropdown-item" href="#services">Shampoing + Coupe</a>
+                  <a class="dropdown-item" href="#services">Taille Barbe</a>
+                  <a class="dropdown-item" href="#services">Coloration</a>
+                </div>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#about">À propos</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#contact">Contact</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <!-- END header -->
+
+    <section class="site-hero overlay" id="hero" data-stellar-background-ratio="0.5" style="background-image: url(img/big_image_1.jpg);">
+      <div class="container">
+        <div class="row align-items-center site-hero-inner justify-content-center">
+          <div class="col-md-8 text-center">
+            <div class="mb-5 element-animate">
+              <h1 class="mb-4">{{SALON_NAME}}</h1>
+              <p class="lead">{{DESCRIPTION}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- END section -->
+
+    <section class="quick-info element-animate" data-animate-effect="fadeInLeft">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 bgcolor">
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <div class="media">
+                  <div class="mr-3 icon-wrap"><span class="icon ion-ios-telephone"></span></div>
+                  <div class="media-body">
+                    <h5>{{PHONE}}</h5>
+                    <p>Appelez-nous, nous vous répondrons rapidement</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <div class="media">
+                  <div class="mr-3 icon-wrap"><span class="icon ion-location"></span></div>
+                  <div class="media-body">
+                    <h5>Notre Adresse</h5>
+                    <p>{{ADDRESS}}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <div class="media">
+                  <div class="mr-3 icon-wrap"><span class="icon ion-android-time"></span></div>
+                  <div class="media-body">
+                    <h5>Horaires</h5>
+                    <p>{{HOURS}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- END section -->
+
+    <section class="site-section" id="services">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4 pr-5">
+            <h2 class="mb-3">Nos Services</h2>
+            <p class="mb-5">Découvrez notre gamme complète de services professionnels pour hommes. Coupe, barbe, soins - tout ce dont vous avez besoin pour être au top de votre style.</p>
+
+            <div class="mb-3 custom-nav">
+              <a href="#" class="btn btn-primary btn-sm custom-prev mr-2 mb-2"><span class="ion-android-arrow-back"></span></a> 
+              <a href="#" class="btn btn-primary btn-sm custom-next mr-2 mb-2"><span class="ion-android-arrow-forward"></span></a>
+            </div>
+          </div>
+          <div class="col-md-8">
+            <div class="row">
+              <div class="col-md-12 slider-wrap">
+                <div class="owl-carousel owl-theme no-nav js-carousel-1">
+
+                  <a href="#" class="img-bg" style="background-image: url('img/service-1.jpg')">
+                    <div class="text">
+                      <span class="icon custom-icon flaticon-scissors"></span>
+                      <h2>Coupe Cheveux</h2>
+                      <p>En savoir plus</p>
+                    </div>
+                  </a>
+
+                  <a href="#" class="img-bg" style="background-image: url('img/service-2.jpg')">
+                    <div class="text">
+                      <span class="icon custom-icon flaticon-scissors"></span>
+                      <h2>Taille Barbe</h2>
+                      <p>En savoir plus</p>
+                    </div>
+                  </a>
+
+                  <a href="#" class="img-bg last" style="background-image: url('img/service-3.jpg')">
+                    <div class="text">
+                      <span class="icon custom-icon flaticon-scissors"></span>
+                      <h2>Soins & Shampoing</h2>
+                      <p>En savoir plus</p>
+                    </div>
+                  </a>
+
+                  <a href="#" class="img-bg" style="background-image: url('img/service-4.jpg')">
+                    <div class="text">
+                      <span class="icon custom-icon flaticon-scissors"></span>
+                      <h2>Coloration</h2>
+                      <p>En savoir plus</p>
+                    </div>
+                  </a>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- END section -->
+
+    <section class="site-section">
+      <div class="container">
+        <div class="row justify-content-center mb-5">
+          <div class="col-md-7 text-center">
+            <h2>Nos Spécialités</h2>
+            <p>Des services professionnels adaptés à tous vos besoins. Notre équipe experte vous garantit un résultat parfait à chaque visite.</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="media d-block media-feature text-center">
+              <div class="mr-3 icon-wrap"><span class="custom-icon flaticon-scissors-1"></span></div>
+              <div class="media-body">
+                <h3>Coupe & Rasage</h3>
+                <p>Coupe personnalisée et rasage traditionnel pour un look impeccable. Techniques modernes et classiques maîtrisées par nos experts.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="media d-block media-feature text-center">
+              <div class="mr-3 icon-wrap"><span class="custom-icon flaticon-cream"></span></div>
+              <div class="media-body">
+                <h3>Soins & Shampoing</h3>
+                <p>Traitements capillaires premium avec des produits de qualité professionnelle pour nourrir et revitaliser vos cheveux.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="media d-block media-feature text-center">
+              <div class="mr-3 icon-wrap"><span class="custom-icon flaticon-moustache"></span></div>
+              <div class="media-body">
+                <h3>Expert Moustache</h3>
+                <p>Stylisation et entretien professionnel de la moustache. Des techniques traditionnelles pour un style unique et distingué.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4">
+            <div class="media d-block media-feature text-center">
+              <div class="mr-3 icon-wrap"><span class="custom-icon flaticon-scissors"></span></div>
+              <div class="media-body">
+                <h3>Styliste Cheveux</h3>
+                <p>Créateur de styles uniques adaptés à votre personnalité et votre style de vie. Conseil personnalisé inclus.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="media d-block media-feature text-center">
+              <div class="mr-3 icon-wrap"><span class="custom-icon flaticon-razor"></span></div>
+              <div class="media-body">
+                <h3>Rasoir pour Barbe</h3>
+                <p>Rasage au rasoir traditionnel pour une finition parfaite. Expérience authentique du barbier d'antan.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="media d-block media-feature text-center">
+              <div class="mr-3 icon-wrap"><span class="custom-icon flaticon-hair-comb"></span></div>
+              <div class="media-body">
+                <h3>Coiffage</h3>
+                <p>Techniques de coiffage modernes et classiques. Mise en forme et styling pour toutes les occasions.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- END section -->
+
+    <section class="section-cover cta" data-stellar-background-ratio="0.5" style="background-image: url(img/big_image_2.jpg);">
+      <div class="container">
+        <div class="row justify-content-center align-items-center intro">
+          <div class="col-md-8 text-center element-animate">
+            <h2 class="mb-4"><span>Prenez rendez-vous aujourd'hui et</span> Bénéficiez de 25% de réduction</h2>
+            <p><a href="#contact" class="btn btn-black">Prendre Rendez-vous</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- END section -->
+
+    <section class="site-section" id="about">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 video-wrap mb-5">
+            <img src="img/about.jpg" alt="À propos de {{SALON_NAME}}" class="img-fluid">
+            <a href="https://vimeo.com/channels/staffpicks/93951774" class="popup-vimeo btn-video"><span class="fa fa-play"></span></a>
+          </div>
+          <div class="col-md-6 pl-md-5">
+            <h3>{{SALON_NAME}}</h3>
+            <p class="lead">Votre style, notre passion</p>
+            <p>{{DESCRIPTION}}</p>
+            <p>Situés à {{ADDRESS}}, nous vous accueillons dans un cadre moderne et chaleureux. Notre équipe de professionnels expérimentés met tout en œuvre pour vous offrir une expérience unique.</p>
+
+            <div class="contact-info mt-4">
+              <p><strong>Téléphone:</strong> {{PHONE}}</p>
+              <p><strong>Adresse:</strong> {{ADDRESS}}</p>
+              {{EMAIL_SECTION}}
+              {{WEBSITE_SECTION}}
+              <p><strong>Horaires:</strong><br>{{HOURS}}</p>
+            </div>
+
+            {{SOCIAL_SECTION}}
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- END section -->
+
+    <section class="site-section" id="contact">
+      <div class="container">
+        <div class="row justify-content-center mb-5">
+          <div class="col-md-7 text-center">
+            <h2>Nous Contacter</h2>
+            <p>N'hésitez pas à nous contacter pour toute question ou pour prendre rendez-vous. Nous serons ravis de vous accueillir.</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <form action="#" method="post">
+              <div class="row">
+                <div class="col-md-4 form-group">
+                  <label for="name">Nom</label>
+                  <input type="text" id="name" class="form-control" required>
+                </div>
+                <div class="col-md-4 form-group">
+                  <label for="phone">Téléphone</label>
+                  <input type="text" id="phone" class="form-control">
+                </div>
+                <div class="col-md-4 form-group">
+                  <label for="email">Email</label>
+                  <input type="email" id="email" class="form-control" required>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-12 form-group">
+                  <label for="message">Votre Message</label>
+                  <textarea name="message" id="message" class="form-control" cols="30" rows="8" required></textarea>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 form-group">
+                  <input type="submit" value="Envoyer le Message" class="btn btn-primary">
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- END section -->
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-md-4">
+            <h3 class="mb-4">{{SALON_NAME}}</h3>
+            <p class="mb-4">{{DESCRIPTION}}</p>
+            <ul class="list-unstyled">
+              <li class="d-flex"><span class="mr-3"><span class="icon ion-ios-location"></span></span><span>{{ADDRESS}}</span></li>
+              <li class="d-flex"><span class="mr-3"><span class="icon ion-ios-telephone"></span></span><span>{{PHONE}}</span></li>
+              {{EMAIL_FOOTER_SECTION}}
+            </ul>
+          </div>
+          <div class="col-md-2">
+            <h3 class="mb-4">Liens</h3>
+            <ul class="list-unstyled">
+              <li><a href="#about">À propos</a></li>
+              <li><a href="#services">Services</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div>
+          <div class="col-md-3">
+            <h3 class="mb-4">Horaires</h3>
+            <div class="hours-info">
+              {{HOURS}}
+            </div>
+          </div>
+          <div class="col-md-3">
+            <h3>Nous Suivre</h3>
+            <div class="social-links">
+              {{SOCIAL_FOOTER_LINKS}}
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-7 text-center">
+            <p>&copy; {{CURRENT_YEAR}} {{SALON_NAME}}. Tous droits réservés. | Créé avec le Générateur de Sites Salon</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- END footer -->
+
+    <!-- loader -->
+    <div id="loader" class="show fullscreen">
+      <svg class="circular" width="48px" height="48px">
+        <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/>
+        <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#f4b214"/>
+      </svg>
+    </div>
+
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/jquery-migrate-3.0.0.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/jquery.waypoints.min.js"></script>
+    <script src="js/jquery.stellar.min.js"></script>
+    <script src="js/jquery.magnific-popup.min.js"></script>
+    <script src="js/magnific-popup-options.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

@@ -589,8 +589,13 @@ class SalonGenerator {
     }
 
     async loadTemplate(templateType) {
-        // Seul le template Barber X est disponible
-        return await this.getBarberTemplate();
+        switch(templateType) {
+            case 'alotan':
+                return await this.getAlotanTemplate();
+            case 'barber':
+            default:
+                return await this.getBarberTemplate();
+        }
     }
 
     async getBarberTemplate() {
@@ -605,6 +610,21 @@ class SalonGenerator {
         } catch (error) {
             console.warn('Template Barber X non trouvé:', error.message);
             throw new Error('Template Barber X introuvable');
+        }
+    }
+
+    async getAlotanTemplate() {
+        try {
+            // Charger le template Alotan depuis .templates/
+            const response = await fetch('.templates/alotan-index.html');
+            if (response.ok) {
+                const template = await response.text();
+                console.log('Template Alotan chargé avec succès');
+                return template;
+            }
+        } catch (error) {
+            console.warn('Template Alotan non trouvé:', error.message);
+            throw new Error('Template Alotan introuvable');
         }
     }
 
@@ -711,6 +731,7 @@ class SalonGenerator {
         html = html.replace(/{{HOURS}}/g, (data.hours || 'Nous contacter pour les horaires').replace(/\n/g, '<br>'));
         html = html.replace(/{{PRIMARY_COLOR}}/g, data.primaryColor || '#667eea');
         html = html.replace(/{{SECONDARY_COLOR}}/g, data.secondaryColor || '#764ba2');
+        html = html.replace(/{{CURRENT_YEAR}}/g, new Date().getFullYear());
 
         // Horaires pour l'affichage dans la top bar
         const hoursDisplay = data.hours ? data.hours.split('\n')[0] || '9h-18h' : '9h-18h';
