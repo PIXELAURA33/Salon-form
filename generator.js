@@ -77,9 +77,11 @@ class SalonGenerator {
                 
                 // Drag & Drop
                 const container = input.parentElement;
-                container.addEventListener('dragover', (e) => this.handleDragOver(e));
-                container.addEventListener('drop', (e) => this.handleDrop(e, inputId));
-                container.addEventListener('dragleave', (e) => this.handleDragLeave(e));
+                if (container) {
+                    container.addEventListener('dragover', (e) => this.handleDragOver(e));
+                    container.addEventListener('drop', (e) => this.handleDrop(e, inputId));
+                    container.addEventListener('dragleave', (e) => this.handleDragLeave(e));
+                }
             }
         });
 
@@ -89,9 +91,11 @@ class SalonGenerator {
             portfolioInput.addEventListener('change', (e) => this.handlePortfolioImagesUpload(e));
             
             const container = portfolioInput.parentElement;
-            container.addEventListener('dragover', (e) => this.handleDragOver(e));
-            container.addEventListener('drop', (e) => this.handleDrop(e, 'portfolioImages'));
-            container.addEventListener('dragleave', (e) => this.handleDragLeave(e));
+            if (container) {
+                container.addEventListener('dragover', (e) => this.handleDragOver(e));
+                container.addEventListener('drop', (e) => this.handleDrop(e, 'portfolioImages'));
+                container.addEventListener('dragleave', (e) => this.handleDragLeave(e));
+            }
         }
     }
 
@@ -117,10 +121,17 @@ class SalonGenerator {
                 this.handlePortfolioImagesUpload({ target: input });
             } else {
                 // Pour les images individuelles, prendre seulement la première
-                const dt = new DataTransfer();
-                dt.items.add(files[0]);
-                input.files = dt.files;
-                this.handleSingleImageUpload({ target: input }, inputId);
+                try {
+                    const dt = new DataTransfer();
+                    dt.items.add(files[0]);
+                    input.files = dt.files;
+                    this.handleSingleImageUpload({ target: input }, inputId);
+                } catch (error) {
+                    // Fallback si DataTransfer n'est pas supporté
+                    console.warn('DataTransfer non supporté, utilisation alternative');
+                    input.files = files;
+                    this.handleSingleImageUpload({ target: input }, inputId);
+                }
             }
         }
     }
@@ -512,9 +523,8 @@ class SalonGenerator {
 
         // Obtenir les règles pour le template actuel
         const templateRules = templateValidationRules[this.selectedTemplate] || templateValidationRules['classic'];
-        const validationRules = templateRules;
 
-        const rules = validationRules[inputId];
+        const rules = templateRules[inputId];
         if (!rules) {
             return { isValid: false, error: 'Type d\'image non reconnu.' };
         }
@@ -651,7 +661,7 @@ class SalonGenerator {
                 return template;
             }
         } catch (error) {
-            console.warn('Template original non trouvé, utilisation du template par défaut');
+            console.warn('Template original non trouvé, utilisation du template par défaut:', error.message);
         }
         // Fallback vers le template par défaut
         console.log('Utilisation du template par défaut');
@@ -1300,6 +1310,11 @@ class SalonGenerator {
 
         if (this.generatedFiles.size === 0) {
             alert('Erreur: Aucun fichier à télécharger. Veuillez régénérer le site.');
+            return;
+        }
+
+        if (typeof JSZip === 'undefined') {
+            alert('Erreur: Bibliothèque JSZip non chargée. Veuillez recharger la page.');
             return;
         }
 
