@@ -592,6 +592,8 @@ class SalonGenerator {
         switch(templateType) {
             case 'alotan':
                 return await this.getAlotanTemplate();
+            case 'grafreez':
+                return await this.getGrafreezTemplate();
             case 'barber':
             default:
                 return await this.getBarberTemplate();
@@ -625,6 +627,21 @@ class SalonGenerator {
         } catch (error) {
             console.warn('Template Alotan non trouvé:', error.message);
             throw new Error('Template Alotan introuvable');
+        }
+    }
+
+    async getGrafreezTemplate() {
+        try {
+            // Charger le template Grafreez depuis .templates/
+            const response = await fetch('.templates/grafreez-index.html');
+            if (response.ok) {
+                const template = await response.text();
+                console.log('Template Grafreez chargé avec succès');
+                return template;
+            }
+        } catch (error) {
+            console.warn('Template Grafreez non trouvé:', error.message);
+            throw new Error('Template Grafreez introuvable');
         }
     }
 
