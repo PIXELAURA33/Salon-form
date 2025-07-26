@@ -156,6 +156,76 @@ body {
 }
 
 @keyframes fillSuccess {
+    0% { 
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+    }
+    50% { 
+        background-color: #d4edda;
+        border: 2px solid #28a745;
+        transform: scale(1.02);
+    }
+    100% { 
+        background-color: #e8f5e8;
+        border: 2px solid #28a745;
+        transform: scale(1);
+    }
+}
+
+/* Styles supplémentaires pour l'extracteur */
+#mapsExtractor .card-body {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+#mapsUrl:valid {
+    border-color: #28a745;
+}
+
+#mapsUrl:invalid:not(:placeholder-shown) {
+    border-color: #dc3545;
+}
+
+.extraction-success-animation {
+    animation: successPulse 1s ease-in-out;
+}
+
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(40, 167, 69, 0.3); }
+    100% { transform: scale(1); }
+}
+
+/* Style pour les messages temporaires */
+.temp-message {
+    animation: slideInRight 0.5s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Amélioration du design des résultats d'extraction */
+#extractionResults ul li {
+    margin-bottom: 8px;
+    padding: 5px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.7);
+}
+
+#extractionResults .fas, #extractionResults .fab {
+    color: #17a2b8;
+    margin-right: 8px;
+}
+}
+
+@keyframes fillSuccess {
     0% { background-color: transparent; }
     50% { background-color: #d4edda; }
     100% { background-color: transparent; }

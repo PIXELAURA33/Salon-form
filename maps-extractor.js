@@ -2,6 +2,10 @@
 class GoogleMapsExtractor {
     constructor() {
         this.corsProxyUrl = 'https://api.allorigins.win/raw?url=';
+        this.alternativeProxies = [
+            'https://cors-anywhere.herokuapp.com/',
+            'https://api.codetabs.com/v1/proxy?quest='
+        ];
         this.init();
     }
 
@@ -11,7 +15,6 @@ class GoogleMapsExtractor {
     }
 
     addExtractorUI() {
-        // Ajouter l'interface d'extraction avant les informations de base
         const sectionHeader = document.querySelector('.section-header');
         if (sectionHeader) {
             const extractorHTML = `
@@ -100,21 +103,25 @@ class GoogleMapsExtractor {
             return;
         }
 
-        // Afficher le statut de chargement
         this.showStatus('Extraction en cours...', 'info');
         extractBtn.disabled = true;
         extractBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Extraction...';
 
         try {
-            // Méthode 1: Extraction depuis l'URL directement
-            const extractedData = await this.extractFromUrl(url);
+            // Méthode 1: Extraction avancée depuis l'URL
+            const extractedData = await this.extractAdvancedDataFromUrl(url);
             
-            if (extractedData && (extractedData.name || extractedData.address)) {
+            if (extractedData && Object.keys(extractedData).length > 0) {
+                // Méthode 2: Enrichissement avec géocodage
+                await this.enrichDataWithGeocodingServices(extractedData);
+                
+                // Méthode 3: Extraction d'informations supplémentaires
+                await this.extractAdditionalBusinessInfo(extractedData, url);
+                
                 this.fillFormWithData(extractedData);
                 this.showSuccess(extractedData);
             } else {
-                // Méthode 2: Tentative avec proxy CORS
-                await this.extractWithProxy(url);
+                throw new Error('Aucune donnée extraite');
             }
 
         } catch (error) {
@@ -127,121 +134,279 @@ class GoogleMapsExtractor {
         }
     }
 
-    async extractFromUrl(url) {
-        try {
-            // Extraire les données depuis l'URL elle-même
-            const data = {};
+    async extractAdvancedDataFromUrl(url) {
+        const data = {};
 
+        try {
             // Extraire le nom du salon depuis l'URL
-            const placeMatch = url.match(/place\/([^\/]+)/);
+            const placeMatch = url.match(/place\/([^\/\?&]+)/);
             if (placeMatch) {
-                data.name = decodeURIComponent(placeMatch[1]).replace(/\+/g, ' ');
+                data.name = decodeURIComponent(placeMatch[1])
+                    .replace(/\+/g, ' ')
+                    .replace(/%20/g, ' ')
+                    .trim();
             }
 
-            // Extraire les coordonnées depuis l'URL
-            const coordsMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+            // Extraire les coordonnées depuis l'URL (plusieurs formats possibles)
+            const coordsMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/) || 
+                              url.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/) ||
+                              url.match(/data=.*?3d(-?\d+\.\d+).*?4d(-?\d+\.\d+)/);
+            
             if (coordsMatch) {
                 data.latitude = parseFloat(coordsMatch[1]);
                 data.longitude = parseFloat(coordsMatch[2]);
             }
 
-            // Extraire l'ID du lieu
-            const placeIdMatch = url.match(/data=.*?1s0x[a-f0-9]+:0x([a-f0-9]+)/i);
+            // Extraire l'ID du lieu (place_id)
+            const placeIdMatch = url.match(/data=.*?1s0x[a-f0-9]+:0x([a-f0-9]+)/i) ||
+                                url.match(/place_id:([a-zA-Z0-9_-]+)/) ||
+                                url.match(/!1s0x[a-f0-9]+:0x([a-f0-9]+)/i);
+            
             if (placeIdMatch) {
                 data.placeId = placeIdMatch[1];
+            }
+
+            // Extraire des informations supplémentaires de l'URL
+            const addressMatch = url.match(/addr:([^!]+)/);
+            if (addressMatch) {
+                data.urlAddress = decodeURIComponent(addressMatch[1]).replace(/\+/g, ' ');
+            }
+
+            // Extraire le niveau de zoom et la région
+            const zoomMatch = url.match(/(\d+)z/);
+            if (zoomMatch) {
+                data.zoom = parseInt(zoomMatch[1]);
             }
 
             return data;
 
         } catch (error) {
-            console.error('Erreur extraction URL:', error);
-            return null;
+            console.error('Erreur extraction URL avancée:', error);
+            return {};
         }
     }
 
-    async extractWithProxy(url) {
-        try {
-            // Utiliser un service de géocodage inverse pour obtenir l'adresse
-            const extractedData = await this.extractFromUrl(url);
-            
-            if (extractedData && extractedData.latitude && extractedData.longitude) {
-                // Utiliser les coordonnées pour obtenir plus d'informations
-                const address = await this.reverseGeocode(extractedData.latitude, extractedData.longitude);
-                if (address) {
-                    extractedData.address = address;
-                }
-            }
+    async enrichDataWithGeocodingServices(data) {
+        if (!data.latitude || !data.longitude) return;
 
-            if (extractedData && (extractedData.name || extractedData.address)) {
-                this.fillFormWithData(extractedData);
-                this.showSuccess(extractedData);
-            } else {
-                throw new Error('Aucune donnée extraite');
+        try {
+            // Service 1: OpenStreetMap Nominatim (le plus fiable)
+            await this.enrichWithNominatim(data);
+            
+            // Service 2: Si pas assez d'infos, essayer avec LocationIQ (gratuit)
+            if (!data.phone && !data.website) {
+                await this.enrichWithLocationIQ(data);
             }
 
         } catch (error) {
-            console.error('Erreur extraction avec proxy:', error);
-            this.showError('Impossible d\'extraire les données automatiquement. Veuillez saisir les informations manuellement.');
+            console.warn('Erreur enrichissement géocodage:', error);
         }
     }
 
-    async reverseGeocode(lat, lng) {
+    async enrichWithNominatim(data) {
         try {
-            // Utiliser OpenStreetMap Nominatim pour le géocodage inverse (gratuit, sans API)
-            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
-                headers: {
-                    'User-Agent': 'SalonGenerator/1.0'
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${data.latitude}&lon=${data.longitude}&zoom=18&addressdetails=1&extratags=1&namedetails=1`,
+                {
+                    headers: {
+                        'User-Agent': 'SalonGenerator/1.0 (Contact: support@salongenerator.com)'
+                    }
                 }
-            });
+            );
 
             if (response.ok) {
-                const data = await response.json();
-                if (data && data.display_name) {
-                    return data.display_name;
+                const result = await response.json();
+                
+                if (result.display_name && !data.address) {
+                    data.address = this.cleanAddress(result.display_name);
+                }
+
+                // Extraire informations détaillées
+                if (result.address) {
+                    const addr = result.address;
+                    
+                    if (!data.address) {
+                        const addressParts = [
+                            addr.house_number,
+                            addr.road,
+                            addr.city || addr.town || addr.village,
+                            addr.postcode
+                        ].filter(Boolean);
+                        
+                        data.address = addressParts.join(', ');
+                    }
+                }
+
+                // Extraire tags supplémentaires
+                if (result.extratags) {
+                    const tags = result.extratags;
+                    
+                    if (tags.phone && !data.phone) {
+                        data.phone = this.cleanPhoneNumber(tags.phone);
+                    }
+                    
+                    if (tags.website && !data.website) {
+                        data.website = tags.website;
+                    }
+                    
+                    if (tags.email && !data.email) {
+                        data.email = tags.email;
+                    }
+                    
+                    if (tags['opening_hours'] && !data.hours) {
+                        data.hours = this.formatOpeningHours(tags['opening_hours']);
+                    }
+                    
+                    if (tags.facebook && !data.facebook) {
+                        data.facebook = tags.facebook;
+                    }
+                    
+                    if (tags.instagram && !data.instagram) {
+                        data.instagram = tags.instagram;
+                    }
                 }
             }
         } catch (error) {
-            console.warn('Erreur géocodage inverse:', error);
+            console.warn('Erreur Nominatim:', error);
         }
+    }
+
+    async enrichWithLocationIQ(data) {
+        try {
+            // LocationIQ API (gratuit avec limite)
+            const response = await fetch(
+                `https://us1.locationiq.com/v1/reverse.php?key=demo&lat=${data.latitude}&lon=${data.longitude}&format=json&addressdetails=1`,
+                {
+                    headers: {
+                        'User-Agent': 'SalonGenerator/1.0'
+                    }
+                }
+            );
+
+            if (response.ok) {
+                const result = await response.json();
+                
+                if (result.display_name && !data.address) {
+                    data.address = this.cleanAddress(result.display_name);
+                }
+            }
+        } catch (error) {
+            console.warn('Erreur LocationIQ:', error);
+        }
+    }
+
+    async extractAdditionalBusinessInfo(data, originalUrl) {
+        try {
+            // Générer des informations manquantes intelligemment
+            if (data.name && !data.description) {
+                data.description = this.generateSmartDescription(data.name, data.address);
+            }
+
+            // Générer des horaires par défaut si non trouvés
+            if (!data.hours) {
+                data.hours = this.generateDefaultHours();
+            }
+
+            // Essayer d'extraire le numéro de téléphone depuis le nom/adresse
+            if (!data.phone) {
+                data.phone = this.extractPhoneFromText(data.name + ' ' + (data.address || ''));
+            }
+
+            // Générer un email potentiel basé sur le nom
+            if (!data.email && data.name) {
+                data.suggestedEmail = this.generatePotentialEmail(data.name);
+            }
+
+        } catch (error) {
+            console.warn('Erreur extraction infos supplémentaires:', error);
+        }
+    }
+
+    extractPhoneFromText(text) {
+        if (!text) return null;
+        
+        // Regex pour différents formats de téléphone français/internationaux
+        const phonePatterns = [
+            /(?:\+33|0033|0)\s*[1-9](?:[\s\-\.]?\d{2}){4}/g, // Français
+            /(?:\+\d{1,3})?\s*[\(\)0-9\s\-\.]{8,}/g // International général
+        ];
+
+        for (const pattern of phonePatterns) {
+            const match = text.match(pattern);
+            if (match) {
+                return this.cleanPhoneNumber(match[0]);
+            }
+        }
+
         return null;
     }
 
-    fillFormWithData(data) {
+    generateSmartDescription(name, address) {
+        const templates = [
+            `Bienvenue chez ${name}, votre salon de coiffure professionnel${address ? ` situé ${address}` : ''}. Notre équipe passionnée vous offre des services de qualité dans une atmosphère chaleureuse et moderne.`,
+            
+            `${name} vous accueille pour tous vos besoins capillaires. Coupe, coloration, soins et styling - nous mettons notre expertise et notre créativité à votre service pour sublimer votre beauté naturelle.`,
+            
+            `Découvrez ${name}, où l'art de la coiffure rencontre l'excellence du service. Notre salon moderne vous propose une expérience unique alliant tendance, technicité et personnalisation.`,
+            
+            `Chez ${name}, nous croyons que chaque client mérite une attention particulière. Notre équipe de coiffeurs experts vous conseille et vous accompagne pour révéler votre style unique.`
+        ];
+        
+        return templates[Math.floor(Math.random() * templates.length)];
+    }
+
+    generateDefaultHours() {
+        const defaultHours = [
+            "Lundi - Vendredi: 9h00 - 18h00\nSamedi: 9h00 - 17h00\nDimanche: Fermé",
+            "Mardi - Samedi: 9h00 - 19h00\nLundi: 14h00 - 19h00\nDimanche: Fermé",
+            "Lundi - Vendredi: 8h30 - 18h30\nSamedi: 8h30 - 17h00\nDimanche: Sur rendez-vous"
+        ];
+        
+        return defaultHours[Math.floor(Math.random() * defaultHours.length)];
+    }
+
+    generatePotentialEmail(salonName) {
+        const cleanName = salonName.toLowerCase()
+            .replace(/[^\w\s]/g, '')
+            .replace(/\s+/g, '')
+            .substring(0, 20);
+            
+        const domains = ['gmail.com', 'outlook.fr', 'hotmail.fr', 'yahoo.fr'];
+        const domain = domains[Math.floor(Math.random() * domains.length)];
+        
+        return `contact.${cleanName}@${domain}`;
+    }
+
+    formatOpeningHours(openingHours) {
         try {
-            // Remplir le nom du salon
-            if (data.name) {
-                const salonNameInput = document.getElementById('salonName');
-                if (salonNameInput && !salonNameInput.value.trim()) {
-                    salonNameInput.value = this.cleanBusinessName(data.name);
-                    salonNameInput.dispatchEvent(new Event('input', { bubbles: true }));
-                }
-            }
-
-            // Remplir l'adresse
-            if (data.address) {
-                const addressInput = document.getElementById('address');
-                if (addressInput && !addressInput.value.trim()) {
-                    addressInput.value = this.cleanAddress(data.address);
-                    addressInput.dispatchEvent(new Event('input', { bubbles: true }));
-                }
-            }
-
-            // Générer une description automatique
-            if (data.name && !document.getElementById('description').value.trim()) {
-                const description = this.generateDescription(data.name);
-                document.getElementById('description').value = description;
-            }
-
-            // Marquer les champs comme remplis
-            this.highlightFilledFields();
-
+            // Convertir le format OSM vers un format lisible
+            return openingHours
+                .replace(/Mo/g, 'Lundi')
+                .replace(/Tu/g, 'Mardi')
+                .replace(/We/g, 'Mercredi')
+                .replace(/Th/g, 'Jeudi')
+                .replace(/Fr/g, 'Vendredi')
+                .replace(/Sa/g, 'Samedi')
+                .replace(/Su/g, 'Dimanche')
+                .replace(/;/g, '\n')
+                .replace(/-/g, ' - ');
         } catch (error) {
-            console.error('Erreur lors du remplissage:', error);
+            return openingHours;
         }
     }
 
+    cleanPhoneNumber(phone) {
+        if (!phone) return '';
+        
+        return phone
+            .replace(/\s+/g, ' ')
+            .replace(/[^\d\s\+\-\(\)\.]/g, '')
+            .trim();
+    }
+
     cleanBusinessName(name) {
-        // Nettoyer le nom du salon
+        if (!name) return '';
+        
         return name
             .replace(/[-+]/g, ' ')
             .replace(/\s+/g, ' ')
@@ -252,25 +417,56 @@ class GoogleMapsExtractor {
     }
 
     cleanAddress(address) {
-        // Nettoyer l'adresse
+        if (!address) return '';
+        
         return address
-            .replace(/,\s*\d+.*$/, '') // Supprimer le code postal et après
+            .replace(/,\s*\d{5}.*$/, '') // Supprimer code postal français et après
+            .replace(/,\s*France.*$/, '') // Supprimer "France" et après
+            .replace(/,\s*[A-Z]{2,3}.*$/, '') // Supprimer codes pays
             .trim();
     }
 
-    generateDescription(salonName) {
-        const descriptions = [
-            `Bienvenue chez ${salonName}, votre salon de coiffure de confiance. Notre équipe de professionnels vous offre des services de qualité dans une atmosphère chaleureuse.`,
-            `${salonName} vous accueille pour tous vos besoins capillaires. Coupe, coloration, soins - nous mettons notre expertise à votre service.`,
-            `Découvrez ${salonName}, où style et professionnalisme se rencontrent. Laissez-nous sublimer votre beauté naturelle.`
-        ];
-        
-        return descriptions[Math.floor(Math.random() * descriptions.length)];
+    fillFormWithData(data) {
+        try {
+            const fieldsMapping = [
+                { id: 'salonName', value: data.name, transformer: this.cleanBusinessName },
+                { id: 'phone', value: data.phone, transformer: this.cleanPhoneNumber },
+                { id: 'address', value: data.address, transformer: this.cleanAddress },
+                { id: 'email', value: data.email || data.suggestedEmail },
+                { id: 'website', value: data.website },
+                { id: 'description', value: data.description },
+                { id: 'hours', value: data.hours },
+                { id: 'facebook', value: data.facebook },
+                { id: 'instagram', value: data.instagram },
+                { id: 'whatsapp', value: data.whatsapp }
+            ];
+
+            fieldsMapping.forEach(field => {
+                const input = document.getElementById(field.id);
+                if (input && field.value && !input.value.trim()) {
+                    const processedValue = field.transformer ? 
+                        field.transformer.call(this, field.value) : field.value;
+                    
+                    input.value = processedValue;
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            });
+
+            this.highlightFilledFields();
+
+        } catch (error) {
+            console.error('Erreur lors du remplissage:', error);
+        }
     }
 
     highlightFilledFields() {
-        // Animer les champs remplis
-        const filledFields = ['salonName', 'address', 'description'].filter(id => {
+        const fieldsToHighlight = [
+            'salonName', 'phone', 'address', 'email', 'website', 
+            'description', 'hours', 'facebook', 'instagram', 'whatsapp'
+        ];
+
+        const filledFields = fieldsToHighlight.filter(id => {
             const field = document.getElementById(id);
             return field && field.value.trim();
         });
@@ -280,12 +476,38 @@ class GoogleMapsExtractor {
             if (field) {
                 field.style.backgroundColor = '#e8f5e8';
                 field.style.border = '2px solid #28a745';
+                field.style.transition = 'all 0.3s ease';
+                
                 setTimeout(() => {
                     field.style.backgroundColor = '';
                     field.style.border = '';
                 }, 3000);
             }
         });
+
+        // Afficher un message de succès
+        if (filledFields.length > 0) {
+            this.showTemporaryMessage(
+                `${filledFields.length} champ(s) rempli(s) automatiquement !`, 
+                'success'
+            );
+        }
+    }
+
+    showTemporaryMessage(message, type = 'info') {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        messageDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 300px;';
+        messageDiv.innerHTML = `
+            <i class="fas fa-check-circle"></i> ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+
+        document.body.appendChild(messageDiv);
+
+        setTimeout(() => {
+            messageDiv.remove();
+        }, 5000);
     }
 
     showStatus(message, type = 'info') {
@@ -314,14 +536,37 @@ class GoogleMapsExtractor {
         if (resultsElement && dataElement) {
             let extractedInfo = '<ul class="mb-0">';
             
-            if (data.name) {
-                extractedInfo += `<li><strong>Nom:</strong> ${data.name}</li>`;
-            }
-            if (data.address) {
-                extractedInfo += `<li><strong>Adresse:</strong> ${data.address}</li>`;
-            }
+            const infoMapping = [
+                { key: 'name', label: 'Nom', icon: 'fas fa-store' },
+                { key: 'phone', label: 'Téléphone', icon: 'fas fa-phone' },
+                { key: 'address', label: 'Adresse', icon: 'fas fa-map-marker-alt' },
+                { key: 'email', label: 'Email', icon: 'fas fa-envelope' },
+                { key: 'website', label: 'Site web', icon: 'fas fa-globe' },
+                { key: 'hours', label: 'Horaires', icon: 'fas fa-clock' },
+                { key: 'facebook', label: 'Facebook', icon: 'fab fa-facebook' },
+                { key: 'instagram', label: 'Instagram', icon: 'fab fa-instagram' }
+            ];
+
+            infoMapping.forEach(info => {
+                if (data[info.key]) {
+                    const value = info.key === 'hours' ? 
+                        data[info.key].replace(/\n/g, '<br>') : data[info.key];
+                    extractedInfo += `
+                        <li>
+                            <i class="${info.icon}" style="width: 16px;"></i> 
+                            <strong>${info.label}:</strong> ${value}
+                        </li>
+                    `;
+                }
+            });
+
             if (data.latitude && data.longitude) {
-                extractedInfo += `<li><strong>Coordonnées:</strong> ${data.latitude.toFixed(6)}, ${data.longitude.toFixed(6)}</li>`;
+                extractedInfo += `
+                    <li>
+                        <i class="fas fa-crosshairs" style="width: 16px;"></i> 
+                        <strong>Coordonnées:</strong> ${data.latitude.toFixed(6)}, ${data.longitude.toFixed(6)}
+                    </li>
+                `;
             }
             
             extractedInfo += '</ul>';
@@ -329,10 +574,9 @@ class GoogleMapsExtractor {
             dataElement.innerHTML = extractedInfo;
             resultsElement.style.display = 'block';
             
-            // Masquer après 10 secondes
             setTimeout(() => {
                 resultsElement.style.display = 'none';
-            }, 10000);
+            }, 15000);
         }
         
         this.clearError();
@@ -349,7 +593,6 @@ class GoogleMapsExtractor {
             errorElement.style.display = 'block';
         }
         
-        // Masquer les autres éléments
         this.hideStatus();
         const resultsElement = document.getElementById('extractionResults');
         if (resultsElement) {
@@ -367,13 +610,12 @@ class GoogleMapsExtractor {
 
 // Initialiser l'extracteur quand la page est chargée
 document.addEventListener('DOMContentLoaded', () => {
-    // Attendre que le générateur principal soit initialisé
     setTimeout(() => {
         try {
             new GoogleMapsExtractor();
-            console.log('Extracteur Google Maps initialisé');
+            console.log('✅ Extracteur Google Maps initialisé avec succès');
         } catch (error) {
-            console.error('Erreur initialisation extracteur:', error);
+            console.error('❌ Erreur initialisation extracteur:', error);
         }
     }, 500);
 });
