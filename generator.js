@@ -3,7 +3,13 @@ class SalonGenerator {
     constructor() {
         this.generatedHTML = null;
         this.generatedFiles = new Map();
+        this.selectedTemplate = this.getSelectedTemplate();
         this.init();
+    }
+
+    getSelectedTemplate() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('template') || 'classic';
     }
 
     init() {
@@ -29,18 +35,287 @@ class SalonGenerator {
             address: document.getElementById('address').value,
             email: document.getElementById('email').value || '',
             website: document.getElementById('website').value || '',
+            description: document.getElementById('description').value || '',
             hours: document.getElementById('hours').value || 'Nous contacter pour les horaires',
             facebook: document.getElementById('facebook').value || '',
             instagram: document.getElementById('instagram').value || '',
-            whatsapp: document.getElementById('whatsapp').value || ''
+            whatsapp: document.getElementById('whatsapp').value || '',
+            primaryColor: document.getElementById('primaryColor').value || '#667eea',
+            secondaryColor: document.getElementById('secondaryColor').value || '#764ba2'
         };
+    }
+
+    async loadTemplate(templateType) {
+        const templates = {
+            'classic': await this.getClassicTemplate(),
+            'modern': await this.getModernTemplate(),
+            'luxury': await this.getLuxuryTemplate(),
+            'minimal': await this.getMinimalTemplate(),
+            'barber': await this.getBarberTemplate(),
+            'creative': await this.getCreativeTemplate()
+        };
+        return templates[templateType] || templates['classic'];
+    }
+
+    async getClassicTemplate() {
+        // Template original du salon
+        try {
+            const response = await fetch('.templates/index.html');
+            if (response.ok) {
+                return await response.text();
+            }
+        } catch (error) {
+            console.warn('Template original non trouvé, utilisation du template par défaut');
+        }
+        return this.getDefaultTemplate();
+    }
+
+    async getModernTemplate() {
+        return this.getTemplateVariation('modern');
+    }
+
+    async getLuxuryTemplate() {
+        return this.getTemplateVariation('luxury');
+    }
+
+    async getMinimalTemplate() {
+        return this.getTemplateVariation('minimal');
+    }
+
+    async getBarberTemplate() {
+        return this.getTemplateVariation('barber');
+    }
+
+    async getCreativeTemplate() {
+        return this.getTemplateVariation('creative');
+    }
+
+    async getTemplateVariation(type) {
+        const baseTemplate = await this.getDefaultTemplate();
+        return this.applyTemplateStyle(baseTemplate, type);
+    }
+
+    applyTemplateStyle(html, type) {
+        const styles = {
+            'modern': {
+                gradient: 'linear-gradient(45deg, #f093fb, #f5576c)',
+                fontFamily: 'Montserrat, sans-serif',
+                buttonStyle: 'border-radius: 25px; background: linear-gradient(45deg, #f093fb, #f5576c);'
+            },
+            'luxury': {
+                gradient: 'linear-gradient(45deg, #ffecd2, #fcb69f)',
+                fontFamily: 'Playfair Display, serif',
+                buttonStyle: 'border-radius: 0; background: linear-gradient(45deg, #d4af37, #ffd700); color: #000;'
+            },
+            'minimal': {
+                gradient: 'linear-gradient(45deg, #f8f9fa, #e9ecef)',
+                fontFamily: 'Inter, sans-serif',
+                buttonStyle: 'border-radius: 2px; background: #212529; border: none;'
+            },
+            'barber': {
+                gradient: 'linear-gradient(45deg, #434343, #000000)',
+                fontFamily: 'Oswald, sans-serif',
+                buttonStyle: 'border-radius: 0; background: #dc3545; border: 2px solid #fff;'
+            },
+            'creative': {
+                gradient: 'linear-gradient(45deg, #ff9a9e, #fecfef)',
+                fontFamily: 'Fredoka One, cursive',
+                buttonStyle: 'border-radius: 50px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4);'
+            }
+        };
+
+        const style = styles[type];
+        if (style) {
+            // Appliquer les styles personnalisés
+            html = html.replace(
+                /<head>/,
+                `<head>
+                <style>
+                    body { font-family: ${style.fontFamily} !important; }
+                    .btn-custom { ${style.buttonStyle} }
+                    .hero-section { background: ${style.gradient} !important; }
+                </style>`
+            );
+        }
+
+        return html;
+    }
+
+    getDefaultTemplate() {
+        return `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{SALON_NAME}} - Salon de Coiffure</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .hero-section { 
+            background: linear-gradient(135deg, {{PRIMARY_COLOR}}, {{SECONDARY_COLOR}});
+            color: white; 
+            padding: 100px 0; 
+            text-align: center; 
+        }
+        .service-card { 
+            border: none; 
+            border-radius: 15px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+            transition: transform 0.3s;
+        }
+        .service-card:hover { transform: translateY(-5px); }
+        .btn-custom { 
+            background: {{PRIMARY_COLOR}}; 
+            border: none; 
+            border-radius: 25px; 
+            padding: 12px 30px; 
+            color: white;
+        }
+        .contact-section { background: #f8f9fa; padding: 60px 0; }
+        .footer { background: #333; color: white; padding: 40px 0; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><strong>{{SALON_NAME}}</strong></a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="#services">Services</a>
+                <a class="nav-link" href="#about">À propos</a>
+                <a class="nav-link" href="#contact">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="display-4 mb-4">{{SALON_NAME}}</h1>
+            <p class="lead">{{DESCRIPTION}}</p>
+            <a href="#contact" class="btn btn-custom btn-lg">Prendre Rendez-vous</a>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section id="services" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Nos Services</h2>
+            <div class="row">
+                <div class="col-md-3 mb-4">
+                    <div class="card service-card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-cut fa-3x mb-3" style="color: {{PRIMARY_COLOR}};"></i>
+                            <h5>Coupe</h5>
+                            <p>Coupe personnalisée selon votre style</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card service-card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-palette fa-3x mb-3" style="color: {{PRIMARY_COLOR}};"></i>
+                            <h5>Coloration</h5>
+                            <p>Couleurs tendance et naturelles</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card service-card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-magic fa-3x mb-3" style="color: {{PRIMARY_COLOR}};"></i>
+                            <h5>Soins</h5>
+                            <p>Traitements capillaires professionnels</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card service-card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-spa fa-3x mb-3" style="color: {{PRIMARY_COLOR}};"></i>
+                            <h5>Styling</h5>
+                            <p>Mise en forme et coiffage</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="py-5 bg-light">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h2>À propos de {{SALON_NAME}}</h2>
+                    <p>{{DESCRIPTION}}</p>
+                    <p><strong>Horaires :</strong><br>{{HOURS}}</p>
+                    {{EMAIL_SECTION}}
+                    {{WEBSITE_SECTION}}
+                </div>
+                <div class="col-md-6">
+                    <div class="text-center">
+                        <i class="fas fa-cut fa-10x" style="color: {{PRIMARY_COLOR}}; opacity: 0.1;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <h2 class="text-center mb-5">Nous Contacter</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="contact-info">
+                        <div class="mb-4">
+                            <i class="fas fa-map-marker-alt fa-2x mb-3" style="color: {{PRIMARY_COLOR}};"></i>
+                            <h5>Adresse</h5>
+                            <p>{{ADDRESS}}</p>
+                        </div>
+                        <div class="mb-4">
+                            <i class="fas fa-phone fa-2x mb-3" style="color: {{PRIMARY_COLOR}};"></i>
+                            <h5>Téléphone</h5>
+                            <p>{{PHONE}}</p>
+                        </div>
+                        {{SOCIAL_SECTION}}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <form>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" placeholder="Votre nom">
+                        </div>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="Votre email">
+                        </div>
+                        <div class="mb-3">
+                            <textarea class="form-control" rows="5" placeholder="Votre message"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-custom">Envoyer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p>&copy; 2024 {{SALON_NAME}}. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>`;
     }
 
     async generateSite(data) {
         try {
-            // Charger le template HTML original
-            const response = await fetch('index.html');
-            let htmlContent = await response.text();
+            // Charger le template HTML selon le type sélectionné
+            let htmlContent = await this.loadTemplate(this.selectedTemplate);
 
             // Remplacer les données dans le template
             htmlContent = this.replaceTemplateData(htmlContent, data);
@@ -57,7 +332,35 @@ class SalonGenerator {
     }
 
     replaceTemplateData(html, data) {
-        // Remplacer le titre et les métadonnées
+        // Remplacements pour les nouveaux templates
+        html = html.replace(/{{SALON_NAME}}/g, data.salonName);
+        html = html.replace(/{{PHONE}}/g, data.phone);
+        html = html.replace(/{{ADDRESS}}/g, data.address);
+        html = html.replace(/{{DESCRIPTION}}/g, data.description || `Bienvenue chez ${data.salonName}, votre salon de coiffure professionnel.`);
+        html = html.replace(/{{HOURS}}/g, data.hours.replace(/\n/g, '<br>'));
+        html = html.replace(/{{PRIMARY_COLOR}}/g, data.primaryColor);
+        html = html.replace(/{{SECONDARY_COLOR}}/g, data.secondaryColor);
+
+        // Sections conditionnelles
+        const emailSection = data.email ? `<p><strong>Email :</strong> <a href="mailto:${data.email}">${data.email}</a></p>` : '';
+        const websiteSection = data.website ? `<p><strong>Site web :</strong> <a href="${data.website}" target="_blank">${data.website}</a></p>` : '';
+        
+        let socialSection = '';
+        if (data.facebook || data.instagram || data.whatsapp) {
+            socialSection = `<div class="mb-4">
+                <i class="fas fa-share-alt fa-2x mb-3" style="color: ${data.primaryColor};"></i>
+                <h5>Réseaux sociaux</h5>`;
+            if (data.facebook) socialSection += `<a href="${data.facebook}" class="me-3"><i class="fab fa-facebook fa-2x"></i></a>`;
+            if (data.instagram) socialSection += `<a href="${data.instagram}" class="me-3"><i class="fab fa-instagram fa-2x"></i></a>`;
+            if (data.whatsapp) socialSection += `<a href="https://wa.me/${data.whatsapp}" class="me-3"><i class="fab fa-whatsapp fa-2x"></i></a>`;
+            socialSection += '</div>';
+        }
+
+        html = html.replace(/{{EMAIL_SECTION}}/g, emailSection);
+        html = html.replace(/{{WEBSITE_SECTION}}/g, websiteSection);
+        html = html.replace(/{{SOCIAL_SECTION}}/g, socialSection);
+
+        // Remplacements pour l'ancien template (rétrocompatibilité)
         html = html.replace(/Beauty &amp; Salon - Free Bootstrap 4 Template/g, `${data.salonName} - Salon de Coiffure`);
         html = html.replace(/Beauty and Salon - Free Bootstrap 4 Template \| Boostraptheme/g, `${data.salonName} - Salon de Coiffure`);
         

@@ -4,20 +4,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de Site Salon</title>
+    <title>Personnaliser votre Site Salon</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="generator.css">
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container mt-4">
         <div class="row">
-            <div class="col-md-8 mx-auto">
+            <div class="col-md-10 mx-auto">
+                <div class="template-header mb-4">
+                    <a href="index.html" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Retour aux templates
+                    </a>
+                    <div class="template-info mt-3" id="templateInfo">
+                        <h3 id="templateName">Template Sélectionné</h3>
+                        <p id="templateDescription">Personnalisez votre template</p>
+                    </div>
+                </div>
+
                 <div class="card">
-                    <div class="card-header">
-                        <h2 class="text-center mb-0">🎨 Générateur de Site Salon</h2>
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="fas fa-edit"></i> Personnalisation du Site</h4>
                     </div>
                     <div class="card-body">
                         <form id="salonForm">
+                            <!-- Informations de base -->
+                            <div class="section-header">
+                                <h5><i class="fas fa-info-circle"></i> Informations de base</h5>
+                                <hr>
+                            </div>
+                            
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -54,11 +71,21 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="hours" class="form-label">Horaires d'ouverture</label>
-                                <textarea class="form-control" id="hours" rows="3" placeholder="Ex: Lun-Ven: 9h-18h, Sam: 9h-17h, Dim: Fermé"></textarea>
+                                <label for="description" class="form-label">Description du salon</label>
+                                <textarea class="form-control" id="description" rows="3" placeholder="Décrivez votre salon et vos services..."></textarea>
                             </div>
 
-                            <h5>Réseaux sociaux</h5>
+                            <div class="mb-3">
+                                <label for="hours" class="form-label">Horaires d'ouverture</label>
+                                <textarea class="form-control" id="hours" rows="3" placeholder="Ex: Lun-Ven: 9h-18h&#10;Sam: 9h-17h&#10;Dim: Fermé"></textarea>
+                            </div>
+
+                            <!-- Réseaux sociaux -->
+                            <div class="section-header mt-4">
+                                <h5><i class="fab fa-facebook"></i> Réseaux sociaux</h5>
+                                <hr>
+                            </div>
+                            
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="mb-3">
@@ -80,9 +107,40 @@
                                 </div>
                             </div>
 
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-lg">🚀 Générer le site</button>
-                                <button type="button" id="downloadBtn" class="btn btn-success" disabled>📥 Télécharger le site (.zip)</button>
+                            <!-- Couleurs du template (selon le template choisi) -->
+                            <div class="section-header mt-4" id="colorSection">
+                                <h5><i class="fas fa-palette"></i> Personnalisation des couleurs</h5>
+                                <hr>
+                            </div>
+                            
+                            <div class="row" id="colorOptions">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="primaryColor" class="form-label">Couleur principale</label>
+                                        <input type="color" class="form-control form-control-color" id="primaryColor" value="#667eea">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="secondaryColor" class="form-label">Couleur secondaire</label>
+                                        <input type="color" class="form-control form-control-color" id="secondaryColor" value="#764ba2">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Boutons d'action -->
+                            <div class="action-buttons mt-4">
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-magic"></i> Générer le site
+                                    </button>
+                                    <button type="button" id="previewBtn" class="btn btn-info" disabled>
+                                        <i class="fas fa-eye"></i> Aperçu du site
+                                    </button>
+                                    <button type="button" id="downloadBtn" class="btn btn-success" disabled>
+                                        <i class="fas fa-download"></i> Télécharger le site (.zip)
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -91,6 +149,7 @@
         </div>
     </div>
 
+    <!-- Modal de prévisualisation -->
     <div class="modal fade" id="previewModal" tabindex="-1">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
@@ -103,7 +162,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                    <button type="button" id="downloadFromPreview" class="btn btn-success">📥 Télécharger</button>
+                    <button type="button" id="downloadFromPreview" class="btn btn-success">
+                        <i class="fas fa-download"></i> Télécharger
+                    </button>
                 </div>
             </div>
         </div>
@@ -112,5 +173,65 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="generator.js"></script>
+    
+    <script>
+        // Détecter le template sélectionné depuis l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedTemplate = urlParams.get('template') || 'classic';
+        
+        // Mettre à jour l'interface selon le template
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTemplateInfo(selectedTemplate);
+            updateColorOptions(selectedTemplate);
+        });
+
+        function updateTemplateInfo(template) {
+            const templateInfo = {
+                'classic': {
+                    name: '🎨 Salon Classique',
+                    description: 'Template élégant et professionnel pour salons traditionnels'
+                },
+                'modern': {
+                    name: '✨ Salon Moderne', 
+                    description: 'Design contemporain avec animations fluides'
+                },
+                'luxury': {
+                    name: '💎 Salon Luxury',
+                    description: 'Template haut de gamme pour salons premium'
+                },
+                'minimal': {
+                    name: '🌿 Salon Minimaliste',
+                    description: 'Design épuré et clean'
+                },
+                'barber': {
+                    name: '✂️ Salon Barbier',
+                    description: 'Style masculin et vintage pour barbershops'
+                },
+                'creative': {
+                    name: '🎨 Salon Créatif',
+                    description: 'Design coloré et artistique'
+                }
+            };
+
+            const info = templateInfo[template] || templateInfo['classic'];
+            document.getElementById('templateName').textContent = info.name;
+            document.getElementById('templateDescription').textContent = info.description;
+        }
+
+        function updateColorOptions(template) {
+            const colorPresets = {
+                'classic': { primary: '#667eea', secondary: '#764ba2' },
+                'modern': { primary: '#f093fb', secondary: '#f5576c' },
+                'luxury': { primary: '#ffecd2', secondary: '#fcb69f' },
+                'minimal': { primary: '#a8edea', secondary: '#fed6e3' },
+                'barber': { primary: '#434343', secondary: '#000000' },
+                'creative': { primary: '#ff9a9e', secondary: '#fecfef' }
+            };
+
+            const colors = colorPresets[template] || colorPresets['classic'];
+            document.getElementById('primaryColor').value = colors.primary;
+            document.getElementById('secondaryColor').value = colors.secondary;
+        }
+    </script>
 </body>
 </html>
