@@ -117,88 +117,128 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Image d'en-tête / Hero</label>
                                     <div class="image-upload-container">
-                                        <input type="file" id="heroImage" class="form-control" accept="image/*">
-                                        <small class="form-text text-muted">Format recommandé: 1920x1080px (JPG/PNG)</small>
+                                        <input type="file" id="heroImage" class="form-control" accept="image/jpeg,image/jpg,image/png,image/webp">
+                                        <small class="form-text text-muted">
+                                            <strong>Format:</strong> JPG, PNG, WEBP uniquement<br>
+                                            <strong>Dimension recommandée:</strong> 1920x1080px<br>
+                                            <strong>Taille max:</strong> 5MB
+                                        </small>
                                         <div class="image-preview mt-2" id="heroImagePreview" style="display: none;">
                                             <img src="" alt="Aperçu" style="max-width: 200px; max-height: 120px; border-radius: 5px;">
                                         </div>
+                                        <div class="alert alert-danger mt-2" id="heroImageError" style="display: none; padding: 8px; font-size: 12px;"></div>
                                     </div>
                                 </div>
                                 
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Image "À propos" / Perfect Style</label>
                                     <div class="image-upload-container">
-                                        <input type="file" id="aboutImage" class="form-control" accept="image/*">
-                                        <small class="form-text text-muted">Format recommandé: 800x600px (JPG/PNG)</small>
+                                        <input type="file" id="aboutImage" class="form-control" accept="image/jpeg,image/jpg,image/png,image/webp">
+                                        <small class="form-text text-muted">
+                                            <strong>Format:</strong> JPG, PNG, WEBP uniquement<br>
+                                            <strong>Dimension recommandée:</strong> 800x600px<br>
+                                            <strong>Taille max:</strong> 5MB
+                                        </small>
                                         <div class="image-preview mt-2" id="aboutImagePreview" style="display: none;">
                                             <img src="" alt="Aperçu" style="max-width: 200px; max-height: 150px; border-radius: 5px;">
                                         </div>
+                                        <div class="alert alert-danger mt-2" id="aboutImageError" style="display: none; padding: 8px; font-size: 12px;"></div>
                                     </div>
                                 </div>
 
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label">Équipe - Photo 1</label>
                                     <div class="image-upload-container">
-                                        <input type="file" id="team1Image" class="form-control" accept="image/*">
-                                        <small class="form-text text-muted">Format: 400x400px (JPG/PNG)</small>
+                                        <input type="file" id="team1Image" class="form-control" accept="image/jpeg,image/jpg,image/png,image/webp">
+                                        <small class="form-text text-muted">
+                                            <strong>Format:</strong> JPG, PNG, WEBP<br>
+                                            <strong>Dimension:</strong> 400x400px (carré)<br>
+                                            <strong>Taille max:</strong> 3MB
+                                        </small>
                                         <div class="image-preview mt-2" id="team1ImagePreview" style="display: none;">
                                             <img src="" alt="Aperçu" style="max-width: 100px; max-height: 100px; border-radius: 50%;">
                                         </div>
+                                        <div class="alert alert-danger mt-2" id="team1ImageError" style="display: none; padding: 8px; font-size: 12px;"></div>
                                     </div>
                                 </div>
 
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label">Équipe - Photo 2</label>
                                     <div class="image-upload-container">
-                                        <input type="file" id="team2Image" class="form-control" accept="image/*">
-                                        <small class="form-text text-muted">Format: 400x400px (JPG/PNG)</small>
+                                        <input type="file" id="team2Image" class="form-control" accept="image/jpeg,image/jpg,image/png,image/webp">
+                                        <small class="form-text text-muted">
+                                            <strong>Format:</strong> JPG, PNG, WEBP<br>
+                                            <strong>Dimension:</strong> 400x400px (carré)<br>
+                                            <strong>Taille max:</strong> 3MB
+                                        </small>
                                         <div class="image-preview mt-2" id="team2ImagePreview" style="display: none;">
                                             <img src="" alt="Aperçu" style="max-width: 100px; max-height: 100px; border-radius: 50%;">
                                         </div>
+                                        <div class="alert alert-danger mt-2" id="team2ImageError" style="display: none; padding: 8px; font-size: 12px;"></div>
                                     </div>
                                 </div>
 
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label">Équipe - Photo 3</label>
                                     <div class="image-upload-container">
-                                        <input type="file" id="team3Image" class="form-control" accept="image/*">
-                                        <small class="form-text text-muted">Format: 400x400px (JPG/PNG)</small>
+                                        <input type="file" id="team3Image" class="form-control" accept="image/jpeg,image/jpg,image/png,image/webp">
+                                        <small class="form-text text-muted">
+                                            <strong>Format:</strong> JPG, PNG, WEBP<br>
+                                            <strong>Dimension:</strong> 400x400px (carré)<br>
+                                            <strong>Taille max:</strong> 3MB
+                                        </small>
                                         <div class="image-preview mt-2" id="team3ImagePreview" style="display: none;">
                                             <img src="" alt="Aperçu" style="max-width: 100px; max-height: 100px; border-radius: 50%;">
                                         </div>
+                                        <div class="alert alert-danger mt-2" id="team3ImageError" style="display: none; padding: 8px; font-size: 12px;"></div>
                                     </div>
                                 </div>
 
                                 <div class="col-12 mb-3">
                                     <label class="form-label">Portfolio / Galerie (jusqu'à 6 images)</label>
                                     <div class="image-upload-container">
-                                        <input type="file" id="portfolioImages" class="form-control" accept="image/*" multiple>
-                                        <small class="form-text text-muted">Format recommandé: 600x600px (JPG/PNG) - Maximum 6 images</small>
+                                        <input type="file" id="portfolioImages" class="form-control" accept="image/jpeg,image/jpg,image/png,image/webp" multiple>
+                                        <small class="form-text text-muted">
+                                            <strong>Format:</strong> JPG, PNG, WEBP uniquement<br>
+                                            <strong>Dimension recommandée:</strong> 600x600px (carré de préférence)<br>
+                                            <strong>Nombre max:</strong> 6 images | <strong>Taille max par image:</strong> 4MB
+                                        </small>
                                         <div class="image-preview mt-2" id="portfolioImagesPreview" style="display: none;">
                                             <div class="d-flex flex-wrap gap-2" id="portfolioPreviewContainer"></div>
                                         </div>
+                                        <div class="alert alert-danger mt-2" id="portfolioImagesError" style="display: none; padding: 8px; font-size: 12px;"></div>
                                     </div>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Logo du salon</label>
                                     <div class="image-upload-container">
-                                        <input type="file" id="logoImage" class="form-control" accept="image/*">
-                                        <small class="form-text text-muted">Format recommandé: 200x200px (PNG avec fond transparent)</small>
+                                        <input type="file" id="logoImage" class="form-control" accept="image/png,image/svg+xml,image/webp">
+                                        <small class="form-text text-muted">
+                                            <strong>Format:</strong> PNG, SVG, WEBP (fond transparent recommandé)<br>
+                                            <strong>Dimension recommandée:</strong> 200x200px ou ratio 1:1<br>
+                                            <strong>Taille max:</strong> 2MB
+                                        </small>
                                         <div class="image-preview mt-2" id="logoImagePreview" style="display: none;">
                                             <img src="" alt="Aperçu" style="max-width: 100px; max-height: 100px; border-radius: 5px;">
                                         </div>
+                                        <div class="alert alert-danger mt-2" id="logoImageError" style="display: none; padding: 8px; font-size: 12px;"></div>
                                     </div>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Image de pied de page</label>
                                     <div class="image-upload-container">
-                                        <input type="file" id="footerImage" class="form-control" accept="image/*">
-                                        <small class="form-text text-muted">Format recommandé: 1920x400px (JPG/PNG)</small>
+                                        <input type="file" id="footerImage" class="form-control" accept="image/jpeg,image/jpg,image/png,image/webp">
+                                        <small class="form-text text-muted">
+                                            <strong>Format:</strong> JPG, PNG, WEBP uniquement<br>
+                                            <strong>Dimension recommandée:</strong> 1920x400px (format paysage)<br>
+                                            <strong>Taille max:</strong> 5MB
+                                        </small>
                                         <div class="image-preview mt-2" id="footerImagePreview" style="display: none;">
                                             <img src="" alt="Aperçu" style="max-width: 200px; max-height: 50px; border-radius: 5px;">
                                         </div>
+                                        <div class="alert alert-danger mt-2" id="footerImageError" style="display: none; padding: 8px; font-size: 12px;"></div>
                                     </div>
                                 </div>
                             </div>

@@ -83,16 +83,16 @@ class SalonGenerator {
         const file = e.target.files[0];
         if (!file) return;
 
-        try {
-            // Valider le type de fichier
-            if (!file.type.startsWith('image/')) {
-                alert('Veuillez sélectionner un fichier image valide.');
-                return;
-            }
+        // Effacer les erreurs précédentes
+        this.clearImageError(inputId);
 
-            // Valider la taille (max 5MB)
-            if (file.size > 5 * 1024 * 1024) {
-                alert('L\'image est trop volumineuse. Taille maximum: 5MB.');
+        try {
+            // Validation du format et de la taille selon le type d'image
+            const validationResult = this.validateImageFile(file, inputId);
+            if (!validationResult.isValid) {
+                this.showImageError(inputId, validationResult.error);
+                // Effacer l'input
+                e.target.value = '';
                 return;
             }
 
@@ -109,7 +109,8 @@ class SalonGenerator {
 
         } catch (error) {
             console.error('Erreur lors du traitement de l\'image:', error);
-            alert('Erreur lors du traitement de l\'image.');
+            this.showImageError(inputId, 'Erreur lors du traitement de l\'image.');
+            e.target.value = '';
         }
     }
 
@@ -117,23 +118,24 @@ class SalonGenerator {
         const files = Array.from(e.target.files);
         if (!files.length) return;
 
+        // Effacer les erreurs précédentes
+        this.clearImageError('portfolioImages');
+
         // Limiter à 6 images
         if (files.length > 6) {
-            alert('Maximum 6 images pour le portfolio.');
+            this.showImageError('portfolioImages', 'Maximum 6 images autorisées pour le portfolio.');
+            e.target.value = '';
             return;
         }
 
         try {
             const portfolioImages = [];
+            const errors = [];
             
             for (let file of files) {
-                if (!file.type.startsWith('image/')) {
-                    alert(`${file.name} n'est pas un fichier image valide.`);
-                    continue;
-                }
-
-                if (file.size > 5 * 1024 * 1024) {
-                    alert(`${file.name} est trop volumineux (max 5MB).`);
+                const validationResult = this.validateImageFile(file, 'portfolioImages');
+                if (!validationResult.isValid) {
+                    errors.push(`${file.name}: ${validationResult.error}`);
                     continue;
                 }
 
@@ -145,12 +147,25 @@ class SalonGenerator {
                 });
             }
 
+            if (errors.length > 0) {
+                this.showImageError('portfolioImages', errors.join('<br>'));
+                e.target.value = '';
+                return;
+            }
+
+            if (portfolioImages.length === 0) {
+                this.showImageError('portfolioImages', 'Aucune image valide trouvée.');
+                e.target.value = '';
+                return;
+            }
+
             this.customImages.set('portfolioImages', portfolioImages);
             this.showPortfolioPreview(portfolioImages);
 
         } catch (error) {
             console.error('Erreur lors du traitement des images:', error);
-            alert('Erreur lors du traitement des images.');
+            this.showImageError('portfolioImages', 'Erreur lors du traitement des images.');
+            e.target.value = '';
         }
     }
 
@@ -189,6 +204,105 @@ class SalonGenerator {
             });
             
             previewElement.style.display = 'block';
+        }
+    }
+
+    validateImageFile(file, inputId) {
+        // Définir les règles de validation par type d'image
+        const validationRules = {
+            'heroImage': {
+                formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                maxSize: 5 * 1024 * 1024, // 5MB
+                name: 'Image d\'en-tête'
+            },
+            'aboutImage': {
+                formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                maxSize: 5 * 1024 * 1024, // 5MB
+                name: 'Image À propos'
+            },
+            'logoImage': {
+                formats: ['image/png', 'image/svg+xml', 'image/webp'],
+                maxSize: 2 * 1024 * 1024, // 2MB
+                name: 'Logo'
+            },
+            'footerImage': {
+                formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                maxSize: 5 * 1024 * 1024, // 5MB
+                name: 'Image de pied de page'
+            },
+            'team1Image': {
+                formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                maxSize: 3 * 1024 * 1024, // 3MB
+                name: 'Photo équipe 1'
+            },
+            'team2Image': {
+                formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                maxSize: 3 * 1024 * 1024, // 3MB
+                name: 'Photo équipe 2'
+            },
+            'team3Image': {
+                formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                maxSize: 3 * 1024 * 1024, // 3MB
+                name: 'Photo équipe 3'
+            },
+            'portfolioImages': {
+                formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                maxSize: 4 * 1024 * 1024, // 4MB
+                name: 'Image portfolio'
+            }
+        };
+
+        const rules = validationRules[inputId];
+        if (!rules) {
+            return { isValid: false, error: 'Type d\'image non reconnu.' };
+        }
+
+        // Vérifier le format
+        if (!rules.formats.includes(file.type)) {
+            const allowedFormats = rules.formats.map(format => format.split('/')[1].toUpperCase()).join(', ');
+            return { 
+                isValid: false, 
+                error: `Format non autorisé pour ${rules.name}. Formats acceptés: ${allowedFormats}` 
+            };
+        }
+
+        // Vérifier la taille
+        if (file.size > rules.maxSize) {
+            const maxSizeMB = (rules.maxSize / (1024 * 1024)).toFixed(1);
+            const fileSizeMB = (file.size / (1024 * 1024)).toFixed(1);
+            return { 
+                isValid: false, 
+                error: `${rules.name} trop volumineuse: ${fileSizeMB}MB. Taille max: ${maxSizeMB}MB` 
+            };
+        }
+
+        // Validation supplémentaire pour les noms de fichiers
+        if (file.name.length > 100) {
+            return { 
+                isValid: false, 
+                error: 'Le nom du fichier est trop long (max 100 caractères).' 
+            };
+        }
+
+        return { isValid: true };
+    }
+
+    showImageError(inputId, errorMessage) {
+        const errorElement = document.getElementById(inputId + 'Error');
+        if (errorElement) {
+            errorElement.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${errorMessage}`;
+            errorElement.style.display = 'block';
+        } else {
+            // Fallback: afficher une alerte si l'élément d'erreur n'existe pas
+            alert(errorMessage);
+        }
+    }
+
+    clearImageError(inputId) {
+        const errorElement = document.getElementById(inputId + 'Error');
+        if (errorElement) {
+            errorElement.style.display = 'none';
+            errorElement.innerHTML = '';
         }
     }
 
