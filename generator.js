@@ -341,8 +341,17 @@ class SalonGenerator {
 
     validateImageFile(file, inputId) {
         // Vérification de base
-        if (!file || !file.type) {
-            return { isValid: false, error: 'Fichier invalide ou type non détecté.' };
+        if (!file) {
+            return { isValid: false, error: 'Aucun fichier sélectionné.' };
+        }
+
+        if (!file.type) {
+            return { isValid: false, error: 'Type de fichier non détecté.' };
+        }
+
+        // Vérifier que c'est bien une image
+        if (!file.type.startsWith('image/')) {
+            return { isValid: false, error: 'Le fichier doit être une image.' };
         }
 
         // Définir les règles de validation par template et par type d'image
@@ -544,18 +553,59 @@ class SalonGenerator {
             secondaryColor: getValue('secondaryColor', '#764ba2')
         };
 
-        // Validation des URLs
-        if (data.website && !data.website.startsWith('http')) {
-            data.website = 'https://' + data.website;
-        }
-        if (data.facebook && !data.facebook.startsWith('http')) {
-            data.facebook = 'https://' + data.facebook;
-        }
-        if (data.instagram && !data.instagram.startsWith('http')) {
-            data.instagram = 'https://' + data.instagram;
+        // Validation et nettoyage des données
+        try {
+            // Validation des URLs
+            if (data.website && !data.website.startsWith('http')) {
+                data.website = 'https://' + data.website;
+            }
+            if (data.facebook && !data.facebook.startsWith('http')) {
+                data.facebook = 'https://' + data.facebook;
+            }
+            if (data.instagram && !data.instagram.startsWith('http')) {
+                data.instagram = 'https://' + data.instagram;
+            }
+
+            // Validation de l'email
+            if (data.email && !this.isValidEmail(data.email)) {
+                console.warn('Email invalide fourni:', data.email);
+                data.email = '';
+            }
+
+            // Validation des couleurs
+            if (!this.isValidColor(data.primaryColor)) {
+                data.primaryColor = '#667eea';
+            }
+            if (!this.isValidColor(data.secondaryColor)) {
+                data.secondaryColor = '#764ba2';
+            }
+
+            // Échapper les données pour éviter les injections HTML
+            data.salonName = this.escapeHtml(data.salonName);
+            data.description = this.escapeHtml(data.description);
+            data.address = this.escapeHtml(data.address);
+
+        } catch (error) {
+            console.error('Erreur lors de la validation des données:', error);
         }
 
         return data;
+    }
+
+    isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    isValidColor(color) {
+        const colorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+        return colorRegex.test(color);
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     async loadTemplate(templateType) {
