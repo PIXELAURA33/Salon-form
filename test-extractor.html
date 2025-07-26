@@ -12,55 +12,121 @@
 <body>
     <div class="container mt-4">
         <div class="row">
-            <div class="col-md-8 mx-auto">
-                <h2>Test de l'Extracteur Google Maps</h2>
+            <div class="col-md-10 mx-auto">
+                <div class="text-center mb-4">
+                    <h2><i class="fab fa-google"></i> Test de l'Extracteur Google Maps</h2>
+                    <p class="text-muted">Testez l'extraction automatique des données de salon depuis Google Maps</p>
+                </div>
                 
-                <!-- Simuler les champs du formulaire -->
-                <form id="salonForm">
-                    <div class="mb-3">
-                        <label for="salonName" class="form-label">Nom du salon *</label>
-                        <input type="text" class="form-control" id="salonName" required>
+                <!-- Section header pour l'extracteur -->
+                <div class="section-header mb-4"></div>
+
+                <!-- Formulaire de test -->
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Formulaire de test</h5>
                     </div>
-                    <div class="mb-3">
-                        <label for="phone" class="form-label">Téléphone *</label>
-                        <input type="tel" class="form-control" id="phone" required>
+                    <div class="card-body">
+                        <form id="salonForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="salonName" class="form-label">Nom du salon *</label>
+                                        <input type="text" class="form-control" id="salonName" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="phone" class="form-label">Téléphone *</label>
+                                        <input type="tel" class="form-control" id="phone" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="address" class="form-label">Adresse *</label>
+                                        <input type="text" class="form-control" id="address" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="whatsapp" class="form-label">WhatsApp</label>
+                                        <input type="tel" class="form-control" id="whatsapp">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="description" class="form-label">Description</label>
+                                        <textarea class="form-control" id="description" rows="3"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="hours" class="form-label">Horaires</label>
+                                        <textarea class="form-control" id="hours" rows="3"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="facebook" class="form-label">Facebook</label>
+                                        <input type="url" class="form-control" id="facebook">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="instagram" class="form-label">Instagram</label>
+                                        <input type="url" class="form-control" id="instagram">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    <div class="mb-3">
-                        <label for="address" class="form-label">Adresse *</label>
-                        <input type="text" class="form-control" id="address" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" rows="3"></textarea>
-                    </div>
-                </form>
+                </div>
 
                 <!-- URLs de test -->
                 <div class="card mt-4">
-                    <div class="card-header">
-                        <h5>URLs de test</h5>
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">URLs de test</h5>
                     </div>
                     <div class="card-body">
-                        <div class="mb-2">
-                            <button class="btn btn-sm btn-outline-primary" onclick="testUrl('https://www.google.com/maps/place/Mona+Lisa+Coiffure/data=!4m7!3m6!1s0x102354317bf6e663:0x1ea90b4e08d1508b!8m2!3d6.3539367!4d2.3939986!16s%2Fg%2F11c6smb8k0!19sChIJY-b2ezFUIxARi1DRCE4LqR4?authuser=0&hl=en&rclk=1')">
-                                Test Mona Lisa Coiffure
-                            </button>
+                        <p class="text-muted">Cliquez sur un bouton pour tester l'extraction avec des URLs d'exemple :</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <button class="btn btn-sm btn-outline-success w-100" onclick="testUrl('https://www.google.com/maps/place/Salon+de+Coiffure+Moderne/@45.7640,4.8357,17z/data=!3m1!4b1!4m6!3m5!1s0x47f4ea516ae88797:0x408ab2ae3d3d3d3d!8m2!3d45.7640!4d4.8357!16s%2Fg%2F11f5h6j7k8')">
+                                        <i class="fas fa-cut"></i> Salon Lyon
+                                    </button>
+                                </div>
+                                <div class="mb-2">
+                                    <button class="btn btn-sm btn-outline-success w-100" onclick="testUrl('https://www.google.com/maps/place/Jean+Claude+Biguine/@48.8727,2.3334,17z/data=!3m1!4b1!4m6!3m5!1s0x47e66e2b8f8f8b8f:0x1234567890abcdef!8m2!3d48.8727!4d2.3334!16s%2Fg%2F11c6smb8k0')">
+                                        <i class="fas fa-scissors"></i> Jean Claude Biguine Paris
+                                    </button>
+                                </div>
+                                <div class="mb-2">
+                                    <button class="btn btn-sm btn-outline-success w-100" onclick="testUrl('https://www.google.com/maps/place/Dessange+Paris/@48.8566,2.3522,15z/data=!4m7!3m6!1s0x47e671d877937b0f:0x40b82c3688c9460!8m2!3d48.8566!4d2.3522!15s!5s20220101T000000')">
+                                        <i class="fas fa-spa"></i> Dessange Paris
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <button class="btn btn-sm btn-outline-success w-100" onclick="testUrl('https://www.google.com/maps/place/Coiffure+Belle+%C3%89poque,+75001+Paris/@48.8648,2.3322,17z/data=!3m1!4b1!4m6!3m5!1s0x47e66e1f8b8c8b8b:0x9876543210fedcba!8m2!3d48.8648!4d2.3322')">
+                                        <i class="fas fa-magic"></i> Belle Époque Paris
+                                    </button>
+                                </div>
+                                <div class="mb-2">
+                                    <button class="btn btn-sm btn-outline-success w-100" onclick="testUrl('https://www.google.com/maps/place/Salon+Moderne+Coiffure,+13001+Marseille/@43.2965,5.3698,17z/data=!3m1!4b1!4m6!3m5!1s0x12c9c0b8c8c8c8c8:0xabcdef1234567890!8m2!3d43.2965!4d5.3698')">
+                                        <i class="fas fa-crown"></i> Salon Marseille
+                                    </button>
+                                </div>
+                                <div class="mb-2">
+                                    <button class="btn btn-sm btn-outline-success w-100" onclick="clearForm()">
+                                        <i class="fas fa-eraser"></i> Vider le formulaire
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-2">
-                            <button class="btn btn-sm btn-outline-primary" onclick="testUrl('https://www.google.com/maps/place/Salon+Jean+Claude+Biguine/@48.8727,2.3334,17z/data=!3m1!4b1!4m6!3m5!1s0x47e66e2b8f8f8b8f:0x1234567890abcdef!8m2!3d48.8727!4d2.3334!16s%2Fg%2F11c6smb8k0')">
-                                Test Jean Claude Biguine Paris
-                            </button>
-                        </div>
-                        <div class="mb-2">
-                            <button class="btn btn-sm btn-outline-primary" onclick="testUrl('https://www.google.com/maps/place/Dessange+Paris/@48.8566,2.3522,15z/data=!4m7!3m6!1s0x47e671d877937b0f:0x40b82c3688c9460!8m2!3d48.8566!4d2.3522!15s!5s20220101T000000')">
-                                Test Dessange Paris
-                            </button>
-                        </div>
-                        <div class="mb-2">
-                            <button class="btn btn-sm btn-outline-primary" onclick="testUrl('https://www.google.com/maps/place/Salon+de+Coiffure+Moderne/@45.7640,4.8357,17z/data=!3m1!4b1!4m6!3m5!1s0x47f4ea516ae88797:0x408ab2ae3d3d3d3d!8m2!3d45.7640!4d4.8357!16s%2Fg%2F11f5h6j7k8')">
-                                Test Salon Lyon
-                            </button>
-                        </div>
+                    </div>
+                </div>
+
+                <!-- Résultats du test -->
+                <div class="card mt-4" id="testResults" style="display: none;">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Résultats du test</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="testResultsContent"></div>
                     </div>
                 </div>
             </div>
@@ -76,8 +142,80 @@
             if (input) {
                 input.value = url;
                 input.dispatchEvent(new Event('input'));
+                
+                // Scroll vers l'extracteur
+                document.getElementById('mapsExtractor').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
             }
         }
+
+        function clearForm() {
+            const fields = ['salonName', 'phone', 'address', 'email', 'description', 'hours', 'facebook', 'instagram', 'whatsapp'];
+            fields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.value = '';
+                    field.style.backgroundColor = '';
+                    field.style.border = '';
+                    field.style.borderLeft = '';
+                }
+            });
+
+            // Cacher les résultats
+            const results = document.getElementById('testResults');
+            if (results) results.style.display = 'none';
+
+            // Vider aussi l'URL
+            const mapsUrl = document.getElementById('mapsUrl');
+            if (mapsUrl) mapsUrl.value = '';
+        }
+
+        // Écouter les changements dans le formulaire pour afficher les résultats
+        document.addEventListener('DOMContentLoaded', function() {
+            const fields = ['salonName', 'phone', 'address', 'email', 'description', 'hours', 'facebook', 'instagram', 'whatsapp'];
+            
+            fields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('input', updateTestResults);
+                }
+            });
+        });
+
+        function updateTestResults() {
+            const fields = ['salonName', 'phone', 'address', 'email', 'description', 'hours', 'facebook', 'instagram', 'whatsapp'];
+            const filledFields = fields.filter(fieldId => {
+                const field = document.getElementById(fieldId);
+                return field && field.value.trim();
+            });
+
+            if (filledFields.length > 0) {
+                const resultsDiv = document.getElementById('testResults');
+                const contentDiv = document.getElementById('testResultsContent');
+                
+                let resultsHTML = `<p><strong>${filledFields.length} champ(s) rempli(s) :</strong></p><ul>`;
+                
+                filledFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    const label = field.previousElementSibling.textContent;
+                    resultsHTML += `<li><strong>${label}:</strong> ${field.value}</li>`;
+                });
+                
+                resultsHTML += '</ul>';
+                
+                contentDiv.innerHTML = resultsHTML;
+                resultsDiv.style.display = 'block';
+            }
+        }
+
+        // Simuler window.siteGenerator pour éviter les erreurs
+        window.siteGenerator = {
+            updatePreview: function() {
+                console.log('Preview update called');
+            }
+        };
     </script>
 </body>
 </html>
