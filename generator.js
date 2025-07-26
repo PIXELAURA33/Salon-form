@@ -549,57 +549,77 @@ class SalonGenerator {
 
     integrateCustomImages(html) {
         // Remplacer les images par les versions personnalisées (en base64)
+        // tout en préservant les styles CSS d'origine
         
-        // Image hero/header
+        // Image hero/header - conserver les styles CSS background-image
         if (this.customImages.has('heroImage')) {
             const heroImg = this.customImages.get('heroImage');
-            html = html.replace(/header-background-1\.jpg|header-background-2\.jpg/g, heroImg.data);
+            // Remplacer dans les styles CSS et attributs src
+            html = html.replace(/url\("\.\.\/img\/header-background-1\.jpg"\)/g, `url("${heroImg.data}")`);
+            html = html.replace(/url\("\.\.\/img\/header-background-2\.jpg"\)/g, `url("${heroImg.data}")`);
+            html = html.replace(/header-background-1\.jpg/g, heroImg.data);
+            html = html.replace(/header-background-2\.jpg/g, heroImg.data);
         }
 
-        // Image "À propos" / Perfect Style
+        // Image "À propos" / Perfect Style - conserver les styles background-image
         if (this.customImages.has('aboutImage')) {
             const aboutImg = this.customImages.get('aboutImage');
+            html = html.replace(/url\("\.\.\/img\/perfect-style\.jpg"\)/g, `url("${aboutImg.data}")`);
             html = html.replace(/perfect-style\.jpg/g, aboutImg.data);
         }
 
-        // Logo
-        if (this.customImages.has('logoImage')) {
-            const logoImg = this.customImages.get('logoImage');
-            html = html.replace(/logo\.png|beauty-salon_logo_96dp\.png/g, logoImg.data);
-        }
-
-        // Footer background
+        // Footer background - conserver les styles background-image
         if (this.customImages.has('footerImage')) {
             const footerImg = this.customImages.get('footerImage');
+            html = html.replace(/url\("\.\.\/img\/bg-footer1\.jpg"\)/g, `url("${footerImg.data}")`);
             html = html.replace(/bg-footer1\.jpg/g, footerImg.data);
         }
 
-        // Images d'équipe
+        // Logo - conserver les attributs src des balises img
+        if (this.customImages.has('logoImage')) {
+            const logoImg = this.customImages.get('logoImage');
+            html = html.replace(/src="img\/logo\.png"/g, `src="${logoImg.data}"`);
+            html = html.replace(/src="img\/beauty-salon_logo_96dp\.png"/g, `src="${logoImg.data}"`);
+            html = html.replace(/logo\.png/g, logoImg.data);
+            html = html.replace(/beauty-salon_logo_96dp\.png/g, logoImg.data);
+        }
+
+        // Images d'équipe - conserver les classes et styles des balises img
         if (this.customImages.has('team1Image')) {
             const teamImg = this.customImages.get('team1Image');
+            html = html.replace(/src="img\/team\/team-1\.jpg"/g, `src="${teamImg.data}"`);
             html = html.replace(/team-1\.jpg/g, teamImg.data);
         }
         if (this.customImages.has('team2Image')) {
             const teamImg = this.customImages.get('team2Image');
+            html = html.replace(/src="img\/team\/team-2\.jpg"/g, `src="${teamImg.data}"`);
             html = html.replace(/team-2\.jpg/g, teamImg.data);
         }
         if (this.customImages.has('team3Image')) {
             const teamImg = this.customImages.get('team3Image');
+            html = html.replace(/src="img\/team\/team-3\.jpg"/g, `src="${teamImg.data}"`);
             html = html.replace(/team-3\.jpg/g, teamImg.data);
         }
 
-        // Portfolio images
+        // Portfolio images - conserver les classes et effets hover
         if (this.customImages.has('portfolioImages')) {
             const portfolioImages = this.customImages.get('portfolioImages');
             portfolioImages.forEach((image, index) => {
-                const originalName = `portfolio-${index + 1}.jpg`;
-                html = html.replace(new RegExp(originalName, 'g'), image.data);
-            });
-            
-            // Remplacer également les références img/portfolio/
-            portfolioImages.forEach((image, index) => {
-                const originalPath = `img/portfolio/portfolio-${index + 1}.jpg`;
-                html = html.replace(new RegExp(originalPath, 'g'), image.data);
+                const portfolioIndex = index + 1;
+                // Remplacer dans les attributs src tout en gardant les classes CSS
+                html = html.replace(
+                    new RegExp(`src="img/portfolio/portfolio-${portfolioIndex}\\.jpg"`, 'g'), 
+                    `src="${image.data}"`
+                );
+                // Remplacer les références directes
+                html = html.replace(
+                    new RegExp(`img/portfolio/portfolio-${portfolioIndex}\\.jpg`, 'g'), 
+                    image.data
+                );
+                html = html.replace(
+                    new RegExp(`portfolio-${portfolioIndex}\\.jpg`, 'g'), 
+                    image.data
+                );
             });
         }
 
