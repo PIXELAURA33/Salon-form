@@ -1,4 +1,5 @@
 
+
 class GoogleMapsExtractor {
     constructor() {
         this.corsProxyUrl = 'https://api.allorigins.win/raw?url=';
@@ -111,13 +112,23 @@ class GoogleMapsExtractor {
             // Méthode 1: Extraction avancée depuis l'URL
             const extractedData = await this.extractAdvancedDataFromUrl(url);
             
+            // Méthode 2: Enrichissement avec géocodage multiple
+            if (extractedData.latitude && extractedData.longitude) {
+                await this.enrichDataWithMultipleServices(extractedData);
+            }
+            
+            // Méthode 3: Extraction via Place ID si disponible
+            if (extractedData.placeId) {
+                await this.enrichWithPlaceId(extractedData);
+            }
+            
+            // Méthode 4: Extraction depuis le contenu de la page
+            await this.extractFromPageContent(url, extractedData);
+            
+            // Méthode 5: Recherche intelligente des réseaux sociaux
+            await this.findSocialMediaLinks(extractedData);
+            
             if (extractedData && Object.keys(extractedData).length > 0) {
-                // Méthode 2: Enrichissement avec géocodage
-                await this.enrichDataWithGeocodingServices(extractedData);
-                
-                // Méthode 3: Extraction d'informations supplémentaires
-                await this.extractAdditionalBusinessInfo(extractedData, url);
-                
                 this.fillFormWithData(extractedData);
                 this.showSuccess(extractedData);
             } else {
@@ -138,68 +149,83 @@ class GoogleMapsExtractor {
         const data = {};
 
         try {
-            // Extraire le nom du salon depuis l'URL
-            const placeMatch = url.match(/place\/([^\/\?&]+)/);
+            // Extraire le nom du salon depuis l'URL (plusieurs formats)
+            const placeMatch = url.match(/place\/([^\/\?&@]+)/) || 
+                              url.match(/search\/([^\/\?&@]+)/) ||
+                              url.match(/dir\/[^\/]*\/([^\/\?&@]+)/);
+            
             if (placeMatch) {
                 data.name = decodeURIComponent(placeMatch[1])
                     .replace(/\+/g, ' ')
                     .replace(/%20/g, ' ')
+                    .replace(/[-_]/g, ' ')
                     .trim();
             }
 
-            // Extraire les coordonnées depuis l'URL (plusieurs formats possibles)
-            const coordsMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/) || 
-                              url.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/) ||
-                              url.match(/data=.*?3d(-?\d+\.\d+).*?4d(-?\d+\.\d+)/);
+            // Extraire les coordonnées (tous les formats possibles)
+            const coordsPatterns = [
+                /@(-?\d+\.\d+),(-?\d+\.\d+)/,
+                /!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/,
+                /data=.*?3d(-?\d+\.\d+).*?4d(-?\d+\.\d+)/,
+                /ll=(-?\d+\.\d+),(-?\d+\.\d+)/,
+                /center=(-?\d+\.\d+),(-?\d+\.\d+)/
+            ];
             
-            if (coordsMatch) {
-                data.latitude = parseFloat(coordsMatch[1]);
-                data.longitude = parseFloat(coordsMatch[2]);
+            for (const pattern of coordsPatterns) {
+                const match = url.match(pattern);
+                if (match) {
+                    data.latitude = parseFloat(match[1]);
+                    data.longitude = parseFloat(match[2]);
+                    break;
+                }
             }
 
-            // Extraire l'ID du lieu (place_id)
-            const placeIdMatch = url.match(/data=.*?1s0x[a-f0-9]+:0x([a-f0-9]+)/i) ||
-                                url.match(/place_id:([a-zA-Z0-9_-]+)/) ||
-                                url.match(/!1s0x[a-f0-9]+:0x([a-f0-9]+)/i);
+            // Extraire Place ID (formats multiples)
+            const placeIdPatterns = [
+                /place_id:([a-zA-Z0-9_-]+)/,
+                /!1s0x[a-f0-9]+:0x([a-f0-9]+)/i,
+                /data=.*?1s0x[a-f0-9]+:0x([a-f0-9]+)/i,
+                /ftid=0x[a-f0-9]+:0x([a-f0-9]+)/i
+            ];
             
-            if (placeIdMatch) {
-                data.placeId = placeIdMatch[1];
+            for (const pattern of placeIdPatterns) {
+                const match = url.match(pattern);
+                if (match) {
+                    data.placeId = match[1];
+                    break;
+                }
             }
 
-            // Extraire des informations supplémentaires de l'URL
-            const addressMatch = url.match(/addr:([^!]+)/);
-            if (addressMatch) {
-                data.urlAddress = decodeURIComponent(addressMatch[1]).replace(/\+/g, ' ');
-            }
-
-            // Extraire le niveau de zoom et la région
-            const zoomMatch = url.match(/(\d+)z/);
-            if (zoomMatch) {
-                data.zoom = parseInt(zoomMatch[1]);
+            // Extraire numéro de téléphone directement de l'URL
+            const phoneMatch = url.match(/phone[=:]([+\d\s\-\(\)]+)/i) ||
+                              url.match(/tel[=:]([+\d\s\-\(\)]+)/i) ||
+                              url.match(/(\+33[1-9][\d\s\-\.]{8,})/);
+            
+            if (phoneMatch) {
+                data.phone = this.cleanPhoneNumber(phoneMatch[1]);
             }
 
             return data;
 
         } catch (error) {
-            console.error('Erreur extraction URL avancée:', error);
+            console.error('Erreur extraction URL:', error);
             return {};
         }
     }
 
-    async enrichDataWithGeocodingServices(data) {
-        if (!data.latitude || !data.longitude) return;
-
+    async enrichDataWithMultipleServices(data) {
         try {
-            // Service 1: OpenStreetMap Nominatim (le plus fiable)
+            // Service 1: Nominatim OpenStreetMap
             await this.enrichWithNominatim(data);
             
-            // Service 2: Si pas assez d'infos, essayer avec LocationIQ (gratuit)
-            if (!data.phone && !data.website) {
-                await this.enrichWithLocationIQ(data);
-            }
+            // Service 2: Places API alternatif
+            await this.enrichWithAlternativePlacesAPI(data);
+            
+            // Service 3: Recherche par coordonnées avec services multiples
+            await this.searchByCoordinates(data);
 
         } catch (error) {
-            console.warn('Erreur enrichissement géocodage:', error);
+            console.warn('Erreur enrichissement:', error);
         }
     }
 
@@ -217,27 +243,18 @@ class GoogleMapsExtractor {
             if (response.ok) {
                 const result = await response.json();
                 
+                // Nom du lieu
+                if (result.display_name && !data.name) {
+                    const nameParts = result.display_name.split(',');
+                    data.name = nameParts[0].trim();
+                }
+
+                // Adresse
                 if (result.display_name && !data.address) {
                     data.address = this.cleanAddress(result.display_name);
                 }
 
-                // Extraire informations détaillées
-                if (result.address) {
-                    const addr = result.address;
-                    
-                    if (!data.address) {
-                        const addressParts = [
-                            addr.house_number,
-                            addr.road,
-                            addr.city || addr.town || addr.village,
-                            addr.postcode
-                        ].filter(Boolean);
-                        
-                        data.address = addressParts.join(', ');
-                    }
-                }
-
-                // Extraire tags supplémentaires
+                // Tags détaillés
                 if (result.extratags) {
                     const tags = result.extratags;
                     
@@ -245,24 +262,54 @@ class GoogleMapsExtractor {
                         data.phone = this.cleanPhoneNumber(tags.phone);
                     }
                     
+                    if (tags['contact:phone'] && !data.phone) {
+                        data.phone = this.cleanPhoneNumber(tags['contact:phone']);
+                    }
+                    
                     if (tags.website && !data.website) {
-                        data.website = tags.website;
+                        data.website = this.cleanUrl(tags.website);
+                    }
+                    
+                    if (tags['contact:website'] && !data.website) {
+                        data.website = this.cleanUrl(tags['contact:website']);
                     }
                     
                     if (tags.email && !data.email) {
                         data.email = tags.email;
                     }
                     
+                    if (tags['contact:email'] && !data.email) {
+                        data.email = tags['contact:email'];
+                    }
+                    
                     if (tags['opening_hours'] && !data.hours) {
                         data.hours = this.formatOpeningHours(tags['opening_hours']);
                     }
                     
+                    // Réseaux sociaux
                     if (tags.facebook && !data.facebook) {
-                        data.facebook = tags.facebook;
+                        data.facebook = this.cleanSocialUrl(tags.facebook, 'facebook');
+                    }
+                    
+                    if (tags['contact:facebook'] && !data.facebook) {
+                        data.facebook = this.cleanSocialUrl(tags['contact:facebook'], 'facebook');
                     }
                     
                     if (tags.instagram && !data.instagram) {
-                        data.instagram = tags.instagram;
+                        data.instagram = this.cleanSocialUrl(tags.instagram, 'instagram');
+                    }
+                    
+                    if (tags['contact:instagram'] && !data.instagram) {
+                        data.instagram = this.cleanSocialUrl(tags['contact:instagram'], 'instagram');
+                    }
+                    
+                    // WhatsApp
+                    if (tags.whatsapp && !data.whatsapp) {
+                        data.whatsapp = this.extractWhatsAppNumber(tags.whatsapp);
+                    }
+                    
+                    if (tags['contact:whatsapp'] && !data.whatsapp) {
+                        data.whatsapp = this.extractWhatsAppNumber(tags['contact:whatsapp']);
                     }
                 }
             }
@@ -271,14 +318,103 @@ class GoogleMapsExtractor {
         }
     }
 
-    async enrichWithLocationIQ(data) {
+    async enrichWithAlternativePlacesAPI(data) {
         try {
-            // LocationIQ API (gratuit avec limite)
+            // Utiliser Overpass API pour plus de détails
+            const overpassQuery = `
+                [out:json][timeout:25];
+                (
+                  node(around:50,${data.latitude},${data.longitude})["amenity"~"^(hairdresser|beauty_salon)$"];
+                  way(around:50,${data.latitude},${data.longitude})["amenity"~"^(hairdresser|beauty_salon)$"];
+                  relation(around:50,${data.latitude},${data.longitude})["amenity"~"^(hairdresser|beauty_salon)$"];
+                );
+                out tags;
+            `;
+            
+            const response = await fetch('https://overpass-api.de/api/interpreter', {
+                method: 'POST',
+                body: overpassQuery,
+                headers: {
+                    'Content-Type': 'text/plain'
+                }
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                
+                if (result.elements && result.elements.length > 0) {
+                    const element = result.elements[0];
+                    const tags = element.tags || {};
+                    
+                    // Extraire toutes les informations disponibles
+                    if (tags.name && !data.name) {
+                        data.name = tags.name;
+                    }
+                    
+                    if (tags.phone && !data.phone) {
+                        data.phone = this.cleanPhoneNumber(tags.phone);
+                    }
+                    
+                    if (tags['addr:full'] && !data.address) {
+                        data.address = tags['addr:full'];
+                    } else if (!data.address) {
+                        const addr = [
+                            tags['addr:housenumber'],
+                            tags['addr:street'],
+                            tags['addr:postcode'],
+                            tags['addr:city']
+                        ].filter(Boolean).join(', ');
+                        
+                        if (addr) data.address = addr;
+                    }
+                    
+                    if (tags.website && !data.website) {
+                        data.website = this.cleanUrl(tags.website);
+                    }
+                    
+                    if (tags.email && !data.email) {
+                        data.email = tags.email;
+                    }
+                    
+                    if (tags.facebook && !data.facebook) {
+                        data.facebook = this.cleanSocialUrl(tags.facebook, 'facebook');
+                    }
+                    
+                    if (tags.instagram && !data.instagram) {
+                        data.instagram = this.cleanSocialUrl(tags.instagram, 'instagram');
+                    }
+                    
+                    if (tags.whatsapp && !data.whatsapp) {
+                        data.whatsapp = this.extractWhatsAppNumber(tags.whatsapp);
+                    }
+                }
+            }
+        } catch (error) {
+            console.warn('Erreur Overpass API:', error);
+        }
+    }
+
+    async searchByCoordinates(data) {
+        try {
+            // Recherche dans Foursquare
+            await this.searchFoursquare(data);
+            
+            // Recherche dans Yelp (si disponible)
+            await this.searchYelp(data);
+            
+        } catch (error) {
+            console.warn('Erreur recherche coordonnées:', error);
+        }
+    }
+
+    async searchFoursquare(data) {
+        try {
+            // Utiliser l'API publique de Foursquare
             const response = await fetch(
-                `https://us1.locationiq.com/v1/reverse.php?key=demo&lat=${data.latitude}&lon=${data.longitude}&format=json&addressdetails=1`,
+                `https://api.foursquare.com/v3/places/search?ll=${data.latitude},${data.longitude}&radius=100&categories=11013,11014&limit=5`,
                 {
                     headers: {
-                        'User-Agent': 'SalonGenerator/1.0'
+                        'Accept': 'application/json'
                     }
                 }
             );
@@ -286,59 +422,209 @@ class GoogleMapsExtractor {
             if (response.ok) {
                 const result = await response.json();
                 
-                if (result.display_name && !data.address) {
-                    data.address = this.cleanAddress(result.display_name);
+                if (result.results && result.results.length > 0) {
+                    const place = result.results[0];
+                    
+                    if (place.name && !data.name) {
+                        data.name = place.name;
+                    }
+                    
+                    if (place.location && place.location.formatted_address && !data.address) {
+                        data.address = place.location.formatted_address;
+                    }
+                    
+                    if (place.tel && !data.phone) {
+                        data.phone = this.cleanPhoneNumber(place.tel);
+                    }
+                    
+                    if (place.website && !data.website) {
+                        data.website = this.cleanUrl(place.website);
+                    }
+                    
+                    // Chercher les réseaux sociaux dans les liens
+                    if (place.social_media) {
+                        if (place.social_media.facebook && !data.facebook) {
+                            data.facebook = this.cleanSocialUrl(place.social_media.facebook, 'facebook');
+                        }
+                        
+                        if (place.social_media.instagram && !data.instagram) {
+                            data.instagram = this.cleanSocialUrl(place.social_media.instagram, 'instagram');
+                        }
+                    }
                 }
             }
         } catch (error) {
-            console.warn('Erreur LocationIQ:', error);
+            console.warn('Erreur Foursquare:', error);
         }
     }
 
-    async extractAdditionalBusinessInfo(data, originalUrl) {
+    async extractFromPageContent(url, data) {
         try {
-            // Générer des informations manquantes intelligemment
-            if (data.name && !data.description) {
-                data.description = this.generateSmartDescription(data.name, data.address);
+            // Essayer d'extraire le contenu de la page Google Maps
+            const proxyUrl = `${this.corsProxyUrl}${encodeURIComponent(url)}`;
+            const response = await fetch(proxyUrl);
+            
+            if (response.ok) {
+                const html = await response.text();
+                
+                // Rechercher les numéros de téléphone dans le HTML
+                const phoneMatches = html.match(/(?:\+33|0)[1-9](?:[\s\-\.]?\d{2}){4}/g);
+                if (phoneMatches && !data.phone) {
+                    data.phone = this.cleanPhoneNumber(phoneMatches[0]);
+                }
+                
+                // Rechercher les emails
+                const emailMatches = html.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g);
+                if (emailMatches && !data.email) {
+                    data.email = emailMatches[0];
+                }
+                
+                // Rechercher Facebook
+                const facebookMatches = html.match(/(?:https?:\/\/)?(?:www\.)?facebook\.com\/[a-zA-Z0-9._-]+/g);
+                if (facebookMatches && !data.facebook) {
+                    data.facebook = this.cleanSocialUrl(facebookMatches[0], 'facebook');
+                }
+                
+                // Rechercher Instagram
+                const instagramMatches = html.match(/(?:https?:\/\/)?(?:www\.)?instagram\.com\/[a-zA-Z0-9._-]+/g);
+                if (instagramMatches && !data.instagram) {
+                    data.instagram = this.cleanSocialUrl(instagramMatches[0], 'instagram');
+                }
+                
+                // Rechercher WhatsApp
+                const whatsappMatches = html.match(/(?:https?:\/\/)?(?:wa\.me|whatsapp\.com\/send)\?phone=(\d+)/g);
+                if (whatsappMatches && !data.whatsapp) {
+                    const match = whatsappMatches[0].match(/phone=(\d+)/);
+                    if (match) {
+                        data.whatsapp = match[1];
+                    }
+                }
             }
-
-            // Générer des horaires par défaut si non trouvés
-            if (!data.hours) {
-                data.hours = this.generateDefaultHours();
-            }
-
-            // Essayer d'extraire le numéro de téléphone depuis le nom/adresse
-            if (!data.phone) {
-                data.phone = this.extractPhoneFromText(data.name + ' ' + (data.address || ''));
-            }
-
-            // Générer un email potentiel basé sur le nom
-            if (!data.email && data.name) {
-                data.suggestedEmail = this.generatePotentialEmail(data.name);
-            }
-
         } catch (error) {
-            console.warn('Erreur extraction infos supplémentaires:', error);
+            console.warn('Erreur extraction contenu page:', error);
         }
     }
 
-    extractPhoneFromText(text) {
-        if (!text) return null;
+    async findSocialMediaLinks(data) {
+        if (!data.name) return;
         
-        // Regex pour différents formats de téléphone français/internationaux
-        const phonePatterns = [
-            /(?:\+33|0033|0)\s*[1-9](?:[\s\-\.]?\d{2}){4}/g, // Français
-            /(?:\+\d{1,3})?\s*[\(\)0-9\s\-\.]{8,}/g // International général
-        ];
+        try {
+            // Générer des URLs probables pour les réseaux sociaux
+            const normalizedName = this.normalizeName(data.name);
+            
+            // Tester les URLs Facebook probables
+            if (!data.facebook) {
+                const facebookUrls = [
+                    `https://www.facebook.com/${normalizedName}`,
+                    `https://www.facebook.com/${normalizedName.replace(/\s+/g, '')}`,
+                    `https://www.facebook.com/${normalizedName.replace(/\s+/g, '.')}`
+                ];
+                
+                for (const url of facebookUrls) {
+                    if (await this.checkUrlExists(url)) {
+                        data.facebook = url;
+                        break;
+                    }
+                }
+            }
+            
+            // Tester les URLs Instagram probables
+            if (!data.instagram) {
+                const instagramUrls = [
+                    `https://www.instagram.com/${normalizedName.replace(/\s+/g, '')}`,
+                    `https://www.instagram.com/${normalizedName.replace(/\s+/g, '_')}`,
+                    `https://www.instagram.com/${normalizedName.replace(/\s+/g, '.')}`
+                ];
+                
+                for (const url of instagramUrls) {
+                    if (await this.checkUrlExists(url)) {
+                        data.instagram = url;
+                        break;
+                    }
+                }
+            }
+            
+        } catch (error) {
+            console.warn('Erreur recherche réseaux sociaux:', error);
+        }
+    }
 
-        for (const pattern of phonePatterns) {
-            const match = text.match(pattern);
-            if (match) {
-                return this.cleanPhoneNumber(match[0]);
+    async checkUrlExists(url) {
+        try {
+            const response = await fetch(url, { method: 'HEAD', mode: 'no-cors' });
+            return true; // Si pas d'erreur, l'URL existe probablement
+        } catch (error) {
+            return false;
+        }
+    }
+
+    normalizeName(name) {
+        return name
+            .toLowerCase()
+            .replace(/[^a-z0-9\s]/g, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
+    cleanPhoneNumber(phone) {
+        if (!phone) return '';
+        
+        // Nettoyer et formater le numéro
+        let cleaned = phone
+            .replace(/[^\d\+]/g, '')
+            .trim();
+        
+        // Convertir au format international si nécessaire
+        if (cleaned.startsWith('0')) {
+            cleaned = '+33' + cleaned.substring(1);
+        }
+        
+        return cleaned;
+    }
+
+    extractWhatsAppNumber(whatsapp) {
+        if (!whatsapp) return '';
+        
+        // Extraire le numéro de différents formats WhatsApp
+        const match = whatsapp.match(/(\+?\d{10,15})/);
+        if (match) {
+            let number = match[1];
+            if (number.startsWith('+')) {
+                number = number.substring(1);
+            }
+            return number;
+        }
+        
+        return '';
+    }
+
+    cleanUrl(url) {
+        if (!url) return '';
+        
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            url = 'https://' + url;
+        }
+        
+        return url;
+    }
+
+    cleanSocialUrl(url, platform) {
+        if (!url) return '';
+        
+        // Nettoyer et normaliser les URLs des réseaux sociaux
+        url = url.replace(/^.*?\/\//g, 'https://');
+        
+        if (platform === 'facebook') {
+            if (!url.includes('facebook.com')) {
+                url = `https://www.facebook.com/${url.replace(/https?:\/\//, '')}`;
+            }
+        } else if (platform === 'instagram') {
+            if (!url.includes('instagram.com')) {
+                url = `https://www.instagram.com/${url.replace(/https?:\/\//, '')}`;
             }
         }
-
-        return null;
+        
+        return url;
     }
 
     generateSmartDescription(name, address) {
@@ -365,21 +651,8 @@ class GoogleMapsExtractor {
         return defaultHours[Math.floor(Math.random() * defaultHours.length)];
     }
 
-    generatePotentialEmail(salonName) {
-        const cleanName = salonName.toLowerCase()
-            .replace(/[^\w\s]/g, '')
-            .replace(/\s+/g, '')
-            .substring(0, 20);
-            
-        const domains = ['gmail.com', 'outlook.fr', 'hotmail.fr', 'yahoo.fr'];
-        const domain = domains[Math.floor(Math.random() * domains.length)];
-        
-        return `contact.${cleanName}@${domain}`;
-    }
-
     formatOpeningHours(openingHours) {
         try {
-            // Convertir le format OSM vers un format lisible
             return openingHours
                 .replace(/Mo/g, 'Lundi')
                 .replace(/Tu/g, 'Mardi')
@@ -395,47 +668,26 @@ class GoogleMapsExtractor {
         }
     }
 
-    cleanPhoneNumber(phone) {
-        if (!phone) return '';
-        
-        return phone
-            .replace(/\s+/g, ' ')
-            .replace(/[^\d\s\+\-\(\)\.]/g, '')
-            .trim();
-    }
-
-    cleanBusinessName(name) {
-        if (!name) return '';
-        
-        return name
-            .replace(/[-+]/g, ' ')
-            .replace(/\s+/g, ' ')
-            .trim()
-            .split(' ')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-            .join(' ');
-    }
-
     cleanAddress(address) {
         if (!address) return '';
         
         return address
-            .replace(/,\s*\d{5}.*$/, '') // Supprimer code postal français et après
-            .replace(/,\s*France.*$/, '') // Supprimer "France" et après
-            .replace(/,\s*[A-Z]{2,3}.*$/, '') // Supprimer codes pays
+            .replace(/,\s*\d{5}.*$/, '')
+            .replace(/,\s*France.*$/, '')
+            .replace(/,\s*[A-Z]{2,3}.*$/, '')
             .trim();
     }
 
     fillFormWithData(data) {
         try {
             const fieldsMapping = [
-                { id: 'salonName', value: data.name, transformer: this.cleanBusinessName },
-                { id: 'phone', value: data.phone, transformer: this.cleanPhoneNumber },
-                { id: 'address', value: data.address, transformer: this.cleanAddress },
-                { id: 'email', value: data.email || data.suggestedEmail },
+                { id: 'salonName', value: data.name },
+                { id: 'phone', value: data.phone },
+                { id: 'address', value: data.address },
+                { id: 'email', value: data.email },
                 { id: 'website', value: data.website },
-                { id: 'description', value: data.description },
-                { id: 'hours', value: data.hours },
+                { id: 'description', value: data.description || (data.name ? this.generateSmartDescription(data.name, data.address) : '') },
+                { id: 'hours', value: data.hours || this.generateDefaultHours() },
                 { id: 'facebook', value: data.facebook },
                 { id: 'instagram', value: data.instagram },
                 { id: 'whatsapp', value: data.whatsapp }
@@ -444,32 +696,15 @@ class GoogleMapsExtractor {
             fieldsMapping.forEach(field => {
                 const input = document.getElementById(field.id);
                 if (input && field.value && !input.value.trim()) {
-                    const processedValue = field.transformer ? 
-                        field.transformer.call(this, field.value) : field.value;
+                    input.value = field.value;
                     
-                    // Préserver les animations et transitions CSS existantes
-                    const originalTransition = input.style.transition;
-                    const originalAnimation = input.style.animation;
-                    
-                    input.value = processedValue;
-                    
-                    // Déclencher les événements nécessaires pour maintenir la cohérence du template
+                    // Déclencher les événements nécessaires
                     input.dispatchEvent(new Event('input', { bubbles: true }));
                     input.dispatchEvent(new Event('change', { bubbles: true }));
-                    input.dispatchEvent(new Event('blur', { bubbles: true }));
-                    
-                    // Restaurer les propriétés CSS si elles ont été modifiées
-                    if (originalTransition) input.style.transition = originalTransition;
-                    if (originalAnimation) input.style.animation = originalAnimation;
-                    
-                    // Maintenir les classes CSS du template
-                    this.preserveTemplateClasses(input);
                 }
             });
 
-            // Déclencher la mise à jour du preview si elle existe
             this.triggerPreviewUpdate();
-            
             this.highlightFilledFields();
 
         } catch (error) {
@@ -477,53 +712,19 @@ class GoogleMapsExtractor {
         }
     }
 
-    preserveTemplateClasses(input) {
-        try {
-            // Préserver les classes importantes du template
-            const importantClasses = ['form-control', 'form-control-lg', 'form-control-sm', 
-                                    'field-filled', 'is-valid', 'is-invalid'];
-            
-            importantClasses.forEach(className => {
-                if (input.classList.contains(className)) {
-                    // Réappliquer la classe après un court délai pour maintenir les animations
-                    setTimeout(() => {
-                        if (!input.classList.contains(className)) {
-                            input.classList.add(className);
-                        }
-                    }, 50);
-                }
-            });
-
-            // Préserver les attributs de style inline importants
-            const computedStyle = window.getComputedStyle(input);
-            const importantStyles = ['border-radius', 'box-shadow', 'background-color'];
-            
-            importantStyles.forEach(styleProp => {
-                if (computedStyle[styleProp]) {
-                    input.style.setProperty(styleProp, computedStyle[styleProp], 'important');
-                }
-            });
-
-        } catch (error) {
-            console.warn('Erreur lors de la préservation des classes:', error);
-        }
-    }
-
     triggerPreviewUpdate() {
         try {
-            // Chercher les fonctions de mise à jour du générateur
             if (typeof window.siteGenerator !== 'undefined' && window.siteGenerator.updatePreview) {
                 window.siteGenerator.updatePreview();
             }
             
-            // Déclencher un événement personnalisé pour notifier les autres composants
             const updateEvent = new CustomEvent('formDataUpdated', {
                 detail: { source: 'mapsExtractor' }
             });
             document.dispatchEvent(updateEvent);
             
         } catch (error) {
-            console.warn('Erreur lors de la mise à jour du preview:', error);
+            console.warn('Erreur mise à jour preview:', error);
         }
     }
 
@@ -541,51 +742,24 @@ class GoogleMapsExtractor {
         filledFields.forEach((fieldId, index) => {
             const field = document.getElementById(fieldId);
             if (field) {
-                // Attendre un délai progressif pour un effet cascade
                 setTimeout(() => {
-                    // Sauvegarder les styles originaux
-                    const originalBorder = field.style.border;
-                    const originalBackground = field.style.backgroundColor;
-                    const originalBoxShadow = field.style.boxShadow;
-                    
-                    // Ajouter la classe d'animation CSS existante si elle existe
-                    field.classList.add('field-filled');
-                    
-                    // Appliquer l'animation de remplissage
                     field.style.backgroundColor = '#e8f5e8';
                     field.style.border = '2px solid #28a745';
-                    field.style.boxShadow = '0 0 10px rgba(40, 167, 69, 0.3)';
-                    field.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-                    field.style.transform = 'scale(1.02)';
-                    
-                    // Animation de "pulse" pour attirer l'attention
-                    field.style.animation = 'fillSuccess 1s ease-in-out';
+                    field.style.transition = 'all 0.5s ease';
                     
                     setTimeout(() => {
-                        // Retour à l'état normal avec préservation du style du template
-                        field.style.transform = 'scale(1)';
-                        field.style.backgroundColor = originalBackground || '';
-                        field.style.border = originalBorder || '';
-                        field.style.boxShadow = originalBoxShadow || '';
-                        field.style.animation = '';
+                        field.style.backgroundColor = '';
+                        field.style.border = '';
+                        field.style.borderLeft = '4px solid #28a745';
                         
-                        // Garder une bordure verte discrète pour indiquer le remplissage
-                        if (!originalBorder) {
-                            field.style.borderLeft = '4px solid #28a745';
-                        }
-                        
-                        // Supprimer la bordure verte après quelques secondes
                         setTimeout(() => {
                             field.style.borderLeft = '';
-                            field.classList.remove('field-filled');
                         }, 5000);
-                        
                     }, 2000);
-                }, index * 150); // Délai progressif pour effet cascade
+                }, index * 150);
             }
         });
 
-        // Afficher un message de succès avec animation
         if (filledFields.length > 0) {
             this.showTemporaryMessage(
                 `✨ ${filledFields.length} champ(s) rempli(s) automatiquement !`, 
@@ -644,7 +818,8 @@ class GoogleMapsExtractor {
                 { key: 'website', label: 'Site web', icon: 'fas fa-globe' },
                 { key: 'hours', label: 'Horaires', icon: 'fas fa-clock' },
                 { key: 'facebook', label: 'Facebook', icon: 'fab fa-facebook' },
-                { key: 'instagram', label: 'Instagram', icon: 'fab fa-instagram' }
+                { key: 'instagram', label: 'Instagram', icon: 'fab fa-instagram' },
+                { key: 'whatsapp', label: 'WhatsApp', icon: 'fab fa-whatsapp' }
             ];
 
             infoMapping.forEach(info => {
@@ -659,15 +834,6 @@ class GoogleMapsExtractor {
                     `;
                 }
             });
-
-            if (data.latitude && data.longitude) {
-                extractedInfo += `
-                    <li>
-                        <i class="fas fa-crosshairs" style="width: 16px;"></i> 
-                        <strong>Coordonnées:</strong> ${data.latitude.toFixed(6)}, ${data.longitude.toFixed(6)}
-                    </li>
-                `;
-            }
             
             extractedInfo += '</ul>';
             
@@ -708,14 +874,15 @@ class GoogleMapsExtractor {
     }
 }
 
-// Initialiser l'extracteur quand la page est chargée
+// Initialiser l'extracteur
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         try {
             new GoogleMapsExtractor();
-            console.log('✅ Extracteur Google Maps initialisé avec succès');
+            console.log('✅ Extracteur Google Maps amélioré initialisé');
         } catch (error) {
             console.error('❌ Erreur initialisation extracteur:', error);
         }
     }, 500);
 });
+
