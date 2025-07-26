@@ -1200,7 +1200,7 @@ class SalonGenerator {
             htmlContent = this.replaceTemplateData(htmlContent, data);
             
             // Intégrer les images personnalisées dans le HTML
-            htmlContent = this.integrateCustomImages(htmlContent);
+            htmlContent = await this.integrateCustomImages(htmlContent);
             
             this.generatedHTML = htmlContent;
             
@@ -1213,11 +1213,11 @@ class SalonGenerator {
         }
     }
 
-    integrateCustomImages(html) {
+    async integrateCustomImages(html) {
         // Remplacer les images par les versions personnalisées (en base64)
-        // tout en préservant les styles CSS d'origine
+        // ou conserver les images par défaut si aucune image personnalisée n'est fournie
         
-        // Image hero/header - conserver les styles CSS background-image
+        // Image hero/header - utiliser l'image personnalisée ou conserver la par défaut
         if (this.customImages.has('heroImage')) {
             const heroImg = this.customImages.get('heroImage');
             // Remplacer dans les styles CSS et attributs src
@@ -1225,59 +1225,61 @@ class SalonGenerator {
             html = html.replace(/url\("\.\.\/img\/header-background-2\.jpg"\)/g, `url("${heroImg.data}")`);
             html = html.replace(/header-background-1\.jpg/g, heroImg.data);
             html = html.replace(/header-background-2\.jpg/g, heroImg.data);
+        } else {
+            // Conserver les images par défaut - pas de modification nécessaire
+            console.log('Utilisation de l\'image hero par défaut');
         }
 
-        // Image "À propos" / Perfect Style - conserver les styles background-image
+        // Image "À propos" / Perfect Style
         if (this.customImages.has('aboutImage')) {
             const aboutImg = this.customImages.get('aboutImage');
             html = html.replace(/url\("\.\.\/img\/perfect-style\.jpg"\)/g, `url("${aboutImg.data}")`);
             html = html.replace(/perfect-style\.jpg/g, aboutImg.data);
+        } else {
+            console.log('Utilisation de l\'image à propos par défaut');
         }
 
-        // Footer background - conserver les styles background-image
+        // Footer background
         if (this.customImages.has('footerImage')) {
             const footerImg = this.customImages.get('footerImage');
             html = html.replace(/url\("\.\.\/img\/bg-footer1\.jpg"\)/g, `url("${footerImg.data}")`);
             html = html.replace(/bg-footer1\.jpg/g, footerImg.data);
+        } else {
+            console.log('Utilisation de l\'image footer par défaut');
         }
 
-        // Logo - conserver les attributs src des balises img
+        // Logo
         if (this.customImages.has('logoImage')) {
             const logoImg = this.customImages.get('logoImage');
             html = html.replace(/src="img\/logo\.png"/g, `src="${logoImg.data}"`);
             html = html.replace(/src="img\/beauty-salon_logo_96dp\.png"/g, `src="${logoImg.data}"`);
             html = html.replace(/logo\.png/g, logoImg.data);
             html = html.replace(/beauty-salon_logo_96dp\.png/g, logoImg.data);
+        } else {
+            console.log('Utilisation du logo par défaut');
         }
 
-        // Images d'équipe - conserver les classes et styles des balises img
-        if (this.customImages.has('team1Image')) {
-            const teamImg = this.customImages.get('team1Image');
-            html = html.replace(/src="img\/team\/team-1\.jpg"/g, `src="${teamImg.data}"`);
-            html = html.replace(/team-1\.jpg/g, teamImg.data);
-        }
-        if (this.customImages.has('team2Image')) {
-            const teamImg = this.customImages.get('team2Image');
-            html = html.replace(/src="img\/team\/team-2\.jpg"/g, `src="${teamImg.data}"`);
-            html = html.replace(/team-2\.jpg/g, teamImg.data);
-        }
-        if (this.customImages.has('team3Image')) {
-            const teamImg = this.customImages.get('team3Image');
-            html = html.replace(/src="img\/team\/team-3\.jpg"/g, `src="${teamImg.data}"`);
-            html = html.replace(/team-3\.jpg/g, teamImg.data);
-        }
+        // Images d'équipe
+        ['team1Image', 'team2Image', 'team3Image'].forEach((teamKey, index) => {
+            const teamNumber = index + 1;
+            if (this.customImages.has(teamKey)) {
+                const teamImg = this.customImages.get(teamKey);
+                html = html.replace(new RegExp(`src="img/team/team-${teamNumber}\\.jpg"`, 'g'), `src="${teamImg.data}"`);
+                html = html.replace(new RegExp(`team-${teamNumber}\\.jpg`, 'g'), teamImg.data);
+            } else {
+                console.log(`Utilisation de l'image équipe ${teamNumber} par défaut`);
+            }
+        });
 
-        // Portfolio images - conserver les classes et effets hover
+        // Portfolio images
         if (this.customImages.has('portfolioImages')) {
             const portfolioImages = this.customImages.get('portfolioImages');
             portfolioImages.forEach((image, index) => {
                 const portfolioIndex = index + 1;
-                // Remplacer dans les attributs src tout en gardant les classes CSS
                 html = html.replace(
                     new RegExp(`src="img/portfolio/portfolio-${portfolioIndex}\\.jpg"`, 'g'), 
                     `src="${image.data}"`
                 );
-                // Remplacer les références directes
                 html = html.replace(
                     new RegExp(`img/portfolio/portfolio-${portfolioIndex}\\.jpg`, 'g'), 
                     image.data
@@ -1287,6 +1289,8 @@ class SalonGenerator {
                     image.data
                 );
             });
+        } else {
+            console.log('Utilisation des images portfolio par défaut');
         }
 
         return html;
@@ -1509,44 +1513,28 @@ class SalonGenerator {
     }
 
     async copyOriginalImages() {
-        // Copier les images originales qui n'ont pas été remplacées
-        const imagePaths = [
+        // Copier TOUTES les images nécessaires pour que chaque template soit complet
+        const allRequiredImages = [
+            // Images communes à tous les templates
             'img/client/client-1.jpg', 'img/client/client-2.jpg', 'img/client/client-3.jpg',
             'img/service/service-1.jpg', 'img/service/service-2.jpg', 'img/service/service-3.jpg', 'img/service/service-4.jpg',
-            'img/loading.gif', 'img/treamer-small.png'
+            'img/loading.gif', 'img/treamer-small.png',
+            
+            // Images principales (toujours inclure pour templates complets)
+            'img/header-background-1.jpg', 'img/header-background-2.jpg',
+            'img/perfect-style.jpg',
+            'img/logo.png', 'img/beauty-salon_logo_96dp.png',
+            'img/bg-footer1.jpg',
+            'img/team/team-1.jpg', 'img/team/team-2.jpg', 'img/team/team-3.jpg'
         ];
 
-        // Ajouter les images originales non remplacées
-        if (!this.customImages.has('heroImage')) {
-            imagePaths.push('img/header-background-1.jpg', 'img/header-background-2.jpg');
-        }
-        if (!this.customImages.has('aboutImage')) {
-            imagePaths.push('img/perfect-style.jpg');
-        }
-        if (!this.customImages.has('logoImage')) {
-            imagePaths.push('img/logo.png', 'img/beauty-salon_logo_96dp.png');
-        }
-        if (!this.customImages.has('footerImage')) {
-            imagePaths.push('img/bg-footer1.jpg');
-        }
-        if (!this.customImages.has('team1Image')) {
-            imagePaths.push('img/team/team-1.jpg');
-        }
-        if (!this.customImages.has('team2Image')) {
-            imagePaths.push('img/team/team-2.jpg');
-        }
-        if (!this.customImages.has('team3Image')) {
-            imagePaths.push('img/team/team-3.jpg');
+        // Ajouter toutes les images portfolio (1 à 10)
+        for (let i = 1; i <= 10; i++) {
+            allRequiredImages.push(`img/portfolio/portfolio-${i}.jpg`);
         }
 
-        // Ajouter les images portfolio non remplacées
-        if (!this.customImages.has('portfolioImages')) {
-            for (let i = 1; i <= 10; i++) {
-                imagePaths.push(`img/portfolio/portfolio-${i}.jpg`);
-            }
-        }
-
-        for (const imagePath of imagePaths) {
+        // Copier toutes les images pour avoir des templates complets
+        for (const imagePath of allRequiredImages) {
             try {
                 const response = await fetch(`.templates/${imagePath}`);
                 if (response.ok) {
@@ -1559,6 +1547,8 @@ class SalonGenerator {
                 console.warn(`Erreur lors du chargement de ${imagePath}:`, error.message);
             }
         }
+
+        console.log(`Images copiées: ${allRequiredImages.length} fichiers inclus pour template complet`);
     }
 
     base64ToBinary(base64String) {
