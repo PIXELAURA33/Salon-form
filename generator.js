@@ -58,15 +58,8 @@ class SalonGenerator {
     }
 
     async getClassicTemplate() {
-        // Template original du salon
-        try {
-            const response = await fetch('.templates/index.html');
-            if (response.ok) {
-                return await response.text();
-            }
-        } catch (error) {
-            console.warn('Template original non trouvé, utilisation du template par défaut');
-        }
+        // Utiliser le template par défaut pour l'instant car le template original n'est pas dans .templates/
+        // TODO: Copier le template original du salon dans .templates/ si nécessaire
         return this.getDefaultTemplate();
     }
 
@@ -451,26 +444,28 @@ class SalonGenerator {
         // Ajouter le fichier HTML généré
         this.generatedFiles.set('index.html', this.generatedHTML);
         
-        // Copier tous les fichiers CSS
-        const cssFiles = ['css/animate.min.css', 'css/app.css', 'css/bootstrap.css', 'css/magnific-popup.css', 'css/owl.carousel.min.css', 'css/owl.theme.default.min.css'];
+        // Copier tous les fichiers CSS depuis .templates/
+        const cssFiles = ['.templates/css/animate.min.css', '.templates/css/app.css', '.templates/css/bootstrap.css', '.templates/css/magnific-popup.css', '.templates/css/owl.carousel.min.css', '.templates/css/owl.theme.default.min.css'];
         
         for (const cssFile of cssFiles) {
             try {
                 const response = await fetch(cssFile);
                 if (response.ok) {
                     const content = await response.text();
-                    this.generatedFiles.set(cssFile, content);
+                    // Garder le chemin relatif pour le zip
+                    const relativePath = cssFile.replace('.templates/', '');
+                    this.generatedFiles.set(relativePath, content);
                 }
             } catch (error) {
                 console.warn(`Impossible de charger ${cssFile}`);
             }
         }
         
-        // Copier tous les fichiers JS
+        // Copier tous les fichiers JS depuis .templates/
         const jsFiles = [
-            'js/app.js', 'js/bootstrap.min.js', 'js/contact_me.js', 'js/contact_me.min.js',
-            'js/jqBootstrapValidation.min.js', 'js/jquery.easing.min.js', 'js/jquery.magnific-popup.min.js',
-            'js/jquery.min.js', 'js/owl.carousel.min.js', 'js/popper.min.js', 'js/wow.min.js'
+            '.templates/js/app.js', '.templates/js/bootstrap.min.js', '.templates/js/contact_me.js', '.templates/js/contact_me.min.js',
+            '.templates/js/jqBootstrapValidation.min.js', '.templates/js/jquery.easing.min.js', '.templates/js/jquery.magnific-popup.min.js',
+            '.templates/js/jquery.min.js', '.templates/js/owl.carousel.min.js', '.templates/js/popper.min.js', '.templates/js/wow.min.js'
         ];
         
         for (const jsFile of jsFiles) {
@@ -478,7 +473,9 @@ class SalonGenerator {
                 const response = await fetch(jsFile);
                 if (response.ok) {
                     const content = await response.text();
-                    this.generatedFiles.set(jsFile, content);
+                    // Garder le chemin relatif pour le zip
+                    const relativePath = jsFile.replace('.templates/', '');
+                    this.generatedFiles.set(relativePath, content);
                 }
             } catch (error) {
                 console.warn(`Impossible de charger ${jsFile}`);
@@ -499,6 +496,11 @@ class SalonGenerator {
     async downloadZip() {
         if (!this.generatedHTML) {
             alert('Veuillez d\'abord générer le site');
+            return;
+        }
+
+        if (this.generatedFiles.size === 0) {
+            alert('Erreur: Aucun fichier à télécharger. Veuillez régénérer le site.');
             return;
         }
 
