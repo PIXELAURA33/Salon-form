@@ -205,6 +205,12 @@ class SalonGenerator {
             return;
         }
         
+        // Afficher un indicateur de chargement
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Génération en cours...';
+        submitBtn.disabled = true;
+        
         try {
             const formData = this.getFormData();
             await this.generateSite(formData);
@@ -212,9 +218,21 @@ class SalonGenerator {
             
             document.getElementById('downloadBtn').disabled = false;
             document.getElementById('previewBtn').disabled = false;
+            
+            // Succès
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> Site généré !';
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 2000);
+            
         } catch (error) {
             console.error('Erreur lors de la génération:', error);
             alert('Une erreur est survenue lors de la génération du site. Veuillez réessayer.');
+            
+            // Restaurer le bouton
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
         }
     }
 
@@ -252,12 +270,15 @@ class SalonGenerator {
             // Essayer de charger le template original depuis .templates/
             const response = await fetch('.templates/index.html');
             if (response.ok) {
-                return await response.text();
+                const template = await response.text();
+                console.log('Template original chargé avec succès');
+                return template;
             }
         } catch (error) {
             console.warn('Template original non trouvé, utilisation du template par défaut');
         }
         // Fallback vers le template par défaut
+        console.log('Utilisation du template par défaut');
         return this.getDefaultTemplate();
     }
 
@@ -574,6 +595,12 @@ class SalonGenerator {
                 const originalName = `portfolio-${index + 1}.jpg`;
                 html = html.replace(new RegExp(originalName, 'g'), image.data);
             });
+            
+            // Remplacer également les références img/portfolio/
+            portfolioImages.forEach((image, index) => {
+                const originalPath = `img/portfolio/portfolio-${index + 1}.jpg`;
+                html = html.replace(new RegExp(originalPath, 'g'), image.data);
+            });
         }
 
         return html;
@@ -880,6 +907,17 @@ class SalonGenerator {
             return;
         }
 
+        // Afficher indicateur de téléchargement
+        const downloadBtn = document.getElementById('downloadBtn');
+        const downloadFromPreview = document.getElementById('downloadFromPreview');
+        const originalText = downloadBtn.innerHTML;
+        const originalTextPreview = downloadFromPreview.innerHTML;
+        
+        downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Préparation...';
+        downloadFromPreview.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Préparation...';
+        downloadBtn.disabled = true;
+        downloadFromPreview.disabled = true;
+
         const zip = new JSZip();
         
         // Ajouter tous les fichiers au zip
@@ -915,20 +953,45 @@ Bonne chance avec votre nouveau site !
         zip.file('README.md', readmeContent);
         
         try {
-            const content = await zip.generateAsync({ type: 'blob' });
+            const content = await zip.generateAsync({ 
+                type: 'blob',
+                compression: "DEFLATE",
+                compressionOptions: {
+                    level: 6
+                }
+            });
+            
             const url = URL.createObjectURL(content);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'salon-website.zip';
+            a.download = `salon-website-${this.selectedTemplate}.zip`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            alert('Téléchargement terminé ! Extrayez le fichier zip et remplacez les images par les vôtres.');
+            // Restaurer les boutons
+            downloadBtn.innerHTML = '<i class="fas fa-check"></i> Téléchargé !';
+            downloadFromPreview.innerHTML = '<i class="fas fa-check"></i> Téléchargé !';
+            
+            setTimeout(() => {
+                downloadBtn.innerHTML = originalText;
+                downloadFromPreview.innerHTML = originalTextPreview;
+                downloadBtn.disabled = false;
+                downloadFromPreview.disabled = false;
+            }, 2000);
+            
+            console.log(`Téléchargement terminé: salon-website-${this.selectedTemplate}.zip`);
+            
         } catch (error) {
             console.error('Erreur lors de la création du zip:', error);
             alert('Erreur lors du téléchargement. Veuillez réessayer.');
+            
+            // Restaurer les boutons en cas d'erreur
+            downloadBtn.innerHTML = originalText;
+            downloadFromPreview.innerHTML = originalTextPreview;
+            downloadBtn.disabled = false;
+            downloadFromPreview.disabled = false;
         }
     }
 }

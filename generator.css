@@ -174,3 +174,38 @@ h5 {
     background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
     color: white;
 }
+
+/* États de boutons */
+.btn .fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.btn-loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+/* Amélioration responsive */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 20px;
+    }
+    
+    .template-header {
+        padding: 15px;
+    }
+    
+    .image-upload-container {
+        padding: 10px;
+    }
+    
+    #portfolioPreviewContainer img {
+        width: 60px;
+        height: 60px;
+    }
+}
