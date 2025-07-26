@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -11,589 +10,342 @@
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
-        
-        .main-container {
-            padding: 2rem 0;
-        }
-        
-        .header-title {
-            text-align: center;
+        .hero-section {
+            padding: 100px 0;
             color: white;
-            margin-bottom: 3rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            text-align: center;
         }
-        
-        .header-title h1 {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-        
         .template-card {
             border: none;
-            border-radius: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            transition: all 0.4s ease;
-            cursor: pointer;
-            height: 100%;
+            background: white;
         }
-        
         .template-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
-        
         .template-preview {
             height: 200px;
-            position: relative;
             background-size: cover;
             background-position: center;
+            position: relative;
+        }
+        .template-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        
-        .template-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #ff6b6b;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        
-        .template-overlay {
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        
         .template-card:hover .template-overlay {
             opacity: 1;
         }
-        
-        .card-body {
-            padding: 2rem;
-        }
-        
-        .card-title {
+        .btn-template {
+            background: rgba(255,255,255,0.9);
             color: #333;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
             font-weight: 600;
-            margin-bottom: 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
         }
-        
-        .card-text {
-            color: #666;
-            line-height: 1.6;
+        .btn-template:hover {
+            background: white;
+            color: #667eea;
+            text-decoration: none;
         }
-        
-        .features-list {
-            list-style: none;
-            padding: 0;
-            margin: 1rem 0 0 0;
-        }
-        
-        .features-list li {
-            padding: 0.3rem 0;
-            color: #28a745;
-            font-size: 0.9rem;
-        }
-        
-        .features-list li i {
-            margin-right: 0.5rem;
-        }
-        
-        .how-it-works {
+        .steps-section {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            padding: 2rem;
-            margin: 3rem 0;
+            padding: 40px;
+            margin: 50px 0;
             color: white;
         }
-        
-        .how-it-works h3 {
-            text-align: center;
-            margin-bottom: 2rem;
-            font-weight: 600;
+        .step-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
         }
+        .preview-gradient {
+            height: 100%;
+            border-radius: 15px 15px 0 0;
+        }
+        .classic-gradient { background: linear-gradient(45deg, #667eea, #764ba2); }
+        .modern-gradient { background: linear-gradient(45deg, #f093fb, #f5576c); }
+        .luxury-gradient { background: linear-gradient(45deg, #ffecd2, #fcb69f); }
+        .minimal-gradient { background: linear-gradient(45deg, #f8f9fa, #e9ecef); }
+        .barber-gradient { background: linear-gradient(45deg, #434343, #000000); }
+        .creative-gradient { background: linear-gradient(45deg, #ff9a9e, #fecfef); }
+        .spa-gradient { background: linear-gradient(45deg, #a8edea, #f5f7fa); }
+        .futuristic-gradient { background: linear-gradient(45deg, #667eea, #764ba2, #f093fb); }
+        .vintage-gradient { background: linear-gradient(45deg, #d4af37, #ffd700); }
+        .urban-gradient { background: linear-gradient(45deg, #2c2c2c, #434343); }
+        .nature-gradient { background: linear-gradient(45deg, #56ab2f, #a8e6cf); }
+        .bohemian-gradient { background: linear-gradient(45deg, #b7937d, #f5deb3); }
+        .neon-gradient { background: linear-gradient(45deg, #ff0080, #00ff80); }
+        .industrial-gradient { background: linear-gradient(45deg, #555555, #888888); }
+        .romantic-gradient { background: linear-gradient(45deg, #ffc0cb, #ffb6c1); }
+        .scandinavian-gradient { background: linear-gradient(45deg, #f0f8ff, #e6f3ff); }
+        .tropical-gradient { background: linear-gradient(45deg, #ff7f50, #ffb347); }
+        .artdeco-gradient { background: linear-gradient(45deg, #d4af37, #1a1a1a); }
+        .cyber-gradient { background: linear-gradient(45deg, #00ffff, #ff00ff); }
     </style>
 </head>
 <body>
-    <div class="container main-container">
-        <div class="header-title">
-            <h1><i class="fas fa-cut"></i> Générateur de Sites Salon</h1>
-            <p class="mb-0">Choisissez votre template et créez votre site personnalisé en quelques clics</p>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <h1 class="display-4 mb-4">🎨 Générateur de Sites Salon</h1>
+            <p class="lead">Créez votre site web professionnel en quelques minutes</p>
+            <p class="mb-4">Choisissez parmi nos templates modernes et personnalisez selon vos goûts</p>
         </div>
+    </div>
 
-        <div class="row g-4">
-            <!-- Template Salon Classique -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card template-card" onclick="selectTemplate('classic')">
-                    <div class="template-preview" style="background-image: linear-gradient(45deg, #8b5cf6, #06b6d4);">
-                        <div class="template-badge">Populaire</div>
+    <!-- Templates Gallery -->
+    <div class="container">
+        <h2 class="text-center text-white mb-5">Choisissez Votre Template</h2>
+
+        <div class="row">
+            <!-- Template Classic -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="template-card">
+                    <div class="template-preview">
+                        <div class="preview-gradient classic-gradient"></div>
                         <div class="template-overlay">
-                            <button class="btn btn-light btn-lg">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
+                            <a href="generator.html?template=classic" class="btn-template">
+                                <i class="fas fa-edit"></i> Personnaliser
+                            </a>
                         </div>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-crown"></i> Salon Classique</h5>
-                        <p class="card-text">Template élégant et professionnel parfait pour salons de coiffure traditionnels. Design raffiné avec galerie et équipe.</p>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i> Design professionnel</li>
-                            <li><i class="fas fa-check"></i> Galerie portfolio</li>
-                            <li><i class="fas fa-check"></i> Section équipe</li>
-                            <li><i class="fas fa-check"></i> Formulaire contact</li>
-                        </ul>
+                        <h5 class="card-title">Salon Classique</h5>
+                        <p class="card-text">Template élégant et intemporel, parfait pour un salon traditionnel.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">Populaire</small>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Template Moderne -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card template-card" onclick="selectTemplate('modern')">
-                    <div class="template-preview" style="background-image: linear-gradient(45deg, #f093fb, #f5576c);">
+            <!-- Template Modern -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="template-card">
+                    <div class="template-preview">
+                        <div class="preview-gradient modern-gradient"></div>
                         <div class="template-overlay">
-                            <button class="btn btn-light btn-lg">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
+                            <a href="generator.html?template=modern" class="btn-template">
+                                <i class="fas fa-edit"></i> Personnaliser
+                            </a>
                         </div>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-rocket"></i> Salon Moderne</h5>
-                        <p class="card-text">Design contemporain avec animations fluides et couleurs vibrantes. Parfait pour salons branchés.</p>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i> Design contemporain</li>
-                            <li><i class="fas fa-check"></i> Animations CSS</li>
-                            <li><i class="fas fa-check"></i> Couleurs vibrantes</li>
-                            <li><i class="fas fa-check"></i> Interface moderne</li>
-                        </ul>
+                        <h5 class="card-title">Salon Moderne</h5>
+                        <p class="card-text">Design contemporain avec des couleurs vives et dynamiques.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">Tendance</small>
+                            <i class="fas fa-fire text-danger"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Template Luxe -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card template-card" onclick="selectTemplate('luxury')">
-                    <div class="template-preview" style="background-image: linear-gradient(45deg, #ffecd2, #fcb69f);">
-                        <div class="template-badge">Premium</div>
+            <!-- Template Luxury -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="template-card">
+                    <div class="template-preview">
+                        <div class="preview-gradient luxury-gradient"></div>
                         <div class="template-overlay">
-                            <button class="btn btn-light btn-lg">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
+                            <a href="generator.html?template=luxury" class="btn-template">
+                                <i class="fas fa-edit"></i> Personnaliser
+                            </a>
                         </div>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-gem"></i> Salon Luxe</h5>
-                        <p class="card-text">Template haut de gamme avec finitions dorées et typographie élégante. Pour salons premium.</p>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i> Design premium</li>
-                            <li><i class="fas fa-check"></i> Finitions dorées</li>
-                            <li><i class="fas fa-check"></i> Typographie élégante</li>
-                            <li><i class="fas fa-check"></i> Style haut de gamme</li>
-                        </ul>
+                        <h5 class="card-title">Salon Luxe</h5>
+                        <p class="card-text">Template premium pour salons haut de gamme et instituts de beauté.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">Premium</small>
+                            <i class="fas fa-crown text-warning"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Template Minimaliste -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card template-card" onclick="selectTemplate('minimal')">
-                    <div class="template-preview" style="background-image: linear-gradient(45deg, #f8f9fa, #e9ecef);">
+            <!-- Template Minimal -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="template-card">
+                    <div class="template-preview">
+                        <div class="preview-gradient minimal-gradient"></div>
                         <div class="template-overlay">
-                            <button class="btn btn-dark btn-lg">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
+                            <a href="generator.html?template=minimal" class="btn-template">
+                                <i class="fas fa-edit"></i> Personnaliser
+                            </a>
                         </div>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-leaf"></i> Salon Minimaliste</h5>
-                        <p class="card-text">Design épuré et moderne avec beaucoup d'espace blanc. Idéal pour un style clean et sophistiqué.</p>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i> Design épuré</li>
-                            <li><i class="fas fa-check"></i> Espaces blancs</li>
-                            <li><i class="fas fa-check"></i> Navigation simple</li>
-                            <li><i class="fas fa-check"></i> Chargement rapide</li>
-                        </ul>
+                        <h5 class="card-title">Salon Minimaliste</h5>
+                        <p class="card-text">Design épuré et moderne pour un style sophistiqué.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">Épuré</small>
+                            <i class="fas fa-circle text-muted"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Template Barbier -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card template-card" onclick="selectTemplate('barber')">
-                    <div class="template-preview" style="background-image: linear-gradient(45deg, #434343, #000000);">
+            <!-- Template Barber -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="template-card">
+                    <div class="template-preview">
+                        <div class="preview-gradient barber-gradient"></div>
                         <div class="template-overlay">
-                            <button class="btn btn-light btn-lg">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
+                            <a href="generator.html?template=barber" class="btn-template">
+                                <i class="fas fa-edit"></i> Personnaliser
+                            </a>
                         </div>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-cut"></i> Salon Barbier</h5>
-                        <p class="card-text">Style masculin avec couleurs sombres et typographie robuste. Parfait pour barbershops traditionnels.</p>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i> Style masculin</li>
-                            <li><i class="fas fa-check"></i> Couleurs sombres</li>
-                            <li><i class="fas fa-check"></i> Typographie robuste</li>
-                            <li><i class="fas fa-check"></i> Ambiance vintage</li>
-                        </ul>
+                        <h5 class="card-title">Salon Barbier</h5>
+                        <p class="card-text">Style masculin et traditionnel pour barbershops.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">Masculin</small>
+                            <i class="fas fa-cut text-dark"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Template Créatif -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card template-card" onclick="selectTemplate('creative')">
-                    <div class="template-preview" style="background-image: linear-gradient(45deg, #ff9a9e, #fecfef);">
+            <!-- Template Creative -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="template-card">
+                    <div class="template-preview">
+                        <div class="preview-gradient creative-gradient"></div>
                         <div class="template-overlay">
-                            <button class="btn btn-dark btn-lg">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
+                            <a href="generator.html?template=creative" class="btn-template">
+                                <i class="fas fa-edit"></i> Personnaliser
+                            </a>
                         </div>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-palette"></i> Salon Créatif</h5>
-                        <p class="card-text">Design artistique avec couleurs vives et formes originales. Idéal pour salons innovants et créatifs.</p>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i> Design artistique</li>
-                            <li><i class="fas fa-check"></i> Couleurs vives</li>
-                            <li><i class="fas fa-check"></i> Formes originales</li>
-                            <li><i class="fas fa-check"></i> Style unique</li>
-                        </ul>
+                        <h5 class="card-title">Salon Créatif</h5>
+                        <p class="card-text">Design artistique et original pour salons avant-gardistes.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">Artistique</small>
+                            <i class="fas fa-palette text-info"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Template Spa -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card template-card" onclick="selectTemplate('spa')">
-                    <div class="template-preview" style="background-image: linear-gradient(45deg, #a8edea, #f5f7fa);">
+            <!-- Templates supplémentaires -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="template-card">
+                    <div class="template-preview">
+                        <div class="preview-gradient spa-gradient"></div>
                         <div class="template-overlay">
-                            <button class="btn btn-success btn-lg">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
+                            <a href="generator.html?template=spa" class="btn-template">
+                                <i class="fas fa-edit"></i> Personnaliser
+                            </a>
                         </div>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-spa"></i> Salon Spa</h5>
-                        <p class="card-text">Ambiance relaxante avec tons naturels et design zen. Parfait pour spas et salons bien-être.</p>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i> Design zen</li>
-                            <li><i class="fas fa-check"></i> Tons naturels</li>
-                            <li><i class="fas fa-check"></i> Ambiance relaxante</li>
-                            <li><i class="fas fa-check"></i> Style bien-être</li>
-                        </ul>
+                        <h5 class="card-title">Salon Spa</h5>
+                        <p class="card-text">Ambiance zen et relaxante pour spas et centres de bien-être.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">Zen</small>
+                            <i class="fas fa-spa text-success"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Template Futuriste -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card template-card" onclick="selectTemplate('futuristic')">
-                    <div class="template-preview" style="background-image: linear-gradient(45deg, #667eea, #764ba2);">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="template-card">
+                    <div class="template-preview">
+                        <div class="preview-gradient futuristic-gradient"></div>
                         <div class="template-overlay">
-                            <button class="btn btn-light btn-lg">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
+                            <a href="generator.html?template=futuristic" class="btn-template">
+                                <i class="fas fa-edit"></i> Personnaliser
+                            </a>
                         </div>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-rocket"></i> Salon Futuriste</h5>
-                        <p class="card-text">Design high-tech avec effets néon et animations avancées. Pour salons avant-gardistes.</p>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i> Design high-tech</li>
-                            <li><i class="fas fa-check"></i> Effets néon</li>
-                            <li><i class="fas fa-check"></i> Animations avancées</li>
-                            <li><i class="fas fa-check"></i> Style futuriste</li>
-                        </ul>
+                        <h5 class="card-title">Salon Futuriste</h5>
+                        <p class="card-text">Design high-tech et avant-gardiste.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">Futur</small>
+                            <i class="fas fa-rocket text-primary"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Template Vintage -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card template-card" onclick="selectTemplate('vintage')">
-                    <div class="template-preview" style="background-image: linear-gradient(45deg, #d4af37, #ffd700);">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="template-card">
+                    <div class="template-preview">
+                        <div class="preview-gradient vintage-gradient"></div>
                         <div class="template-overlay">
-                            <button class="btn btn-dark btn-lg">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
+                            <a href="generator.html?template=vintage" class="btn-template">
+                                <i class="fas fa-edit"></i> Personnaliser
+                            </a>
                         </div>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-clock"></i> Salon Vintage</h5>
-                        <p class="card-text">Style rétro avec couleurs chaudes et typographie classique. Parfait pour salons nostalgiques.</p>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i> Style rétro</li>
-                            <li><i class="fas fa-check"></i> Couleurs chaudes</li>
-                            <li><i class="fas fa-check"></i> Typographie classique</li>
-                            <li><i class="fas fa-check"></i> Ambiance nostalgique</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Template Urbain -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card template-card" onclick="selectTemplate('urban')">
-                    <div class="template-preview" style="background-image: linear-gradient(45deg, #2c2c2c, #434343);">
-                        <div class="template-overlay">
-                            <button class="btn btn-warning btn-lg">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
+                        <h5 class="card-title">Salon Vintage</h5>
+                        <p class="card-text">Style rétro et nostalgique.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">Rétro</small>
+                            <i class="fas fa-history text-warning"></i>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-city"></i> Salon Urbain</h5>
-                        <p class="card-text">Design street avec couleurs contrastées et style industriel. Idéal pour salons urbains et modernes.</p>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i> Design street</li>
-                            <li><i class="fas fa-check"></i> Style industriel</li>
-                            <li><i class="fas fa-check"></i> Couleurs contrastées</li>
-                            <li><i class="fas fa-check"></i> Ambiance urbaine</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Template Nature -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card template-card" onclick="selectTemplate('nature')">
-                    <div class="template-preview" style="background-image: linear-gradient(45deg, #56ab2f, #a8e6cf);">
-                        <div class="template-overlay">
-                            <button class="btn btn-light btn-lg">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-leaf"></i> Salon Nature</h5>
-                        <p class="card-text">Design bio avec tons verts et éléments naturels. Parfait pour salons éco-responsables.</p>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i> Design bio</li>
-                            <li><i class="fas fa-check"></i> Tons verts</li>
-                            <li><i class="fas fa-check"></i> Éléments naturels</li>
-                            <li><i class="fas fa-check"></i> Style éco-responsable</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Template Bohème -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card template-card" onclick="selectTemplate('bohemian')">
-                    <div class="template-preview" style="background-image: linear-gradient(45deg, #b7937d, #f5deb3);">
-                        <div class="template-overlay">
-                            <button class="btn btn-dark btn-lg">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-feather"></i> Salon Bohème</h5>
-                        <p class="card-text">Style bohème avec couleurs chaudes et textures naturelles. Pour salons artistiques et décontractés.</p>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i> Style bohème</li>
-                            <li><i class="fas fa-check"></i> Couleurs chaudes</li>
-                            <li><i class="fas fa-check"></i> Textures naturelles</li>
-                            <li><i class="fas fa-check"></i> Ambiance décontractée</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Template Néon -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card template-card" onclick="selectTemplate('neon')">
-                    <div class="template-preview" style="background-image: linear-gradient(45deg, #ff0080, #00ff80);">
-                        <div class="template-overlay">
-                            <button class="btn btn-dark btn-lg">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-bolt"></i> Salon Néon</h5>
-                        <p class="card-text">Design électrisant avec couleurs néon et effets lumineux. Pour salons branchés et modernes.</p>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i> Couleurs néon</li>
-                            <li><i class="fas fa-check"></i> Effets lumineux</li>
-                            <li><i class="fas fa-check"></i> Style électrisant</li>
-                            <li><i class="fas fa-check"></i> Design branché</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Template Industriel -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card template-card" onclick="selectTemplate('industrial')">
-                    <div class="template-preview" style="background-image: linear-gradient(45deg, #555555, #888888);">
-                        <div class="template-overlay">
-                            <button class="btn btn-warning btn-lg">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-cog"></i> Salon Industriel</h5>
-                        <p class="card-text">Style industriel avec métaux et béton. Design brut et moderne pour salons urbains.</p>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i> Style industriel</li>
-                            <li><i class="fas fa-check"></i> Métaux et béton</li>
-                            <li><i class="fas fa-check"></i> Design brut</li>
-                            <li><i class="fas fa-check"></i> Ambiance urbaine</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Template Romantique -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card template-card" onclick="selectTemplate('romantic')">
-                    <div class="template-preview" style="background-image: linear-gradient(45deg, #ffc0cb, #ffb6c1);">
-                        <div class="template-overlay">
-                            <button class="btn btn-dark btn-lg">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-heart"></i> Salon Romantique</h5>
-                        <p class="card-text">Design romantique avec tons roses et dorés. Parfait pour salons féminins et élégants.</p>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i> Design romantique</li>
-                            <li><i class="fas fa-check"></i> Tons roses et dorés</li>
-                            <li><i class="fas fa-check"></i> Style féminin</li>
-                            <li><i class="fas fa-check"></i> Ambiance élégante</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Template Scandinave -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card template-card" onclick="selectTemplate('scandinavian')">
-                    <div class="template-preview" style="background-image: linear-gradient(45deg, #f0f8ff, #e6f3ff);">
-                        <div class="template-overlay">
-                            <button class="btn btn-primary btn-lg">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-snowflake"></i> Salon Scandinave</h5>
-                        <p class="card-text">Style nordique avec lignes épurées et couleurs claires. Design fonctionnel et cosy.</p>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i> Style nordique</li>
-                            <li><i class="fas fa-check"></i> Lignes épurées</li>
-                            <li><i class="fas fa-check"></i> Couleurs claires</li>
-                            <li><i class="fas fa-check"></i> Design cosy</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Template Tropical -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card template-card" onclick="selectTemplate('tropical')">
-                    <div class="template-preview" style="background-image: linear-gradient(45deg, #ff7f50, #ffb347);">
-                        <div class="template-overlay">
-                            <button class="btn btn-light btn-lg">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-sun"></i> Salon Tropical</h5>
-                        <p class="card-text">Ambiance exotique avec couleurs vives et motifs tropicaux. Pour salons estivaux et dynamiques.</p>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i> Ambiance exotique</li>
-                            <li><i class="fas fa-check"></i> Couleurs vives</li>
-                            <li><i class="fas fa-check"></i> Motifs tropicaux</li>
-                            <li><i class="fas fa-check"></i> Style estival</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Template Art Déco -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card template-card" onclick="selectTemplate('artdeco')">
-                    <div class="template-preview" style="background-image: linear-gradient(45deg, #d4af37, #1a1a1a);">
-                        <div class="template-badge">Exclusif</div>
-                        <div class="template-overlay">
-                            <button class="btn btn-light btn-lg">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-chess-queen"></i> Salon Art Déco</h5>
-                        <p class="card-text">Style années 20 avec géométrie dorée et lignes élégantes. Design sophistiqué et intemporel.</p>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i> Style années 20</li>
-                            <li><i class="fas fa-check"></i> Géométrie dorée</li>
-                            <li><i class="fas fa-check"></i> Lignes élégantes</li>
-                            <li><i class="fas fa-check"></i> Design sophistiqué</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Template Cyber -->
-            <div class="col-lg-4 col-md-6">
-                <div class="card template-card" onclick="selectTemplate('cyber')">
-                    <div class="template-preview" style="background-image: linear-gradient(45deg, #00ffff, #ff00ff);">
-                        <div class="template-overlay">
-                            <button class="btn btn-dark btn-lg">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-robot"></i> Salon Cyber</h5>
-                        <p class="card-text">Design cyberpunk avec néons et technologies. Pour salons futuristes et avant-gardistes.</p>
-                        <ul class="features-list">
-                            <li><i class="fas fa-check"></i> Style cyberpunk</li>
-                            <li><i class="fas fa-check"></i> Néons technologiques</li>
-                            <li><i class="fas fa-check"></i> Design futuriste</li>
-                            <li><i class="fas fa-check"></i> Ambiance high-tech</li>
-                        </ul>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Comment ça marche -->
-        <div class="how-it-works">
-            <div class="row">
-                <div class="col-12">
-                    <h3><i class="fas fa-question-circle"></i> Comment ça marche ?</h3>
-                    <div class="row text-center">
-                        <div class="col-md-4 mb-3">
-                            <i class="fas fa-mouse-pointer fa-2x mb-2" style="color: #f093fb;"></i>
-                            <h6>1. Choisir</h6>
-                            <small>Sélectionnez le template qui correspond à votre style</small>
+        <!-- Section Comment ça marche -->
+        <div class="steps-section">
+            <div class="container">
+                <h3 class="text-center mb-5">Comment ça marche ?</h3>
+                <div class="row">
+                    <div class="col-md-4 text-center mb-4">
+                        <div class="step-icon">
+                            <i class="fas fa-mouse-pointer fa-2x"></i>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <i class="fas fa-edit fa-2x mb-2" style="color: #4ecdc4;"></i>
-                            <h6>2. Personnaliser</h6>
-                            <small>Remplissez vos informations dans le formulaire</small>
+                        <h6>1. Choisir</h6>
+                        <small>Sélectionnez le template qui correspond à votre style</small>
+                    </div>
+                    <div class="col-md-4 text-center mb-4">
+                        <div class="step-icon">
+                            <i class="fas fa-edit fa-2x"></i>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <i class="fas fa-download fa-2x mb-2" style="color: #45b7d1;"></i>
-                            <h6>3. Télécharger</h6>
-                            <small>Récupérez votre site prêt à être mis en ligne</small>
+                        <h6>2. Personnaliser</h6>
+                        <small>Remplissez vos informations dans le formulaire</small>
+                    </div>
+                    <div class="col-md-4 text-center mb-4">
+                        <div class="step-icon">
+                            <i class="fas fa-download fa-2x"></i>
                         </div>
+                        <h6>3. Télécharger</h6>
+                        <small>Récupérez votre site prêt à être mis en ligne</small>
                     </div>
                 </div>
             </div>
@@ -604,7 +356,7 @@
     <script>
         function selectTemplate(templateType) {
             // Rediriger vers la page de personnalisation avec le template sélectionné
-            window.location.href = 'generator.html?template=' + templateType;
+            window.location.href = `generator.html?template=${templateType}`;
         }
     </script>
 </body>

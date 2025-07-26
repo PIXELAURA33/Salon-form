@@ -526,10 +526,10 @@ class SalonGenerator {
     getFormData() {
         const getValue = (id, defaultValue = '') => {
             const element = document.getElementById(id);
-            return element ? element.value : defaultValue;
+            return element ? element.value.trim() : defaultValue;
         };
 
-        return {
+        const data = {
             salonName: getValue('salonName'),
             phone: getValue('phone'),
             address: getValue('address'),
@@ -543,6 +543,19 @@ class SalonGenerator {
             primaryColor: getValue('primaryColor', '#667eea'),
             secondaryColor: getValue('secondaryColor', '#764ba2')
         };
+
+        // Validation des URLs
+        if (data.website && !data.website.startsWith('http')) {
+            data.website = 'https://' + data.website;
+        }
+        if (data.facebook && !data.facebook.startsWith('http')) {
+            data.facebook = 'https://' + data.facebook;
+        }
+        if (data.instagram && !data.instagram.startsWith('http')) {
+            data.instagram = 'https://' + data.instagram;
+        }
+
+        return data;
     }
 
     async loadTemplate(templateType) {
@@ -736,8 +749,7 @@ class SalonGenerator {
             'romantic': {
                 gradient: 'linear-gradient(45deg, #ffc0cb, #ffb6c1)',
                 fontFamily: 'Parisienne, cursive',
-                buttonStyle: 'border-radius: 25px; background```python
-: linear-gradient(45deg, #ff69b4, #ffb6c1); color: white;'
+                buttonStyle: 'border-radius: 25px; background: linear-gradient(45deg, #ff69b4, #ffb6c1); color: white;'
             },
             'scandinavian': {
                 gradient: 'linear-gradient(45deg, #f0f8ff, #e6f3ff)',
@@ -1287,6 +1299,9 @@ class SalonGenerator {
             allRequiredImages.push(`img/portfolio/portfolio-${i}.jpg`);
         }
 
+        let copiedCount = 0;
+        let errorCount = 0;
+
         // Copier toutes les images pour avoir des templates complets
         for (const imagePath of allRequiredImages) {
             try {
@@ -1294,15 +1309,22 @@ class SalonGenerator {
                 if (response.ok) {
                     const blob = await response.blob();
                     this.generatedFiles.set(imagePath, blob);
+                    copiedCount++;
                 } else {
                     console.warn(`Image non trouvée: ${imagePath} (${response.status})`);
+                    errorCount++;
                 }
             } catch (error) {
                 console.warn(`Erreur lors du chargement de ${imagePath}:`, error.message);
+                errorCount++;
             }
         }
 
-        console.log(`Images copiées: ${allRequiredImages.length} fichiers inclus pour template complet`);
+        console.log(`Images copiées: ${copiedCount}/${allRequiredImages.length} fichiers copiés, ${errorCount} erreurs`);
+        
+        if (errorCount > 0) {
+            console.warn(`Attention: ${errorCount} images n'ont pas pu être copiées. Le site pourrait avoir des images manquantes.`);
+        }
     }
 
     base64ToBinary(base64String) {
@@ -1357,6 +1379,12 @@ class SalonGenerator {
 
         if (this.generatedFiles.size === 0) {
             alert('Erreur: Aucun fichier à télécharger. Veuillez régénérer le site.');
+            return;
+        }
+
+        // Vérifier que le fichier HTML principal existe
+        if (!this.generatedFiles.has('index.html')) {
+            alert('Erreur: Fichier HTML principal manquant. Veuillez régénérer le site.');
             return;
         }
 
