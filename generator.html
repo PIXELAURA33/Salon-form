@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -34,7 +33,7 @@
                                 <h5><i class="fas fa-info-circle"></i> Informations de base</h5>
                                 <hr>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -85,7 +84,7 @@
                                 <h5><i class="fab fa-facebook"></i> Réseaux sociaux</h5>
                                 <hr>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="mb-3">
@@ -112,24 +111,24 @@
                                 <h5><i class="fas fa-image"></i> Personnalisation des images</h5>
                                 <hr>
                             </div>
-                            
+
                             <div class="row" id="imageOptions">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Image d'en-tête / Hero</label>
                                     <div class="image-upload-container">
                                         <input type="file" id="heroImage" class="form-control" accept="image/jpeg,image/jpg,image/png,image/webp">
-                                        <small class="form-text text-muted">
-                                            <strong>Format:</strong> JPG, PNG, WEBP uniquement<br>
-                                            <strong>Dimension recommandée:</strong> 1920x1080px<br>
-                                            <strong>Taille max:</strong> 5MB
-                                        </small>
+                                        <small class="form-text text-muted" id="heroImageInfo">
+                            <strong>Format:</strong> JPG, PNG, WEBP uniquement<br>
+                            <strong>Dimension recommandée:</strong> 1920x1080px<br>
+                            <strong>Taille max:</strong> 5MB
+                        </small>
                                         <div class="image-preview mt-2" id="heroImagePreview" style="display: none;">
                                             <img src="" alt="Aperçu" style="max-width: 200px; max-height: 120px; border-radius: 5px;">
                                         </div>
                                         <div class="alert alert-danger mt-2" id="heroImageError" style="display: none; padding: 8px; font-size: 12px;"></div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Image "À propos" / Perfect Style</label>
                                     <div class="image-upload-container">
@@ -214,11 +213,11 @@
                                     <label class="form-label">Logo du salon</label>
                                     <div class="image-upload-container">
                                         <input type="file" id="logoImage" class="form-control" accept="image/png,image/svg+xml,image/webp">
-                                        <small class="form-text text-muted">
-                                            <strong>Format:</strong> PNG, SVG, WEBP (fond transparent recommandé)<br>
-                                            <strong>Dimension recommandée:</strong> 200x200px ou ratio 1:1<br>
-                                            <strong>Taille max:</strong> 2MB
-                                        </small>
+                                        <small class="form-text text-muted" id="logoImageInfo">
+                            <strong>Format:</strong> PNG, SVG, WEBP (fond transparent recommandé)<br>
+                            <strong>Dimension recommandée:</strong> 200x200px ou ratio 1:1<br>
+                            <strong>Taille max:</strong> 2MB
+                        </small>
                                         <div class="image-preview mt-2" id="logoImagePreview" style="display: none;">
                                             <img src="" alt="Aperçu" style="max-width: 100px; max-height: 100px; border-radius: 5px;">
                                         </div>
@@ -248,7 +247,7 @@
                                 <h5><i class="fas fa-palette"></i> Personnalisation des couleurs</h5>
                                 <hr>
                             </div>
-                            
+
                             <div class="row" id="colorOptions">
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -309,12 +308,12 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="generator.js"></script>
-    
+
     <script>
         // Détecter le template sélectionné depuis l'URL
         const urlParams = new URLSearchParams(window.location.search);
         const selectedTemplate = urlParams.get('template') || 'classic';
-        
+
         // Mettre à jour l'interface selon le template
         document.addEventListener('DOMContentLoaded', function() {
             updateTemplateInfo(selectedTemplate);

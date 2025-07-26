@@ -18,6 +18,52 @@ class SalonGenerator {
         document.getElementById('downloadBtn').addEventListener('click', () => this.downloadZip());
         document.getElementById('downloadFromPreview').addEventListener('click', () => this.downloadZip());
         this.initImageUploads();
+        this.updateImageFormatInfo();
+    }
+
+    updateImageFormatInfo() {
+        // Mettre à jour les informations de format selon le template sélectionné
+        const templateFormatInfo = {
+            'classic': {
+                'heroImageInfo': 'JPG, PNG, WEBP uniquement | 1920x1080px | Max: 5MB',
+                'logoImageInfo': 'PNG, SVG, WEBP (transparent recommandé) | 200x200px | Max: 2MB'
+            },
+            'modern': {
+                'heroImageInfo': 'JPG, PNG, WEBP uniquement | 1920x1080px | Max: 6MB (qualité moderne)',
+                'logoImageInfo': 'PNG, SVG, WEBP (SVG recommandé) | 200x200px | Max: 3MB'
+            },
+            'luxury': {
+                'heroImageInfo': 'JPG, PNG uniquement (haute qualité) | 1920x1080px | Max: 8MB',
+                'logoImageInfo': 'PNG, SVG uniquement (premium) | 200x200px | Max: 3MB'
+            },
+            'minimal': {
+                'heroImageInfo': 'JPG, WEBP uniquement (optimisé) | 1920x1080px | Max: 3MB',
+                'logoImageInfo': 'SVG, PNG (SVG recommandé) | 200x200px | Max: 1MB'
+            },
+            'barber': {
+                'heroImageInfo': 'JPG, PNG uniquement | 1920x1080px | Max: 5MB',
+                'logoImageInfo': 'PNG, SVG (style vintage) | 200x200px | Max: 2MB'
+            },
+            'creative': {
+                'heroImageInfo': 'JPG, PNG, WEBP (tous formats) | 1920x1080px | Max: 7MB',
+                'logoImageInfo': 'PNG, SVG, WEBP (créativité maximale) | 200x200px | Max: 4MB'
+            }
+        };
+
+        const templateInfo = templateFormatInfo[this.selectedTemplate] || templateFormatInfo['classic'];
+        
+        // Mettre à jour les éléments si ils existent
+        Object.keys(templateInfo).forEach(infoId => {
+            const element = document.getElementById(infoId);
+            if (element) {
+                const parts = templateInfo[infoId].split(' | ');
+                element.innerHTML = `
+                    <strong>Format:</strong> ${parts[0]}<br>
+                    <strong>Dimension recommandée:</strong> ${parts[1]}<br>
+                    <strong>Taille max:</strong> ${parts[2]}
+                `;
+            }
+        });
     }
 
     initImageUploads() {
@@ -208,49 +254,265 @@ class SalonGenerator {
     }
 
     validateImageFile(file, inputId) {
-        // Définir les règles de validation par type d'image
-        const validationRules = {
-            'heroImage': {
-                formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                maxSize: 5 * 1024 * 1024, // 5MB
-                name: 'Image d\'en-tête'
+        // Définir les règles de validation par template et par type d'image
+        const templateValidationRules = {
+            'classic': {
+                'heroImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Image d\'en-tête (Classic)'
+                },
+                'aboutImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Image À propos (Classic)'
+                },
+                'logoImage': {
+                    formats: ['image/png', 'image/svg+xml', 'image/webp'],
+                    maxSize: 2 * 1024 * 1024, // 2MB
+                    name: 'Logo (Classic)'
+                },
+                'footerImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Image de pied de page (Classic)'
+                },
+                'team1Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 3 * 1024 * 1024, // 3MB
+                    name: 'Photo équipe 1 (Classic)'
+                },
+                'team2Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 3 * 1024 * 1024, // 3MB
+                    name: 'Photo équipe 2 (Classic)'
+                },
+                'team3Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 3 * 1024 * 1024, // 3MB
+                    name: 'Photo équipe 3 (Classic)'
+                },
+                'portfolioImages': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 4 * 1024 * 1024, // 4MB
+                    name: 'Image portfolio (Classic)'
+                }
             },
-            'aboutImage': {
-                formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                maxSize: 5 * 1024 * 1024, // 5MB
-                name: 'Image À propos'
+            'modern': {
+                'heroImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 6 * 1024 * 1024, // 6MB - Plus grand pour les effets modernes
+                    name: 'Image d\'en-tête (Modern)'
+                },
+                'aboutImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Image À propos (Modern)'
+                },
+                'logoImage': {
+                    formats: ['image/png', 'image/svg+xml', 'image/webp'],
+                    maxSize: 3 * 1024 * 1024, // 3MB - SVG préféré pour Modern
+                    name: 'Logo (Modern - SVG recommandé)'
+                },
+                'footerImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Image de pied de page (Modern)'
+                },
+                'team1Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 4 * 1024 * 1024, // 4MB
+                    name: 'Photo équipe 1 (Modern)'
+                },
+                'team2Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 4 * 1024 * 1024, // 4MB
+                    name: 'Photo équipe 2 (Modern)'
+                },
+                'team3Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 4 * 1024 * 1024, // 4MB
+                    name: 'Photo équipe 3 (Modern)'
+                },
+                'portfolioImages': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 5 * 1024 * 1024, // 5MB - Plus grand pour Modern
+                    name: 'Image portfolio (Modern)'
+                }
             },
-            'logoImage': {
-                formats: ['image/png', 'image/svg+xml', 'image/webp'],
-                maxSize: 2 * 1024 * 1024, // 2MB
-                name: 'Logo'
+            'luxury': {
+                'heroImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 8 * 1024 * 1024, // 8MB - Qualité premium
+                    name: 'Image d\'en-tête (Luxury - Haute qualité)'
+                },
+                'aboutImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 6 * 1024 * 1024, // 6MB
+                    name: 'Image À propos (Luxury)'
+                },
+                'logoImage': {
+                    formats: ['image/png', 'image/svg+xml'],
+                    maxSize: 3 * 1024 * 1024, // 3MB - PNG ou SVG uniquement
+                    name: 'Logo (Luxury - PNG/SVG uniquement)'
+                },
+                'footerImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 6 * 1024 * 1024, // 6MB
+                    name: 'Image de pied de page (Luxury)'
+                },
+                'team1Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Photo équipe 1 (Luxury)'
+                },
+                'team2Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Photo équipe 2 (Luxury)'
+                },
+                'team3Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Photo équipe 3 (Luxury)'
+                },
+                'portfolioImages': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 6 * 1024 * 1024, // 6MB - Qualité premium
+                    name: 'Image portfolio (Luxury)'
+                }
             },
-            'footerImage': {
-                formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                maxSize: 5 * 1024 * 1024, // 5MB
-                name: 'Image de pied de page'
+            'minimal': {
+                'heroImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/webp'],
+                    maxSize: 3 * 1024 * 1024, // 3MB - Optimisé pour minimal
+                    name: 'Image d\'en-tête (Minimal - WEBP recommandé)'
+                },
+                'aboutImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/webp'],
+                    maxSize: 3 * 1024 * 1024, // 3MB
+                    name: 'Image À propos (Minimal)'
+                },
+                'logoImage': {
+                    formats: ['image/svg+xml', 'image/png'],
+                    maxSize: 1 * 1024 * 1024, // 1MB - SVG préféré pour minimal
+                    name: 'Logo (Minimal - SVG recommandé)'
+                },
+                'footerImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/webp'],
+                    maxSize: 3 * 1024 * 1024, // 3MB
+                    name: 'Image de pied de page (Minimal)'
+                },
+                'team1Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/webp'],
+                    maxSize: 2 * 1024 * 1024, // 2MB
+                    name: 'Photo équipe 1 (Minimal)'
+                },
+                'team2Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/webp'],
+                    maxSize: 2 * 1024 * 1024, // 2MB
+                    name: 'Photo équipe 2 (Minimal)'
+                },
+                'team3Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/webp'],
+                    maxSize: 2 * 1024 * 1024, // 2MB
+                    name: 'Photo équipe 3 (Minimal)'
+                },
+                'portfolioImages': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/webp'],
+                    maxSize: 3 * 1024 * 1024, // 3MB
+                    name: 'Image portfolio (Minimal)'
+                }
             },
-            'team1Image': {
-                formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                maxSize: 3 * 1024 * 1024, // 3MB
-                name: 'Photo équipe 1'
+            'barber': {
+                'heroImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Image d\'en-tête (Barber)'
+                },
+                'aboutImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 4 * 1024 * 1024, // 4MB
+                    name: 'Image À propos (Barber)'
+                },
+                'logoImage': {
+                    formats: ['image/png', 'image/svg+xml'],
+                    maxSize: 2 * 1024 * 1024, // 2MB - PNG/SVG pour logos vintage
+                    name: 'Logo (Barber - Style vintage)'
+                },
+                'footerImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 4 * 1024 * 1024, // 4MB
+                    name: 'Image de pied de page (Barber)'
+                },
+                'team1Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 3 * 1024 * 1024, // 3MB
+                    name: 'Photo équipe 1 (Barber)'
+                },
+                'team2Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 3 * 1024 * 1024, // 3MB
+                    name: 'Photo équipe 2 (Barber)'
+                },
+                'team3Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 3 * 1024 * 1024, // 3MB
+                    name: 'Photo équipe 3 (Barber)'
+                },
+                'portfolioImages': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png'],
+                    maxSize: 4 * 1024 * 1024, // 4MB
+                    name: 'Image portfolio (Barber)'
+                }
             },
-            'team2Image': {
-                formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                maxSize: 3 * 1024 * 1024, // 3MB
-                name: 'Photo équipe 2'
-            },
-            'team3Image': {
-                formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                maxSize: 3 * 1024 * 1024, // 3MB
-                name: 'Photo équipe 3'
-            },
-            'portfolioImages': {
-                formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-                maxSize: 4 * 1024 * 1024, // 4MB
-                name: 'Image portfolio'
+            'creative': {
+                'heroImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 7 * 1024 * 1024, // 7MB - Plus grand pour créatif
+                    name: 'Image d\'en-tête (Creative)'
+                },
+                'aboutImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 6 * 1024 * 1024, // 6MB
+                    name: 'Image À propos (Creative)'
+                },
+                'logoImage': {
+                    formats: ['image/png', 'image/svg+xml', 'image/webp'],
+                    maxSize: 4 * 1024 * 1024, // 4MB - Tous formats pour créativité
+                    name: 'Logo (Creative - Tous formats)'
+                },
+                'footerImage': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 6 * 1024 * 1024, // 6MB
+                    name: 'Image de pied de page (Creative)'
+                },
+                'team1Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Photo équipe 1 (Creative)'
+                },
+                'team2Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Photo équipe 2 (Creative)'
+                },
+                'team3Image': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 5 * 1024 * 1024, // 5MB
+                    name: 'Photo équipe 3 (Creative)'
+                },
+                'portfolioImages': {
+                    formats: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+                    maxSize: 6 * 1024 * 1024, // 6MB - Plus grand pour créatif
+                    name: 'Image portfolio (Creative)'
+                }
             }
         };
+
+        // Obtenir les règles pour le template actuel
+        const templateRules = templateValidationRules[this.selectedTemplate] || templateValidationRules['classic'];
+        const validationRules = templateRules;
 
         const rules = validationRules[inputId];
         if (!rules) {
